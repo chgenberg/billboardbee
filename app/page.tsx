@@ -5,12 +5,12 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import BeeQuizModal from './components/BeeQuizModal';
-import ReviewCarousel from './components/ReviewCarousel';
 import { FaMapMarkedAlt } from 'react-icons/fa';
-import BillboardMapWrapper from './components/BillboardMapWrapper';
 
 const MapWithBees = dynamic(() => import('./components/MapWithBees'), { ssr: false });
+const BillboardMapWrapper = dynamic(() => import('./components/BillboardMapWrapper'), { ssr: false });
 
 interface Billboard {
   id: string;
@@ -33,16 +33,28 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<Billboard[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const fetchBillboards = async () => {
       try {
         const response = await fetch('/api/billboards');
+        if (!response.ok) {
+          throw new Error('Failed to fetch billboards');
+        }
         const data = await response.json();
-        setBillboards(data);
+        // Handle the response properly
+        if (Array.isArray(data)) {
+          setBillboards(data);
+        } else if (data && Array.isArray(data.billboards)) {
+          setBillboards(data.billboards);
+        } else {
+          setBillboards([]);
+        }
       } catch (error) {
         console.error('Error fetching billboards:', error);
+        setBillboards([]);
       } finally {
         setLoading(false);
       }
@@ -51,162 +63,234 @@ export default function Home() {
     fetchBillboards();
   }, []);
 
-  // Extrahera unika städer från billboards
-  const cities = [...new Set(billboards.map(b => b.region).filter(Boolean))];
+  // Extract unique regions safely
+  const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
 
-  // Söklogik
   const handleSearch = (value: string) => {
     setSearch(value);
-    if (value.trim().length === 0) {
-      setSearchResults([]);
-      return;
+    if (value.trim().length > 0) {
+      router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}`);
     }
-    // Navigera till lediga-skyltar med query
-    router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}`);
   };
 
   return (
     <>
-      <div
-        className="min-h-screen w-full flex flex-col items-center justify-start bg-cover bg-center relative"
-        style={{ backgroundImage: 'url(/bakgrundens.png)' }}
-      >
-        {/* Main content */}
-        <main className="flex flex-col items-center justify-center flex-1 relative w-full h-full">
-          {/* Minimalistisk sökruta centrerad i billboardbilden */}
-          <div className="absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 w-full flex flex-col items-center justify-center z-20">
-            <h1
-              className="text-[22px] md:text-[32px] font-bold text-black mb-4 text-center tracking-tight"
-              style={{ fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif', fontWeight: 700, letterSpacing: '-0.01em' }}
-            >
-              SÖK DIN SKYLT
-            </h1>
-            <div className="w-full max-w-md flex flex-row items-center bg-white/90 rounded-full shadow-lg border border-[#ececec] px-3 py-2 gap-2">
-              <input
-                id="search-input"
-                type="text"
-                placeholder="Sök ort, t.ex. Stockholm..."
-                className="flex-1 bg-transparent outline-none text-base md:text-lg text-[#222] placeholder-gray-400 font-sans"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { handleSearch(search); } }}
-              />
-              <button
-                className="px-4 py-2 rounded-full bg-[#ff6b00] text-white font-semibold text-base shadow-md border-2 border-[#ff6b00] tracking-wide font-sans hover:bg-white hover:text-[#ff6b00] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40"
-                onClick={() => handleSearch(search)}
-                type="button"
-              >
-                Sök
-              </button>
-              <button
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-[#ff6b00] hover:bg-[#ff8c1a] transition-colors ml-2"
-                onClick={() => setShowMap(true)}
-                title="Visa karta"
-                type="button"
-              >
-                <FaMapMarkedAlt className="w-5 h-5 text-white" />
-              </button>
-            </div>
-            {/* Förslag på städer */}
-            <div className="flex flex-row gap-2 mt-3">
-              {['Stockholm', 'Göteborg', 'Malmö', 'Norrköping'].map((city) => (
-                <button
-                  key={city}
-                  className="px-3 py-1.5 rounded-full bg-white/80 border border-[#ececec] text-[#ff6b00] font-medium shadow hover:bg-[#ff6b00] hover:text-white transition-colors text-xs md:text-sm"
-                  type="button"
-                  onClick={() => handleSearch(city)}
-                >
-                  {city}
-                </button>
-              ))}
-            </div>
-          </div>
-        </main>
-      </div>
-
-      {/* === NY RECENSIONSKOMPONENT === */}
-      <ReviewCarousel />
-
-      {/* Sektion med billboard-objekt */}
-      <section
-        className="w-full min-h-screen flex flex-col items-center justify-center bg-white relative pt-16"
-      >
-        <h2
-          className="text-3xl md:text-4xl font-bold text-[#ff6b00] tracking-widest uppercase mb-6 text-center"
-          style={{ fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif', letterSpacing: '0.08em' }}
-        >
-          LEDIGA OBJEKT
-        </h2>
-        <button
-          onClick={() => setShowMap(true)}
-          className="mb-10 text-[#ff6b00] font-bold text-lg px-6 py-2 rounded-full border border-[#ff6b00] bg-white/90 hover:bg-[#ff6b00] hover:text-white transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40"
-          style={{ fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif' }}
-        >
-          KARTA
-        </button>
-        <div className="max-w-5xl w-full flex flex-col items-center justify-center">
-          <div className="bg-white/95 rounded-[2.5rem] shadow-2xl px-8 py-12 w-full flex flex-col items-center justify-center">
-            {loading ? (
-              <div className="text-[#ff6b00] text-xl">Laddar objekt...</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
-                {billboards.slice(0, 6).map((billboard) => (
-                  <Link
-                    key={billboard.id}
-                    href={`/objekt/${billboard.id}`}
-                    className="group flex flex-col items-center justify-center transition-transform duration-200 hover:scale-105"
-                  >
-                    <div className="relative w-full aspect-square max-w-[260px] max-h-[260px]">
-                      <Image
-                        src={billboard.imageUrls[0] || '/billboards/bb1.png'}
-                        alt={billboard.title}
-                        fill
-                        className="object-cover rounded-3xl shadow-lg group-hover:shadow-2xl transition-all duration-200"
-                      />
-                    </div>
-                    <div className="mt-4 text-center">
-                      <h3 className="text-lg font-bold text-[#ff6b00]">{billboard.title}</h3>
-                      <p className="text-sm text-gray-600">{billboard.location}</p>
-                      <p className="text-sm font-semibold">{billboard.price} kr/månad</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-            {/* Visa alla lediga skyltar-knapp */}
-            <div className="flex flex-col items-center mt-10">
-              <Link href="/lediga-skyltar" className="group flex flex-col items-center">
-                <span className="text-5xl text-[#ff6b00] font-extrabold group-hover:scale-110 transition-transform mb-2">+</span>
-                <span className="text-lg font-bold text-[#ff6b00] group-hover:underline tracking-wide">Visa alla lediga skyltar</span>
-              </Link>
-            </div>
-          </div>
+      {/* Hero Section with Billboard Background */}
+      <section className="relative h-screen w-full overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/bakgrund.png"
+            alt="Billboard background"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20" />
         </div>
 
-        {/* Modal för karta */}
+        {/* Search Container */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            {/* Title */}
+            <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-4 tracking-tight">
+              Hitta din perfekta
+              <span className="block font-medium text-gray-800">reklamplats</span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-gray-600 mb-12 font-light">
+              Sveriges ledande marknadsplats för utomhusreklam
+            </p>
+
+            {/* Search Bar */}
+            <div className={`relative max-w-2xl mx-auto transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
+              <div className="relative bg-white/95 backdrop-blur-md rounded-full shadow-2xl border border-gray-100 overflow-hidden">
+                <input
+                  type="text"
+                  placeholder="Sök stad eller region..."
+                  className="w-full px-8 py-6 pr-32 text-lg bg-transparent outline-none text-gray-900 placeholder-gray-400"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(search);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => handleSearch(search)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
+                >
+                  Sök
+                </button>
+              </div>
+
+              {/* Quick Links */}
+              <div className="flex flex-wrap justify-center gap-3 mt-6">
+                {['Stockholm', 'Göteborg', 'Malmö', 'Uppsala'].map((city) => (
+                  <button
+                    key={city}
+                    onClick={() => handleSearch(city)}
+                    className="px-6 py-2 text-sm text-gray-600 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200 border border-gray-200"
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Map Button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              onClick={() => setShowMap(true)}
+              className="mt-8 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+              <span className="font-medium">Visa karta</span>
+            </motion.button>
+          </motion.div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
+            <motion.div
+              animate={{ y: [0, 12, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="w-1 h-3 bg-gray-400 rounded-full mt-2"
+            />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Featured Billboards Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+              Utvalda skyltar
+            </h2>
+            <p className="text-lg text-gray-600 font-light">
+              Upptäck våra mest populära reklamplatser
+            </p>
+          </motion.div>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {billboards.slice(0, 6).map((billboard, index) => (
+                <motion.div
+                  key={billboard.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Link href={`/objekt/${billboard.id}`}>
+                    <div className="group cursor-pointer">
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100">
+                        <Image
+                          src={billboard.imageUrls[0] || '/billboards/bb1.png'}
+                          alt={billboard.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="text-lg font-medium text-gray-900 group-hover:text-gray-700 transition-colors">
+                          {billboard.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">{billboard.location}</p>
+                        <div className="flex items-baseline gap-2 mt-2">
+                          <span className="text-2xl font-light text-gray-900">{billboard.price.toLocaleString()}</span>
+                          <span className="text-sm text-gray-500">kr/månad</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* View All Button */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mt-16"
+          >
+            <Link
+              href="/lediga-skyltar"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
+            >
+              Visa alla skyltar
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Map Modal */}
+      <AnimatePresence>
         {showMap && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowMap(false)}
           >
-            <div
-              className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl h-[500px] flex flex-col"
-              onClick={e => e.stopPropagation()}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setShowMap(false)}
-                className="absolute top-4 right-4 text-3xl text-[#ff6b00] hover:text-black font-extrabold z-10 bg-white/80 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-[#ff6b00]/20 transition-colors"
-                aria-label="Stäng karta"
+                className="absolute top-6 right-6 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200 shadow-lg"
               >
-                ×
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
-              <div className="flex-1 rounded-3xl overflow-hidden">
-                <BillboardMapWrapper />
-              </div>
-            </div>
-          </div>
+              <BillboardMapWrapper />
+            </motion.div>
+          </motion.div>
         )}
-      </section>
+      </AnimatePresence>
     </>
   );
 }

@@ -1,213 +1,272 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { FaMapMarkerAlt, FaRulerCombined, FaStar, FaRegBookmark, FaShareAlt, FaTag, FaUsers, FaCalendarAlt, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import BillboardMapWrapper from "@/app/components/BillboardMapWrapper";
+import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
-// Dummy data – byt ut mot fetch från din backend om du vill!
-const product = {
-  title: "LED-skylt vid E6 N – Löddeköpinge",
-  coverImage: "/billboards/bb1.png",
-  gallery: ["/billboards/bb1.png", "/billboards/bb2.png", "/billboards/bb3.png"],
-  location: "Löddeköpinge, E6 N",
-  region: "Skåne",
-  address: "E6, 246 32 Löddeköpinge",
-  price: 18900,
-  traffic: 65000,
-  size: "12x3 m",
-  type: "LED",
-  rating: 4.8,
-  reviews: 12,
-  specs: [
-    { icon: <FaRulerCombined />, label: "Storlek", value: "12 x 3 m" },
-    { icon: <FaUsers />, label: "Trafik", value: "65 000/dag" },
-    { icon: <FaTag />, label: "Typ", value: "LED" },
-    { icon: <FaMapMarkerAlt />, label: "Region", value: "Skåne" },
-  ],
-  summary: "Veckopris 18 900 kr, serviceavgift 5 %, lediga veckor: 28–31, 34–40",
-  availableWeeks: [28,29,30,31,34,35,36,37,38,39,40],
-};
+const BillboardMapWrapper = dynamic(() => import("@/app/components/BillboardMapWrapper"), { ssr: false });
+
+interface Billboard {
+  id: string;
+  title: string;
+  description: string;
+  imageUrls: string[];
+  location: string;
+  price: number;
+  status: string;
+  size: string | null;
+  type: string | null;
+  traffic: number | null;
+  region: string | null;
+  latitude: number;
+  longitude: number;
+  address: string | null;
+}
 
 export default function BillboardPage() {
-  const [mainImage, setMainImage] = useState(product.coverImage);
-  const [showModal, setShowModal] = useState(false);
+  const params = useParams();
+  const [billboard, setBillboard] = useState<Billboard | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [mainImage, setMainImage] = useState(0);
+  const [showImageModal, setShowImageModal] = useState(false);
+
+  useEffect(() => {
+    const fetchBillboard = async () => {
+      try {
+        const response = await fetch('/api/billboards');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        const billboards = Array.isArray(data) ? data : data.billboards || [];
+        const found = billboards.find((b: Billboard) => b.id === params.id);
+        if (found) {
+          setBillboard(found);
+        }
+      } catch (error) {
+        console.error('Error fetching billboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBillboard();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!billboard) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-light text-gray-900 mb-4">Skylt hittades inte</h1>
+          <Link href="/lediga-skyltar" className="text-gray-600 hover:text-gray-900">
+            ← Tillbaka till alla skyltar
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-16">
-      <div className="max-w-3xl mx-auto px-4 flex flex-col gap-16">
-        {/* Titel & Dela */}
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="text-4xl font-light text-gray-900 tracking-tight text-center" style={{letterSpacing: ".01em"}}>{product.title}</h1>
-          <div className="flex items-center gap-2 text-gray-400 text-base mt-2">
-            <FaMapMarkerAlt className="text-[#ff6b00]" />
-            <span>{product.location}</span>
-            <span className="mx-2">•</span>
-            <FaStar className="text-yellow-400" />
-            <span>{product.rating} ({product.reviews})</span>
-          </div>
-          <div className="flex gap-2 mt-4">
-            <button className="rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-400 hover:bg-gray-100 text-sm transition">
-              <FaRegBookmark /> Spara
-            </button>
-            <button className="rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-400 hover:bg-gray-100 text-sm transition">
-              <FaShareAlt /> Dela
-            </button>
-          </div>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <Link href="/lediga-skyltar" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Tillbaka</span>
+          </Link>
         </div>
+      </header>
 
-        {/* Bildgalleri */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-6"
-        >
-          <div className="rounded-3xl overflow-hidden shadow-xl bg-white/80 group relative mx-auto w-full max-w-2xl">
-            <div
-              className="relative w-full aspect-[16/7] cursor-zoom-in transition-all"
-              onClick={() => setShowModal(true)}
-            >
-              <Image
-                src={mainImage}
-                alt={product.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                priority
-              />
-              <span className="absolute bottom-2 right-4 bg-white/80 text-xs text-gray-400 px-3 py-1 rounded-full shadow hidden md:block">Klicka för att förstora</span>
-            </div>
-            <div className="flex gap-2 mt-3 px-4 pb-4 justify-center">
-              {product.gallery.map((img) => (
-                <button
-                  key={img}
-                  onClick={() => setMainImage(img)}
-                  className={`w-12 h-9 rounded-xl overflow-hidden transition-all ${mainImage === img ? "ring-2 ring-[#ff6b00] scale-105" : "opacity-60 hover:opacity-100"}`}
-                  style={{border: "none", background: "none"}}
-                >
-                  <Image src={img} alt="" width={48} height={36} className="object-cover w-full h-full" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Pris, Boka, Lediga veckor */}
-        <div className="flex flex-col md:flex-row gap-8 items-start justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex-1 flex flex-col items-center gap-4"
-          >
-            <span className="inline-block border border-[#ffb300] text-[#ff6b00] bg-white font-medium text-xl px-6 py-1.5 rounded-xl shadow-sm">
-              {product.price.toLocaleString("sv-SE")} kr/mån
-            </span>
-            <button
-              className="w-full rounded-xl border border-[#ffb300] text-[#ff6b00] bg-white font-medium text-base py-2 shadow-sm hover:bg-[#fff7e6] transition"
-              style={{ letterSpacing: ".01em" }}
-            >
-              Boka / Intresseanmälan
-            </button>
-            <div className="text-xs text-gray-400 text-center">{product.summary}</div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="flex-1 flex flex-col items-center gap-2"
-          >
-            <div className="flex items-center gap-2 text-[#ff6b00] font-medium mb-1">
-              <FaCalendarAlt /> Lediga veckor
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {product.availableWeeks.map(week => (
-                <span key={week} className="bg-[#ff6b00]/10 text-[#ff6b00] rounded-full px-3 py-1 text-xs font-semibold">
-                  v.{week}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Specifikationer & Karta */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        >
-          <div className="rounded-2xl shadow-xl bg-white/80 p-8">
-            <h2 className="text-lg font-light text-gray-900 mb-6 flex items-center gap-2">
-              <FaTag className="text-[#ffb300]" /> Specifikationer
-            </h2>
-            <div className="flex flex-col gap-4">
-              {product.specs.map((spec, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3"
-                  style={{ minHeight: "2.5rem" }}
-                >
-                  <span className="text-xl text-[#ffb300] flex-shrink-0">{spec.icon}</span>
-                  <span className="text-gray-400 font-light w-24 text-sm">{spec.label}:</span>
-                  <span className="text-gray-900 font-medium text-base whitespace-nowrap">{spec.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Adress & karta */}
-          <div className="rounded-2xl shadow-xl bg-white/80 p-8 flex flex-col gap-2">
-            <h2 className="text-lg font-light text-gray-900 mb-2 flex items-center gap-2">
-              <FaMapMarkerAlt className="text-[#ffb300]" /> Plats
-            </h2>
-            <div className="flex items-center gap-2 text-gray-700 mb-2">
-              <FaMapMarkerAlt className="text-[#ff6b00]" />
-              <span>{product.address}</span>
-            </div>
-            <div className="w-full h-44 rounded-2xl overflow-hidden shadow-inner">
-              <BillboardMapWrapper focusBillboardId={"8c54de65-9c23-465e-89a9-8577bd4a4e6c"} height="h-full" />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Modal för förstoring av bild */}
-        <AnimatePresence>
-          {showModal && (
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Images */}
+          <div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur"
-              onClick={() => setShowModal(false)}
+              className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in"
+              onClick={() => setShowImageModal(true)}
             >
-              <motion.div
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.95 }}
-                className="relative bg-white rounded-3xl shadow-2xl p-2"
-                onClick={e => e.stopPropagation()}
-              >
-                <button
-                  className="absolute top-2 right-2 text-2xl text-gray-400 hover:text-[#ff6b00] bg-white/80 rounded-full p-1"
-                  onClick={() => setShowModal(false)}
-                >
-                  <FaTimes />
-                </button>
-                <div className="relative w-[80vw] max-w-2xl h-[50vw] max-h-[70vh] rounded-2xl overflow-hidden">
-                  <Image
-                    src={mainImage}
-                    alt={product.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-contain bg-black"
-                  />
-                </div>
-              </motion.div>
+              <Image
+                src={billboard.imageUrls[mainImage] || '/billboards/bb1.png'}
+                alt={billboard.title}
+                fill
+                className="object-cover"
+                priority
+              />
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            
+            {billboard.imageUrls.length > 1 && (
+              <div className="flex gap-3 mt-4">
+                {billboard.imageUrls.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setMainImage(index)}
+                    className={`relative w-20 h-20 rounded-lg overflow-hidden transition-all ${
+                      mainImage === index ? 'ring-2 ring-gray-900' : 'opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <Image
+                      src={img}
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Details */}
+          <div>
+            <div className="mb-8">
+              <h1 className="text-3xl font-light text-gray-900 mb-2">{billboard.title}</h1>
+              <p className="text-gray-600">{billboard.location}</p>
+            </div>
+
+            {/* Price */}
+            <div className="mb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-light text-gray-900">{billboard.price.toLocaleString()}</span>
+                <span className="text-lg text-gray-500">kr/månad</span>
+              </div>
+            </div>
+
+            {/* Specs */}
+            <div className="space-y-6 mb-8">
+              {billboard.type && (
+                <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                  <span className="text-gray-600">Typ</span>
+                  <span className="font-medium text-gray-900">{billboard.type}</span>
+                </div>
+              )}
+              {billboard.size && (
+                <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                  <span className="text-gray-600">Storlek</span>
+                  <span className="font-medium text-gray-900">{billboard.size}</span>
+                </div>
+              )}
+              {billboard.traffic && (
+                <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                  <span className="text-gray-600">Trafik</span>
+                  <span className="font-medium text-gray-900">{billboard.traffic.toLocaleString()} visningar/dag</span>
+                </div>
+              )}
+              {billboard.region && (
+                <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                  <span className="text-gray-600">Region</span>
+                  <span className="font-medium text-gray-900">{billboard.region}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Description */}
+            {billboard.description && (
+              <div className="mb-8">
+                <h2 className="text-lg font-medium text-gray-900 mb-3">Beskrivning</h2>
+                <p className="text-gray-600 leading-relaxed">{billboard.description}</p>
+              </div>
+            )}
+
+            {/* CTA */}
+            <div className="space-y-3">
+              <button className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium">
+                Kontakta för bokning
+              </button>
+              <button className="w-full py-4 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200 font-medium">
+                Begär mer information
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Map Section */}
+        {billboard.latitude && billboard.longitude && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mt-16"
+          >
+            <h2 className="text-2xl font-light text-gray-900 mb-6">Plats</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <div className="h-96 rounded-2xl overflow-hidden bg-gray-100">
+                  <BillboardMapWrapper focusBillboardId={billboard.id} height="h-full" />
+                </div>
+              </div>
+              <div>
+                <div className="bg-gray-50 rounded-2xl p-6">
+                  <h3 className="font-medium text-gray-900 mb-4">Adress</h3>
+                  <p className="text-gray-600">
+                    {billboard.address || billboard.location}
+                  </p>
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span>GPS: {billboard.latitude.toFixed(4)}, {billboard.longitude.toFixed(4)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </main>
+
+      {/* Image Modal */}
+      <AnimatePresence>
+        {showImageModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+            onClick={() => setShowImageModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="relative max-w-5xl max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowImageModal(false)}
+                className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+              >
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <Image
+                src={billboard.imageUrls[mainImage] || '/billboards/bb1.png'}
+                alt={billboard.title}
+                width={1200}
+                height={800}
+                className="rounded-lg"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 
