@@ -14,6 +14,22 @@ interface ScrapedData {
   visibleText: string;
 }
 
+interface OpenAIErrorResponse {
+  error?: {
+    message?: string;
+    type?: string;
+    code?: string;
+  };
+}
+
+interface OpenAISuccessResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+}
+
 function validateAndFormatUrl(url: string): string {
   try {
     // Lägg till https:// om det saknas
@@ -124,13 +140,13 @@ Svara ENDAST med JSON-objektet ovan, utan någon annan text eller förklaringar.
     });
 
     if (!openaiRes.ok) {
-      const errorData = await openaiRes.json();
+      const errorData = await openaiRes.json() as OpenAIErrorResponse;
       console.error('OpenAI API error:', errorData);
       throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
     
     console.log('Får svar från OpenAI...');
-    const openaiData = await openaiRes.json();
+    const openaiData = await openaiRes.json() as OpenAISuccessResponse;
     const content = openaiData.choices?.[0]?.message?.content || '';
     let result;
     try {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Booking, BookingStatus } from '@prisma/client';
+import { DateSelectArg, EventClickArg } from '@fullcalendar/core';
 
 // Dynamically import FullCalendar with no SSR
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), {
@@ -53,10 +54,10 @@ export default function CalendarPage() {
 
   useEffect(() => {
     fetchBookings();
-  }, [billboardId]);
+  }, [billboardId, fetchBookings]);
 
   // Skapa bokning vid datumval
-  async function handleSelect(info: any) {
+  async function handleSelect(info: DateSelectArg) {
     const start = info.startStr;
     const end = info.endStr;
     try {
@@ -84,7 +85,7 @@ export default function CalendarPage() {
   }
 
   // Visa modal vid klick på bokning
-  function handleEventClick(info: any) {
+  function handleEventClick(info: EventClickArg) {
     const booking = info.event.extendedProps as Booking;
     setSelectedBooking(booking);
   }

@@ -3,6 +3,7 @@ import { rateLimit } from '@/lib/rate-limit';
 import bcrypt from 'bcryptjs';
 import prisma from '@/app/lib/prisma';
 import { UserRole } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -14,7 +15,7 @@ const registerSchema = z.object({
 export async function POST(request: Request) {
   try {
     // Rate limiting
-    const rateLimitResult = await rateLimit(request as any);
+    const rateLimitResult = await rateLimit(request as NextRequest);
     if (rateLimitResult) {
       return rateLimitResult;
     }
