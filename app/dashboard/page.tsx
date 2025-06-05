@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
 import { 
   HomeIcon, 
   CalendarIcon, 
@@ -67,7 +68,7 @@ const navigation = [
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<unknown>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportMessage, setSupportMessage] = useState('');
