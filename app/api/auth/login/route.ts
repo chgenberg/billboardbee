@@ -29,7 +29,15 @@ export async function POST(request: NextRequest) {
         .setExpirationTime('7d')
         .sign(secret);
 
-      return new Response(JSON.stringify({ token }), {
+      return new Response(JSON.stringify({ 
+        token,
+        user: {
+          id: 'dummy-annonsor-id',
+          email: 'investor@example.com',
+          role: 'ANNONSOR',
+          name: 'Test Annonsör'
+        }
+      }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +52,15 @@ export async function POST(request: NextRequest) {
         .setExpirationTime('7d')
         .sign(secret);
 
-      return new Response(JSON.stringify({ token }), {
+      return new Response(JSON.stringify({ 
+        token,
+        user: {
+          id: 'dummy-uthyrare-id',
+          email: 'investor2@example.com',
+          role: 'UTHYRARE',
+          name: 'Test Uthyrare'
+        }
+      }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
@@ -57,13 +73,23 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return new Response('Invalid email or password', { status: 401 });
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { 
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return new Response('Invalid email or password', { status: 401 });
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { 
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
@@ -72,7 +98,15 @@ export async function POST(request: NextRequest) {
       .setExpirationTime('7d')
       .sign(secret);
 
-    return new Response(JSON.stringify({ token }), {
+    return new Response(JSON.stringify({ 
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name
+      }
+    }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
@@ -80,6 +114,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error during login:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { 
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 } 

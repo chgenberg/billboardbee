@@ -9,8 +9,13 @@ import OverlayNavbar from './components/OverlayNavbar'
 const nunito = Nunito({ subsets: ['latin'], weight: ['400', '600', '700'] })
 
 export const metadata: Metadata = {
-  title: 'Billboard Bee',
-  description: 'Billboard Bee - Din digitala annonsplats',
+  title: 'BillboardBee - Hyr och hyr ut reklamplatser enkelt',
+  description: 'Sveriges ledande marknadsplats för utomhusreklam. Hitta perfekta skyltplatser eller hyr ut dina egna ytor.',
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
 }
 
 export default function RootLayout({
@@ -32,4 +37,4 @@ export default function RootLayout({
       </body>
     </html>
   )
-} 
+}

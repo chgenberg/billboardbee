@@ -98,6 +98,36 @@ async function main() {
     console.log('Pärs user already exists');
   }
 
+  // Create test advertiser
+  const hashedPassword1 = await hash('investor123', 10);
+  const advertiser = await prisma.user.upsert({
+    where: { email: 'investor@example.com' },
+    update: {},
+    create: {
+      email: 'investor@example.com',
+      password: hashedPassword1,
+      name: 'Test Annonsör',
+      role: 'ANNONSOR',
+      emailVerified: true,
+    },
+  });
+
+  // Create test landlord
+  const hashedPassword2 = await hash('investor123', 10);
+  const landlord = await prisma.user.upsert({
+    where: { email: 'investor2@example.com' },
+    update: {},
+    create: {
+      email: 'investor2@example.com',
+      password: hashedPassword2,
+      name: 'Test Uthyrare',
+      role: 'UTHYRARE',
+      emailVerified: true,
+    },
+  });
+
+  console.log({ advertiser, landlord });
+
   console.log('Seed completed successfully!');
 }
 

@@ -95,27 +95,27 @@ export default function Home() {
         </div>
 
         {/* Search Section - Positioned inside the billboard */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-2xl mx-auto px-4"
+            className="w-full max-w-2xl mx-auto"
             style={{
               // Adjust these values to position the search box inside the billboard
               marginTop: '-5%',
               transform: 'scale(0.85)'
             }}
           >
-            <div className="text-center space-y-8">
+            <div className="text-center space-y-4 sm:space-y-8">
               <motion.h1
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-4xl md:text-5xl font-bold text-gray-900 uppercase tracking-wider"
+                className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 uppercase tracking-wider"
               >
                 HITTA DIN PERFEKTA
-                <span className="block text-orange-600 mt-2">REKLAMPLATS</span>
+                <span className="block text-orange-600 mt-1 sm:mt-2">REKLAMPLATS</span>
               </motion.h1>
               
               <motion.form
@@ -126,20 +126,20 @@ export default function Home() {
                   e.preventDefault();
                   handleSearch(searchQuery);
                 }}
-                className="space-y-6"
+                className="space-y-4 sm:space-y-6"
               >
                 <div className="relative group">
-                  <MagnifyingGlassIcon className="absolute left-6 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-500 group-focus-within:text-orange-600 transition-colors" />
+                  <MagnifyingGlassIcon className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 w-5 sm:w-6 h-5 sm:h-6 text-gray-500 group-focus-within:text-orange-600 transition-colors" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="SÖK STAD ELLER REGION..."
-                    className="w-full pl-16 pr-6 py-6 text-lg font-medium placeholder-gray-500 bg-white/90 backdrop-blur border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
+                    className="w-full pl-12 sm:pl-16 pr-4 sm:pr-6 py-4 sm:py-6 text-base sm:text-lg font-medium placeholder-gray-500 bg-white/90 backdrop-blur border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
                   />
                 </div>
                 
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                   {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
                     <motion.button
                       key={city}
@@ -147,19 +147,19 @@ export default function Home() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleQuickSearch(city)}
-                      className="px-6 py-3 text-sm font-bold text-gray-700 bg-white/80 backdrop-blur hover:bg-white hover:text-orange-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+                      className="px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold text-gray-700 bg-white/80 backdrop-blur hover:bg-white hover:text-orange-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
                     >
                       {city}
                     </motion.button>
                   ))}
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-10 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 uppercase tracking-wider"
+                    className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 uppercase tracking-wider"
                   >
                     SÖK SKYLTAR
                   </motion.button>
@@ -169,9 +169,9 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowMap(true)}
-                    className="inline-flex items-center gap-3 px-8 py-4 text-orange-600 bg-white/80 backdrop-blur hover:bg-white rounded-full font-bold transition-all duration-200 shadow-lg hover:shadow-xl uppercase tracking-wider"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 text-orange-600 bg-white/80 backdrop-blur hover:bg-white rounded-full font-bold transition-all duration-200 shadow-lg hover:shadow-xl uppercase tracking-wider text-sm sm:text-base"
                   >
-                    <MapIcon className="w-5 h-5" />
+                    <MapIcon className="w-4 sm:w-5 h-4 sm:h-5" />
                     <span>VISA KARTA</span>
                   </motion.button>
                 </div>
@@ -182,19 +182,19 @@ export default function Home() {
       </section>
 
       {/* Featured Billboards Section */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-12 sm:py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 uppercase tracking-wider">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-2 sm:mb-4 uppercase tracking-wider">
               UTVALDA SKYLTAR
             </h2>
-            <p className="text-lg text-gray-600 font-medium uppercase tracking-wide">
+            <p className="text-base sm:text-lg text-gray-600 font-medium uppercase tracking-wide">
               Upptäck våra mest populära reklamplatser
             </p>
           </motion.div>
@@ -204,7 +204,7 @@ export default function Home() {
               <div className="w-12 h-12 border-3 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
               {billboards.slice(0, 6).map((billboard, index) => (
                 <motion.div
                   key={billboard.id}
@@ -228,14 +228,14 @@ export default function Home() {
                           <p className="text-sm font-bold uppercase tracking-wider">SE MER</p>
                         </div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-2">
+                      <div className="p-4 sm:p-6">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 uppercase tracking-wide mb-1 sm:mb-2">
                           {billboard.title}
                         </h3>
-                        <p className="text-sm text-gray-600 font-medium uppercase tracking-wide mb-4">{billboard.location}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 font-medium uppercase tracking-wide mb-2 sm:mb-4">{billboard.location}</p>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-bold text-orange-600">{billboard.price.toLocaleString()}</span>
-                          <span className="text-sm text-gray-600 font-medium uppercase">KR/MÅNAD</span>
+                          <span className="text-2xl sm:text-3xl font-bold text-orange-600">{billboard.price.toLocaleString()}</span>
+                          <span className="text-xs sm:text-sm text-gray-600 font-medium uppercase">KR/MÅNAD</span>
                         </div>
                       </div>
                     </div>
@@ -251,15 +251,15 @@ export default function Home() {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mt-16"
+            className="text-center mt-8 sm:mt-16"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/lediga-skyltar"
-                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-300 font-bold text-lg uppercase tracking-wider shadow-xl hover:shadow-2xl"
+                className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-300 font-bold text-base sm:text-lg uppercase tracking-wider shadow-xl hover:shadow-2xl"
               >
                 VISA ALLA SKYLTAR
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
