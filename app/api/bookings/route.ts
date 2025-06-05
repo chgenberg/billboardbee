@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient, BookingStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 // GET /api/bookings?billboardId=...&userId=...&from=...&to=...
 export async function GET(req: Request) {
@@ -16,9 +15,9 @@ export async function GET(req: Request) {
   if (userId) where.userId = userId;
   if (from && to) {
     where.OR = [
-      { startDate: { gte: from, lte: to } },
-      { endDate: { gte: from, lte: to } },
-      { startDate: { lte: from }, endDate: { gte: to } },
+      { startDate: { gte: new Date(from), lte: new Date(to) } },
+      { endDate: { gte: new Date(from), lte: new Date(to) } },
+      { startDate: { lte: new Date(from) }, endDate: { gte: new Date(to) } },
     ];
   }
 
@@ -40,7 +39,7 @@ export async function POST(req: Request) {
         billboardId: data.billboardId,
         status: BookingStatus.CONFIRMED,
         OR: [
-          { startDate: { lte: data.endDate }, endDate: { gte: data.startDate } },
+          { startDate: { lte: new Date(data.endDate) }, endDate: { gte: new Date(data.startDate) } },
         ],
       },
     });
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
         userId: data.userId,
         startDate: new Date(data.startDate),
         endDate: new Date(data.endDate),
-        status: data.status || 'requested',
+        status: data.status || BookingStatus.REQUESTED,
       },
     });
     return NextResponse.json(booking);

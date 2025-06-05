@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { Booking, BookingStatus } from '@prisma/client';
 
 // Dynamically import FullCalendar with no SSR
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), {
@@ -36,14 +37,14 @@ export default function CalendarPage() {
     const res = await fetch(url);
     const data = await res.json();
     setEvents(
-      data.map((b: any) => ({
+      data.map((b: Booking) => ({
         id: b.id,
-        title: b.status === 'confirmed' ? 'Bokad' : 'Förfrågan',
+        title: b.status === BookingStatus.CONFIRMED ? 'Bokad' : 'Förfrågan',
         start: b.startDate,
         end: b.endDate,
-        backgroundColor: b.status === 'confirmed' ? '#ff6b00' : '#fffbe6',
+        backgroundColor: b.status === BookingStatus.CONFIRMED ? '#ff6b00' : '#fffbe6',
         borderColor: '#ff6b00',
-        textColor: b.status === 'confirmed' ? '#fff' : '#ff6b00',
+        textColor: b.status === BookingStatus.CONFIRMED ? '#fff' : '#ff6b00',
         extendedProps: { ...b },
       }))
     );
@@ -67,7 +68,7 @@ export default function CalendarPage() {
           userId: 'demo-user',
           startDate: start,
           endDate: end,
-          status: 'requested',
+          status: BookingStatus.REQUESTED,
         })
       });
       if (res.ok) {
@@ -84,18 +85,12 @@ export default function CalendarPage() {
 
   // Visa modal vid klick på bokning
   function handleEventClick(info: any) {
-    setSelectedBooking({
-      id: info.event.id,
-      title: info.event.title,
-      start: info.event.startStr,
-      end: info.event.endStr,
-      status: info.event.backgroundColor === '#ff6b00' ? 'confirmed' : 'requested',
-      ...info.event.extendedProps,
-    });
+    const booking = info.event.extendedProps as Booking;
+    setSelectedBooking(booking);
   }
 
   // Godkänn/avslå bokning
-  async function updateBookingStatus(id: string, status: string) {
+  async function updateBookingStatus(id: string, status: BookingStatus) {
     await fetch(`/api/bookings?id=${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -224,22 +219,22 @@ export default function CalendarPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Bokningsdetaljer</h2>
-            <p><b>Status:</b> {selectedBooking.status === 'confirmed' ? 'Bokad' : selectedBooking.status === 'cancelled' ? 'Avslagen' : 'Förfrågan'}</p>
-            <p><b>Start:</b> {selectedBooking.start}</p>
-            <p><b>Slut:</b> {selectedBooking.end}</p>
-            <p><b>Skylt:</b> {selectedBooking.billboard?.title || selectedBooking.billboardId}</p>
-            <p><b>Användare:</b> {selectedBooking.user?.email || selectedBooking.userId}</p>
-            {selectedBooking.status === 'requested' && (
+            <p><b>Status:</b> {selectedBooking.status === BookingStatus.CONFIRMED ? 'Bokad' : selectedBooking.status === BookingStatus.CANCELLED ? 'Avslagen' : 'Förfrågan'}</p>
+            <p><b>Start:</b> {new Date(selectedBooking.startDate).toLocaleString()}</p>
+            <p><b>Slut:</b> {new Date(selectedBooking.endDate).toLocaleString()}</p>
+            <p><b>Skylt ID:</b> {selectedBooking.billboardId}</p>
+            <p><b>Användare ID:</b> {selectedBooking.userId}</p>
+            {selectedBooking.status === BookingStatus.REQUESTED && (
               <div className="flex gap-4 mt-6">
                 <button
                   className="px-4 py-2 bg-[#ff6b00] text-white rounded-lg"
-                  onClick={() => updateBookingStatus(selectedBooking.id, 'confirmed')}
+                  onClick={() => updateBookingStatus(selectedBooking.id, BookingStatus.CONFIRMED)}
                 >
                   Godkänn
                 </button>
                 <button
                   className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
-                  onClick={() => updateBookingStatus(selectedBooking.id, 'cancelled')}
+                  onClick={() => updateBookingStatus(selectedBooking.id, BookingStatus.CANCELLED)}
                 >
                   Avslå
                 </button>

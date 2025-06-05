@@ -22,4 +22,6 @@ services:
       - key: SMTP_FROM
         sync: false
       - key: NEXT_PUBLIC_APP_URL
-        sync: false 
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true 

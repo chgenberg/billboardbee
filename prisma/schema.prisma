@@ -13,21 +13,21 @@ enum UserRole {
 }
 
 model User {
-  id                String      @id @default(uuid())
-  email             String      @unique
+  id                String            @id @default(uuid())
+  email             String            @unique
   password          String
   name              String?
   role              UserRole    @default(ANNONSOR)
-  emailVerified     Boolean     @default(false)
-  verificationToken String?     @unique
+  emailVerified     Boolean           @default(false)
+  verificationToken String?           @unique
   tokenExpiresAt    DateTime?
-  resetToken        String?     @unique
+  resetToken        String?           @unique
   resetTokenExpires DateTime?
-  rememberToken     String?     @unique
-  createdAt         DateTime    @default(now())
-  billboards        Billboard[] // En användare kan ha flera billboards
+  rememberToken     String?           @unique
+  createdAt         DateTime          @default(now())
+  billboards        Billboard[]       // En användare kan ha flera billboards
+  bookings          Booking[]         // En användare kan ha flera bokningar
   passwordHistory   PasswordHistory[]
-  bookings          Booking[]   // En användare kan ha flera bokningar
 }
 
 model PasswordHistory {
@@ -41,28 +41,28 @@ model PasswordHistory {
 }
 
 model Billboard {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   title         String
   description   String
-  imageUrls     String[] // Array av bild-URL:er
+  imageUrls     String[]  // Array av bild-URL:er
   location      String
   latitude      Float?
   longitude     Float?
   price         Int
-  status        String   @default("ledig")
+  status        String    @default("ledig")
   size          String?
-  type          String?  // t.ex. "digital", "print"
-  traffic       Int?     // bilar/dygn
+  type          String?   // t.ex. "digital", "print"
+  traffic       Int?      // bilar/dygn
   availableFrom DateTime?
   availableTo   DateTime?
   contactPhone  String?
   address       String?
   region        String?
   ownerId       String
-  owner         User     @relation(fields: [ownerId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  owner         User      @relation(fields: [ownerId], references: [id])
   bookings      Booking[] // En skylt kan ha flera bokningar
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   teamMembers        TeamMember[]
   maintenanceTickets MaintenanceTicket[]
   buildingPermits    BuildingPermit[]
@@ -74,23 +74,22 @@ enum BookingStatus {
   REQUESTED
   CONFIRMED
   CANCELLED
-  COMPLETED
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  billboardId String
-  userId      String
-  startDate   DateTime
-  endDate     DateTime
-  status      BookingStatus @default(REQUESTED)
+  id            String        @id @default(uuid())
+  billboardId   String
+  userId        String
+  startDate     DateTime
+  endDate       DateTime
+  status        BookingStatus @default(REQUESTED)
   recurringRule String?     // iCal-format för återkommande bokningar
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
-  billboard   Billboard     @relation(fields: [billboardId], references: [id])
-  user        User          @relation(fields: [userId], references: [id])
-  history     BookingHistory[]
+  billboard     Billboard     @relation(fields: [billboardId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  history       BookingHistory[]
 
   @@index([billboardId])
   @@index([userId])
