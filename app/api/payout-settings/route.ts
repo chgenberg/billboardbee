@@ -1,84 +1,130 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
-
-const prisma = new PrismaClient();
+import { NextRequest } from 'next/server';
+import { verifyToken } from '@/lib/auth';
+import prisma from '@/app/lib/prisma';
 
 // GET /api/payout-settings?billboardId=...
-export async function GET(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function GET(request: NextRequest) {
+  try {
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    if (!token) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const billboardId = searchParams.get('billboardId');
+
+    if (!billboardId) {
+      return new Response('Billboard ID is required', { status: 400 });
+    }
+
+    const settings = await prisma.payoutSettings.findUnique({
+      where: {
+        billboardId,
+      },
+    });
+
+    return new Response(JSON.stringify(settings), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching payout settings:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
-
-  const { searchParams } = new URL(req.url);
-  const billboardId = searchParams.get('billboardId');
-  
-  if (!billboardId) {
-    return NextResponse.json({ error: 'Billboard ID required' }, { status: 400 });
-  }
-
-  const settings = await prisma.payoutSettings.findUnique({
-    where: { billboardId },
-  });
-
-  return NextResponse.json(settings);
 }
 
 // POST /api/payout-settings
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const data = await req.json();
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    if (!token) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    const body = await request.json();
+    const { billboardId, iban, bankgiro, payoutFrequency, vatStatus, stripeAccountId } = body;
+
+    if (!billboardId || !payoutFrequency) {
+      return new Response('Missing required fields', { status: 400 });
+    }
+
     const settings = await prisma.payoutSettings.create({
       data: {
-        billboardId: data.billboardId,
-        iban: data.iban,
-        bankgiro: data.bankgiro,
-        payoutFrequency: data.payoutFrequency,
-        vatStatus: data.vatStatus,
-        stripeAccountId: data.stripeAccountId,
+        billboardId,
+        iban,
+        bankgiro,
+        payoutFrequency,
+        vatStatus: vatStatus || false,
+        stripeAccountId,
       },
     });
-    return NextResponse.json(settings);
+
+    return new Response(JSON.stringify(settings), {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Could not create payout settings' }, { status: 400 });
+    console.error('Error creating payout settings:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
 
 // PATCH /api/payout-settings?billboardId=...
-export async function PATCH(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { searchParams } = new URL(req.url);
-  const billboardId = searchParams.get('billboardId');
-  
-  if (!billboardId) {
-    return NextResponse.json({ error: 'Billboard ID required' }, { status: 400 });
-  }
-
+export async function PATCH(request: NextRequest) {
   try {
-    const data = await req.json();
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    if (!token) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const billboardId = searchParams.get('billboardId');
+
+    if (!billboardId) {
+      return new Response('Billboard ID is required', { status: 400 });
+    }
+
+    const body = await request.json();
+    const { iban, bankgiro, payoutFrequency, vatStatus, stripeAccountId } = body;
+
     const settings = await prisma.payoutSettings.update({
       where: { billboardId },
       data: {
-        iban: data.iban,
-        bankgiro: data.bankgiro,
-        payoutFrequency: data.payoutFrequency,
-        vatStatus: data.vatStatus,
-        stripeAccountId: data.stripeAccountId,
+        iban,
+        bankgiro,
+        payoutFrequency,
+        vatStatus,
+        stripeAccountId,
       },
     });
-    return NextResponse.json(settings);
+
+    return new Response(JSON.stringify(settings), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Could not update payout settings' }, { status: 400 });
+    console.error('Error updating payout settings:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 } 

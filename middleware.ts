@@ -1,25 +1,27 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { verifyToken } from '@/lib/auth';
 
 // Skyddade rutter som kräver autentisering
 const protectedRoutes = ['/profile', '/settings', '/mina-sidor'];
 
 // Middleware-funktion som körs för varje request
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
+  const token = request.headers.get('authorization')?.split(' ')[1];
   if (!token) return NextResponse.next();
+
+  const decoded = verifyToken(token);
+  if (!decoded) return NextResponse.next();
 
   // Redirect annonsor to their dashboard
   if (request.nextUrl.pathname.startsWith('/dashboard') && !request.nextUrl.pathname.startsWith('/dashboard-annonsor')) {
-    if (token.role === 'annonsor') {
+    if (decoded.role === 'ANNONSOR') {
       return NextResponse.redirect(new URL('/dashboard-annonsor', request.url));
     }
   }
   // Redirect uthyrare to their dashboard
   if (request.nextUrl.pathname.startsWith('/dashboard-annonsor')) {
-    if (token.role === 'uthyrare') {
+    if (decoded.role === 'UTHYRARE') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }

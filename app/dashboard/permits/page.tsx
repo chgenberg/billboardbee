@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -17,7 +17,7 @@ interface BuildingPermit {
 }
 
 export default function PermitsPage() {
-  const { data: session } = useSession();
+  const router = useRouter();
   const [permits, setPermits] = useState<BuildingPermit[]>([]);
   const [newPermit, setNewPermit] = useState({
     documentUrl: '',

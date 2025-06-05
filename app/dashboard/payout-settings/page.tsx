@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -19,7 +19,7 @@ interface PayoutSettings {
 }
 
 export default function PayoutSettingsPage() {
-  const { data: session } = useSession();
+  const router = useRouter();
   const [settings, setSettings] = useState<PayoutSettings | null>(null);
   const [loading, setLoading] = useState(true);
 

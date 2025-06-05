@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,7 +21,7 @@ interface MaintenanceTicket {
 }
 
 export default function MaintenancePage() {
-  const { data: session } = useSession();
+  const router = useRouter();
   const [tickets, setTickets] = useState<MaintenanceTicket[]>([]);
   const [newTicket, setNewTicket] = useState({
     title: '',
