@@ -2,7 +2,23 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { 
+  ChevronDownIcon, 
+  MagnifyingGlassIcon,
+  UserGroupIcon,
+  CurrencyDollarIcon,
+  PaintBrushIcon,
+  ComputerDesktopIcon,
+  ChartBarIcon,
+  ScaleIcon,
+  WrenchScrewdriverIcon,
+  GlobeAltIcon,
+  ShieldCheckIcon,
+  LockClosedIcon,
+  MegaphoneIcon,
+  HomeIcon,
+  LifebuoyIcon
+} from '@heroicons/react/24/outline';
 
 interface FAQItem {
   question: string;
@@ -540,16 +556,46 @@ const faqData: FAQItem[] = [
   },
 ];
 
+const categoryIcons: { [key: string]: React.ReactNode } = {
+  "Konto & plattform": <UserGroupIcon className="w-6 h-6" />,
+  "Bokning & prissättning": <CurrencyDollarIcon className="w-6 h-6" />,
+  "Kreativt material & tryck": <PaintBrushIcon className="w-6 h-6" />,
+  "Digital DOOH & programmatic": <ComputerDesktopIcon className="w-6 h-6" />,
+  "Analys & rapportering": <ChartBarIcon className="w-6 h-6" />,
+  "Juridik, etik & regelverk": <ScaleIcon className="w-6 h-6" />,
+  "Byggnation & installation": <WrenchScrewdriverIcon className="w-6 h-6" />,
+  "Hållbarhet & miljö": <GlobeAltIcon className="w-6 h-6" />,
+  "Säkerhet & försäkring": <ShieldCheckIcon className="w-6 h-6" />,
+  "Integritet & cookies": <LockClosedIcon className="w-6 h-6" />,
+  "Frågor för annonsörer": <MegaphoneIcon className="w-6 h-6" />,
+  "Frågor för markägare": <HomeIcon className="w-6 h-6" />,
+  "Support & drift": <LifebuoyIcon className="w-6 h-6" />
+};
+
+const categoryColors: { [key: string]: string } = {
+  "Konto & plattform": "from-blue-500 to-blue-600",
+  "Bokning & prissättning": "from-green-500 to-green-600",
+  "Kreativt material & tryck": "from-purple-500 to-purple-600",
+  "Digital DOOH & programmatic": "from-indigo-500 to-indigo-600",
+  "Analys & rapportering": "from-yellow-500 to-yellow-600",
+  "Juridik, etik & regelverk": "from-red-500 to-red-600",
+  "Byggnation & installation": "from-gray-500 to-gray-600",
+  "Hållbarhet & miljö": "from-emerald-500 to-emerald-600",
+  "Säkerhet & försäkring": "from-orange-500 to-orange-600",
+  "Integritet & cookies": "from-pink-500 to-pink-600",
+  "Frågor för annonsörer": "from-cyan-500 to-cyan-600",
+  "Frågor för markägare": "from-teal-500 to-teal-600",
+  "Support & drift": "from-rose-500 to-rose-600"
+};
+
 export default function QAPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Alla');
-  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string>('Alla');
+  const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  // Get unique categories
   const categories = ['Alla', ...Array.from(new Set(faqData.map(item => item.category)))];
 
-  // Filter FAQ items
-  const filteredItems = faqData.filter(item => {
+  const filteredFAQs = faqData.filter(item => {
     const matchesSearch = searchQuery === '' || 
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.answer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -560,156 +606,218 @@ export default function QAPage() {
   });
 
   const toggleExpanded = (index: number) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(index)) {
-      newExpanded.delete(index);
-    } else {
-      newExpanded.add(index);
-    }
-    setExpandedItems(newExpanded);
+    setExpandedItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-24">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-5xl font-light text-gray-900 mb-4 tracking-tight">
-            Vanliga frågor
-          </h1>
-          <p className="text-xl text-gray-600 font-light">
-            Allt du behöver veta om BillboardBee
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/10" />
+        <div className="relative max-w-7xl mx-auto px-4 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 uppercase tracking-wider">
+              VANLIGA FRÅGOR
+            </h1>
+            <p className="text-xl text-gray-600 mb-12 font-medium uppercase tracking-wide">
+              ALLT DU BEHÖVER VETA OM BILLBOARDBEE
+            </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <div className="relative group">
+                <MagnifyingGlassIcon className="absolute left-6 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-orange-600 transition-colors" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="SÖK BLAND FRÅGOR..."
+                  className="w-full pl-16 pr-6 py-5 text-lg font-medium placeholder-gray-400 bg-white border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
+                />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Search Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-8"
-        >
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Sök bland frågor..."
-              className="w-full pl-12 pr-4 py-4 text-lg border border-gray-200 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-        </motion.div>
-
-        {/* Category Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-12"
-        >
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
+      {/* Category Filter */}
+      <section className="sticky top-20 z-40 bg-white/80 backdrop-blur-xl shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map((category, index) => (
+              <motion.button
                 key={category}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wider transition-all duration-300 ${
                   selectedCategory === category
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg transform scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
                 }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {category}
-              </button>
+                <div className="flex items-center gap-2">
+                  {category !== 'Alla' && (
+                    <span className={selectedCategory === category ? 'text-white' : 'text-gray-600'}>
+                      {categoryIcons[category]}
+                    </span>
+                  )}
+                  {category}
+                </div>
+              </motion.button>
             ))}
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* FAQ Items */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="space-y-4"
-        >
-          {filteredItems.map((item, index) => (
+      {/* FAQ Items */}
+      <section className="max-w-4xl mx-auto px-4 py-16">
+        <AnimatePresence mode="wait">
+          {filteredFAQs.length === 0 ? (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-20"
             >
-              <button
-                onClick={() => toggleExpanded(index)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors duration-200"
-              >
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 text-lg">{item.question}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{item.category}</p>
-                </div>
-                <ChevronDownIcon 
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-                    expandedItems.has(index) ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-              
-              <AnimatePresence>
-                {expandedItems.has(index) && (
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 uppercase">INGA RESULTAT</h3>
+              <p className="text-gray-600 uppercase">PROVA ATT SÖKA PÅ NÅGOT ANNAT</p>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4"
+            >
+              {filteredFAQs.map((item, index) => {
+                const isExpanded = expandedItems.includes(index);
+                const categoryColor = categoryColors[item.category] || "from-gray-500 to-gray-600";
+                
+                return (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group"
                   >
-                    <div className="px-6 pb-5 text-gray-600 leading-relaxed">
-                      {item.answer}
+                    <div
+                      className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
+                        isExpanded ? 'ring-2 ring-orange-500' : ''
+                      }`}
+                    >
+                      <button
+                        onClick={() => toggleExpanded(index)}
+                        className="w-full px-8 py-6 text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className={`inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r ${categoryColor} text-white flex-shrink-0`}>
+                                {categoryIcons[item.category]}
+                              </span>
+                              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                                {item.category}
+                              </span>
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900 pr-8 group-hover:text-orange-600 transition-colors">
+                              {item.question}
+                            </h3>
+                          </div>
+                          <motion.div
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex-shrink-0 mt-8"
+                          >
+                            <ChevronDownIcon className="w-6 h-6 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                          </motion.div>
+                        </div>
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-8 pb-6 pt-2">
+                              <div className="pl-13 pr-8">
+                                <p className="text-gray-700 leading-relaxed">
+                                  {item.answer}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </motion.div>
-                )}
-              </AnimatePresence>
+                );
+              })}
             </motion.div>
-          ))}
-        </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
 
-        {/* Contact Support */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-16 text-center"
-        >
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-3xl p-8">
-            <h2 className="text-2xl font-light text-gray-900 mb-4">
-              Hittade du inte svaret?
+      {/* Contact Section */}
+      <section className="bg-gradient-to-r from-orange-500 to-orange-600 py-20 mt-20">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 uppercase tracking-wider">
+              HITTADE DU INTE SVARET?
             </h2>
-            <p className="text-gray-600 mb-6">
-              Kontakta vår support så hjälper vi dig
+            <p className="text-xl text-white/90 mb-8 uppercase tracking-wide">
+              VI HJÄLPER DIG GÄRNA!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <motion.a
                 href="mailto:support@billboardbee.se"
-                className="px-6 py-3 bg-white text-orange-600 rounded-xl font-medium shadow-sm hover:shadow-md transition-all duration-200"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-orange-600 rounded-full font-bold uppercase tracking-wider shadow-xl hover:shadow-2xl transition-all duration-300"
               >
-                support@billboardbee.se
-              </a>
-              <a
-                href="tel:08-123 456 78"
-                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200"
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                MAILA OSS
+              </motion.a>
+              <motion.a
+                href="tel:08123456"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/20 backdrop-blur text-white border-2 border-white rounded-full font-bold uppercase tracking-wider hover:bg-white/30 transition-all duration-300"
               >
-                08-123 456 78
-              </a>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                RING OSS
+              </motion.a>
             </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 } 
