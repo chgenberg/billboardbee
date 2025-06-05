@@ -58,9 +58,11 @@ export default function LedigaSkyltar() {
       try {
         const response = await fetch('/api/billboards');
         const data = await response.json();
-        setBillboards(data);
+        // Ensure we always have an array, even if the API returns an error
+        setBillboards(Array.isArray(data) ? data : data.billboards || []);
       } catch (error) {
         console.error('Error fetching billboards:', error);
+        setBillboards([]);
       } finally {
         setLoading(false);
       }
