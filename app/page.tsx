@@ -83,77 +83,59 @@ export default function Home() {
   return (
     <>
       {/* Search Section */}
-      <section className="relative -mt-32 z-20 px-4 pb-20">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
-          >
-            {/* Billboard Background */}
+      <section className="relative w-full aspect-[16/9] flex items-center justify-center overflow-hidden pt-14">
+        <img
+          src="/bakgrunds.png"
+          alt="Billboard"
+          className="absolute top-0 left-0 w-full h-full object-contain"
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
+        {/* Overlay för bättre kontrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/60 to-transparent pointer-events-none" />
+        {/* Sökboxen */}
+        <div className="relative z-10 w-full max-w-2xl mx-auto flex flex-col items-center justify-center mt-[-16rem] pt-0">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
+            HITTA DIN PERFEKTA
+          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-[#ff6b00] drop-shadow-lg">
+            REKLAMPLATS
+          </h2>
+          <div className="space-y-2 w-full">
             <div className="relative">
-              <Image
-                src="/bakgrunds.png"
-                alt="Billboard"
-                width={1200}
-                height={800}
-                className="w-full h-auto"
-                priority
+              <input
+                type="text"
+                placeholder="SÖK STAD ELLER REGION..."
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/80"
               />
-              
-              {/* Search Content - Positioned inside billboard */}
-              <div className="absolute inset-0 flex items-center justify-center p-8">
-                <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl w-full transform -translate-y-8">
-                  <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gray-900">
-                    HITTA DIN PERFEKTA
-                  </h2>
-                  <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-[#ff6b00]">
-                    REKLAMPLATS
-                  </h2>
-                  
-                  <div className="space-y-6">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="SÖK STAD ELLER REGION..."
-                        className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors"
-                      />
-                      <MagnifyingGlassIcon className="absolute right-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
-                    </div>
-                    
-                    <div className="flex flex-wrap justify-center gap-3">
-                      {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
-                        <button
-                          key={city}
-                          className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-semibold text-gray-700 transition-colors"
-                        >
-                          {city}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Link
-                        href="/lediga-skyltar"
-                        className="inline-flex items-center justify-center px-8 py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                      >
-                        <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
-                        SÖK SKYLTAR
-                      </Link>
-                      <Link
-                        href="/lediga-skyltar"
-                        className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200"
-                      >
-                        <MapPinIcon className="h-5 w-5 mr-2" />
-                        VISA KARTA
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <MagnifyingGlassIcon className="absolute right-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
             </div>
-          </motion.div>
+            <div className="flex flex-wrap justify-center gap-3">
+              {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
+                <button
+                  key={city}
+                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-semibold text-gray-700 transition-colors"
+                >
+                  {city}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/lediga-skyltar"
+                className="inline-flex items-center justify-center px-8 py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
+                SÖK SKYLTAR
+              </Link>
+              <Link
+                href="/lediga-skyltar"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200"
+              >
+                <MapPinIcon className="h-5 w-5 mr-2" />
+                VISA KARTA
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

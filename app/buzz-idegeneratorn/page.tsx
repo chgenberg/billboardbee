@@ -76,7 +76,7 @@ export default function BuzzIdegeneratorn() {
                 placeholder="https://dinhemsida.se"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="w-full px-6 py-4 bg-white border border-gray-200 rounded-full text-lg outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm"
+                className="w-full px-6 py-4 bg-white border border-gray-200 rounded-full text-lg outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm text-gray-700"
               />
             </div>
             

@@ -35,10 +35,10 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      <nav className={`fixed top-4 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-2xl py-2' 
-          : 'bg-white/80 backdrop-blur-md py-4'
+          : 'bg-white/80 backdrop-blur-md py-2'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -52,9 +52,9 @@ export default function Navbar() {
                 <Image
                   src="/LOGOblackorange.png"
                   alt="BillboardBee"
-                  width={180}
-                  height={60}
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  width={220}
+                  height={80}
+                  className="h-12 sm:h-14 w-auto object-contain"
                   priority
                 />
               </motion.div>
@@ -234,9 +234,6 @@ export default function Navbar() {
           </>
         )}
       </AnimatePresence>
-
-      {/* Spacer for fixed navbar */}
-      <div className={`transition-all duration-500 ${scrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'}`} />
 
       {/* Login Modal */}
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />

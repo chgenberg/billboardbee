@@ -17,11 +17,8 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+// OBS! Inga kolon eller typdeklarationer i parametern, och ingen kod efter sista }
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="sv">
       <body className={`${nunito.className} min-h-screen flex flex-col bg-white relative`}>
