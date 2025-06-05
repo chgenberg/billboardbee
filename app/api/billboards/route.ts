@@ -286,7 +286,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(billboards || []);
+    return NextResponse.json({ billboards: billboards || [] });
   } catch (error) {
     console.error('Error fetching billboards:', error);
     return NextResponse.json(

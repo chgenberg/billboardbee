@@ -57,9 +57,18 @@ export default function LedigaSkyltar() {
     const fetchBillboards = async () => {
       try {
         const response = await fetch('/api/billboards');
+        if (!response.ok) {
+          throw new Error('Failed to fetch billboards');
+        }
         const data = await response.json();
         // Ensure we always have an array, even if the API returns an error
-        setBillboards(Array.isArray(data) ? data : data.billboards || []);
+        if (Array.isArray(data)) {
+          setBillboards(data);
+        } else if (data && Array.isArray(data.billboards)) {
+          setBillboards(data.billboards);
+        } else {
+          setBillboards([]);
+        }
       } catch (error) {
         console.error('Error fetching billboards:', error);
         setBillboards([]);
@@ -77,11 +86,11 @@ export default function LedigaSkyltar() {
   }, [searchParams]);
 
   // Unika regioner och typer för filter
-  const regions = Array.from(new Set(billboards?.map(b => b.region).filter(Boolean) || []));
-  const types = Array.from(new Set(billboards?.map(b => b.type).filter(Boolean) || []));
+  const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
+  const types = Array.from(new Set((billboards || []).map(b => b.type).filter(Boolean)));
 
   // Filtrering
-  let filtered = billboards?.filter(b => {
+  let filtered = (billboards || []).filter(b => {
     const matchesSearch =
       search.trim().length === 0 ||
       (b.title && b.title.toLowerCase().includes(search.toLowerCase())) ||
