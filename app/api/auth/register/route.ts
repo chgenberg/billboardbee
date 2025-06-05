@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { rateLimit } from '@/lib/rate-limit';
 import bcrypt from 'bcryptjs';
 import prisma from '@/app/lib/prisma';
+import { UserRole } from '@prisma/client';
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         name,
-        role,
+        role: role as UserRole,
         emailVerified: true, // Mark as verified immediately
       },
     });
