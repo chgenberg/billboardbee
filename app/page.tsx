@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import BeeQuizModal from './components/BeeQuizModal';
 import { FaMapMarkedAlt } from 'react-icons/fa';
+import { MagnifyingGlassIcon, MapIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const MapWithBees = dynamic(() => import('./components/MapWithBees'), { ssr: false });
 const BillboardMapWrapper = dynamic(() => import('./components/BillboardMapWrapper'), { ssr: false });
@@ -31,7 +32,7 @@ export default function Home() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [billboards, setBillboards] = useState<Billboard[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Billboard[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const router = useRouter();
@@ -67,10 +68,15 @@ export default function Home() {
   const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
 
   const handleSearch = (value: string) => {
-    setSearch(value);
+    setSearchQuery(value);
     if (value.trim().length > 0) {
       router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}`);
     }
+  };
+
+  const handleQuickSearch = (city: string) => {
+    setSearchQuery(city);
+    handleSearch(city);
   };
 
   return (
@@ -88,95 +94,68 @@ export default function Home() {
           />
         </div>
 
-        {/* Search Container - Positioned inside the billboard */}
-        <div className="relative z-10 h-full flex items-center justify-center">
+        {/* Search Section - Centered in billboard */}
+        <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto px-4 -mt-20"
+            className="w-full max-w-4xl mx-auto px-4"
           >
-            {/* Title */}
-            <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-3 tracking-tight uppercase">
-              HITTA DIN PERFEKTA
-              <span className="block font-medium text-gray-800">REKLAMPLATS</span>
-            </h1>
-            
-            {/* Subtitle */}
-            <p className="text-base md:text-lg text-gray-700 mb-8 font-light uppercase tracking-wide">
-              Sveriges ledande marknadsplats för utomhusreklam
-            </p>
-
-            {/* Search Bar */}
-            <div className={`relative max-w-xl mx-auto transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
-              <div className="relative bg-white/95 backdrop-blur-md rounded-full shadow-2xl border border-gray-100 overflow-hidden">
-                <input
-                  type="text"
-                  placeholder="Sök stad eller region..."
-                  className="w-full px-6 py-4 pr-24 text-base bg-transparent outline-none text-gray-900 placeholder-gray-400"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleSearch(search);
-                    }
-                  }}
-                />
-                <button
-                  onClick={() => handleSearch(search)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium text-sm"
-                >
-                  SÖK
-                </button>
-              </div>
-
-              {/* Quick Links */}
-              <div className="flex flex-wrap justify-center gap-2 mt-4">
-                {['Stockholm', 'Göteborg', 'Malmö', 'Uppsala'].map((city) => (
+            <div className="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 md:p-12">
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-10 text-center tracking-tight">
+                Hitta din perfekta reklamplats
+              </h2>
+              
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleSearch(searchQuery);
+              }} className="space-y-8">
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Sök stad eller region..."
+                    className="w-full pl-14 pr-6 py-5 text-lg border border-gray-200 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {['Stockholm', 'Göteborg', 'Malmö', 'Uppsala'].map((city) => (
+                    <button
+                      key={city}
+                      type="button"
+                      onClick={() => handleQuickSearch(city)}
+                      className="px-4 py-3 text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 text-sm font-medium"
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                   <button
-                    key={city}
-                    onClick={() => handleSearch(city)}
-                    className="px-4 py-1.5 text-xs text-gray-600 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200 border border-gray-200"
+                    type="submit"
+                    className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                   >
-                    {city}
+                    Sök skyltar
                   </button>
-                ))}
-              </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setShowMap(true)}
+                    className="inline-flex items-center gap-2 px-6 py-4 text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                  >
+                    <MapIcon className="w-5 h-5" />
+                    <span>Visa karta</span>
+                  </button>
+                </div>
+              </form>
             </div>
-
-            {/* Map Button */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              onClick={() => setShowMap(true)}
-              className="mt-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-              <span className="font-medium uppercase">Visa karta</span>
-            </motion.button>
           </motion.div>
         </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-1 h-3 bg-gray-400 rounded-full mt-2"
-            />
-          </div>
-        </motion.div>
       </section>
 
       {/* Featured Billboards Section */}
@@ -261,35 +240,26 @@ export default function Home() {
       </section>
 
       {/* Map Modal */}
-      <AnimatePresence>
-        {showMap && (
+      {showMap && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowMap(false)}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-5xl h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="absolute top-4 right-4 z-10">
               <button
                 onClick={() => setShowMap(false)}
-                className="absolute top-6 right-6 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200 shadow-lg"
+                className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon className="w-6 h-6 text-gray-600" />
               </button>
-              <BillboardMapWrapper />
-            </motion.div>
+            </div>
+            <BillboardMapWrapper />
           </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </>
   );
 }

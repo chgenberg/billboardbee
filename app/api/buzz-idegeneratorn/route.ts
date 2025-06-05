@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { load } from 'cheerio';
 
-const OPENAI_API_KEY = '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';
-
 async function fetchAndExtractText(url: string): Promise<string> {
   const res = await fetch(url);
   if (!res.ok) throw new Error('Kunde inte hämta sidan.');
@@ -17,11 +15,17 @@ async function fetchAndExtractText(url: string): Promise<string> {
 }
 
 async function openaiChat(messages: any[]) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('OpenAI API key saknas. Vänligen konfigurera OPENAI_API_KEY i miljövariabler.');
+  }
+
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo',
@@ -29,7 +33,13 @@ async function openaiChat(messages: any[]) {
       temperature: 0.7,
     }),
   });
-  if (!res.ok) throw new Error('OpenAI error');
+  
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    console.error('OpenAI API error:', errorData);
+    throw new Error(errorData?.error?.message || 'OpenAI API fel');
+  }
+  
   const data = await res.json();
   return data.choices[0].message.content;
 }
@@ -44,7 +54,7 @@ export async function POST(req: Request) {
 
     // 1. Hämta och extrahera text från sidan
     const text = await fetchAndExtractText(url);
-    console.log('Text:', text);
+    console.log('Text length:', text.length);
 
     // 2. Sammanfatta sidan med OpenAI
     const summaryPrompt = [
@@ -52,7 +62,7 @@ export async function POST(req: Request) {
       { role: 'user', content: `Sammanfatta denna webbsida på max 5 meningar, på svenska:\n\n${text}` },
     ];
     const summary = await openaiChat(summaryPrompt);
-    console.log('Summary:', summary);
+    console.log('Summary generated');
 
     // 3. Generera billboard-idéer med OpenAI
     const ideaPrompt = [
@@ -65,6 +75,7 @@ export async function POST(req: Request) {
       ideas = JSON.parse(ideasJson);
     } catch (e) {
       // fallback: extrahera manuellt om OpenAI inte svarar med JSON
+      console.error('Failed to parse JSON, trying fallback');
       ideas = ideasJson.split(/\n|•|\d+\./).map((s: string) => {
         const [slogan, rest1] = s.split('Beskrivning:');
         const [beskrivning, effekt] = (rest1 || '').split('Effekt:');
@@ -75,6 +86,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ ideas });
   } catch (e: any) {
     console.error('Buzz idégeneratorn error:', e);
-    return NextResponse.json({ error: e.message || 'Kunde inte generera idéer.' }, { status: 500 });
+    
+    if (e.message.includes('API key')) {
+      return NextResponse.json({ 
+        error: 'OpenAI API-nyckeln är inte konfigurerad. Kontakta support.' 
+      }, { status: 503 });
+    }
+    
+    return NextResponse.json({ 
+      error: e.message || 'Kunde inte generera idéer. Försök igen senare.' 
+    }, { status: 500 });
   }
 } 

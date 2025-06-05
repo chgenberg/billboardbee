@@ -1,107 +1,261 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+
+interface Booking {
+  id: string;
+  title: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  status: 'active' | 'upcoming' | 'completed';
+  color: string;
+}
+
 export default function KalenderPage() {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  const bookings: Booking[] = [
+    {
+      id: '1',
+      title: 'Vårkampanj - Stureplan',
+      location: 'Stockholm',
+      startDate: '2024-03-15',
+      endDate: '2024-04-15',
+      status: 'active',
+      color: 'bg-green-500',
+    },
+    {
+      id: '2',
+      title: 'Sommarkampanj - Göteborg',
+      location: 'Göteborg',
+      startDate: '2024-04-01',
+      endDate: '2024-05-01',
+      status: 'upcoming',
+      color: 'bg-blue-500',
+    },
+    {
+      id: '3',
+      title: 'Julkampanj - Malmö',
+      location: 'Malmö',
+      startDate: '2024-01-15',
+      endDate: '2024-02-15',
+      status: 'completed',
+      color: 'bg-gray-400',
+    },
+  ];
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    const days = [];
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+    
+    // Add days of month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    
+    return days;
+  };
+
+  const formatMonth = (date: Date) => {
+    return date.toLocaleDateString('sv-SE', { month: 'long', year: 'numeric' });
+  };
+
+  const days = getDaysInMonth(currentMonth);
+  const weekDays = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentMonth(prev => {
+      const newMonth = new Date(prev);
+      if (direction === 'prev') {
+        newMonth.setMonth(prev.getMonth() - 1);
+      } else {
+        newMonth.setMonth(prev.getMonth() + 1);
+      }
+      return newMonth;
+    });
+  };
+
+  const hasBookingOnDate = (date: Date | null) => {
+    if (!date) return false;
+    const dateStr = date.toISOString().split('T')[0];
+    return bookings.some(booking => {
+      const start = new Date(booking.startDate);
+      const end = new Date(booking.endDate);
+      return date >= start && date <= end;
+    });
+  };
+
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-[#ff6b00]">Bokningskalender</h1>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-light text-gray-900 tracking-tight">Bokningskalender</h1>
+        <p className="text-gray-600 mt-2">Översikt över alla dina kampanjbokningar</p>
+      </motion.div>
 
-      {/* Kalendervy */}
-      <section className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Mars 2024</h2>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Kalendergrid */}
-        <div className="grid grid-cols-7 gap-2">
-          {/* Veckodagar */}
-          {['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'].map((day) => (
-            <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
-              {day}
-            </div>
-          ))}
-
-          {/* Kalenderdagar */}
-          {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-            <div
-              key={day}
-              className={`aspect-square p-2 border rounded-lg ${
-                day === 15 ? 'bg-[#ff6b00] text-white' : 'hover:bg-gray-50'
-              }`}
-            >
-              <div className={`text-sm ${day === 15 ? 'text-black' : ''}`}>{day}</div>
-              {day === 15 && (
-                <div className="text-xs mt-1">3 bokningar</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Bokningslista */}
-      <section className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">Kommande bokningar</h2>
-        <div className="space-y-4">
-          {/* Bokning 1 */}
-          <div className="border rounded-lg p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium">Skyltplats 1 - Stockholm</h3>
-                <p className="text-sm text-gray-500">15 mars - 15 april 2024</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Calendar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:col-span-2"
+        >
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 capitalize">{formatMonth(currentMonth)}</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigateMonth('prev')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                </button>
+                <button
+                  onClick={() => navigateMonth('next')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+                </button>
               </div>
-              <span className="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
-                Bekräftad
-              </span>
             </div>
-            <div className="mt-4 flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                <div>
-                  <p className="text-sm font-medium">Vårkampanj 2024</p>
-                  <p className="text-xs text-gray-500">3 skyltar</p>
+
+            {/* Weekday Headers */}
+            <div className="grid grid-cols-7 gap-2 mb-2">
+              {weekDays.map(day => (
+                <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+                  {day}
                 </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-2">
+              {days.map((date, index) => {
+                const isSelected = selectedDate && date && 
+                  date.toDateString() === selectedDate.toDateString();
+                const hasBooking = hasBookingOnDate(date);
+                const isToday = date && date.toDateString() === new Date().toDateString();
+
+                return (
+                  <motion.button
+                    key={index}
+                    whileHover={date ? { scale: 1.05 } : {}}
+                    whileTap={date ? { scale: 0.95 } : {}}
+                    onClick={() => date && setSelectedDate(date)}
+                    disabled={!date}
+                    className={`
+                      relative h-20 rounded-xl transition-all duration-200
+                      ${!date ? 'cursor-default' : 'cursor-pointer'}
+                      ${isSelected 
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
+                        : date 
+                          ? 'bg-gray-50 hover:bg-gray-100 text-gray-900' 
+                          : ''
+                      }
+                      ${isToday && !isSelected ? 'ring-2 ring-orange-500' : ''}
+                    `}
+                  >
+                    {date && (
+                      <>
+                        <span className="absolute top-2 left-2 text-sm font-medium">
+                          {date.getDate()}
+                        </span>
+                        {hasBooking && (
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                            <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bookings List */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="lg:col-span-1 space-y-6"
+        >
+          {/* Status Legend */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Status</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-green-500 rounded-full" />
+                <span className="text-sm text-gray-600">Aktiv kampanj</span>
               </div>
-              <button className="text-[#ff6b00] hover:text-[#e65c00]">
-                Visa detaljer
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-blue-500 rounded-full" />
+                <span className="text-sm text-gray-600">Kommande kampanj</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-gray-400 rounded-full" />
+                <span className="text-sm text-gray-600">Avslutad kampanj</span>
+              </div>
             </div>
           </div>
 
-          {/* Bokning 2 */}
-          <div className="border rounded-lg p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium">Skyltplats 2 - Göteborg</h3>
-                <p className="text-sm text-gray-500">1 april - 1 maj 2024</p>
-              </div>
-              <span className="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">
-                Väntar på bekräftelse
-              </span>
-            </div>
-            <div className="mt-4 flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                <div>
-                  <p className="text-sm font-medium">Sommarkampanj 2024</p>
-                  <p className="text-xs text-gray-500">5 skyltar</p>
-                </div>
-              </div>
-              <button className="text-[#ff6b00] hover:text-[#e65c00]">
-                Visa detaljer
-              </button>
+          {/* Active Bookings */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Aktiva bokningar</h3>
+            <div className="space-y-4">
+              {bookings.filter(b => b.status !== 'completed').map((booking) => (
+                <motion.div
+                  key={booking.id}
+                  whileHover={{ scale: 1.02 }}
+                  className="p-4 bg-gray-50 rounded-xl cursor-pointer hover:shadow-md transition-all duration-200"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-3 h-3 rounded-full mt-1 ${booking.color}`} />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900">{booking.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                        <MapPinIcon className="w-4 h-4" />
+                        <span>{booking.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                        <ClockIcon className="w-4 h-4" />
+                        <span>{booking.startDate} - {booking.endDate}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+
+          {/* Quick Actions */}
+          <button className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+            Boka ny skylt
+          </button>
+        </motion.div>
+      </div>
     </div>
   );
 } 

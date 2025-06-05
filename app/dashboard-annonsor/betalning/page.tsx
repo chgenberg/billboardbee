@@ -1,113 +1,265 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { CreditCardIcon, DocumentTextIcon, CheckCircleIcon, ClockIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+
+interface Transaction {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  status: 'completed' | 'pending' | 'failed';
+  receiptUrl?: string;
+}
+
 export default function BetalningPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  
+  const transactions: Transaction[] = [
+    {
+      id: 'INV-2024-001',
+      date: '2024-03-15',
+      description: 'Vårkampanj - 3 skyltar',
+      amount: 35000,
+      status: 'completed',
+      receiptUrl: '/receipts/INV-2024-001.pdf',
+    },
+    {
+      id: 'INV-2024-002',
+      date: '2024-03-01',
+      description: 'Februarikampanj - 2 skyltar',
+      amount: 24000,
+      status: 'completed',
+      receiptUrl: '/receipts/INV-2024-002.pdf',
+    },
+    {
+      id: 'INV-2024-003',
+      date: '2024-04-01',
+      description: 'Aprilkampanj - 5 skyltar',
+      amount: 58000,
+      status: 'pending',
+    },
+    {
+      id: 'INV-2024-004',
+      date: '2024-02-15',
+      description: 'Valentinekampanj - 1 skylt',
+      amount: 12000,
+      status: 'failed',
+    },
+  ];
+
+  const stats = {
+    totalSpent: transactions
+      .filter(t => t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0),
+    pendingPayments: transactions
+      .filter(t => t.status === 'pending')
+      .reduce((sum, t) => sum + t.amount, 0),
+    transactionsCount: transactions.length,
+  };
+
+  const getStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+      case 'completed':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+            <CheckCircleIcon className="w-3 h-3" />
+            Betald
+          </span>
+        );
+      case 'pending':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+            <ClockIcon className="w-3 h-3" />
+            Väntar
+          </span>
+        );
+      case 'failed':
+        return (
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+            <ClockIcon className="w-3 h-3" />
+            Misslyckad
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-[#ff6b00]">Betalning & kvittens</h1>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-light text-gray-900 tracking-tight">Betalning & kvittens</h1>
+        <p className="text-gray-600 mt-2">Hantera dina betalningar och ladda ner kvitton</p>
+      </motion.div>
 
-      {/* Betalningsöversikt */}
-      <section className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">Betalningsöversikt</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Totalt spenderat</h3>
-            <p className="text-2xl font-bold text-[#ff6b00]">25 000 kr</p>
-            <p className="text-sm text-gray-500 mt-1">Senaste 30 dagarna</p>
-          </div>
-          <div className="border rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Väntande betalningar</h3>
-            <p className="text-2xl font-bold text-[#ff6b00]">6 875 kr</p>
-            <p className="text-sm text-gray-500 mt-1">2 väntande fakturor</p>
-          </div>
-          <div className="border rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Kommande betalningar</h3>
-            <p className="text-2xl font-bold text-[#ff6b00]">12 500 kr</p>
-            <p className="text-sm text-gray-500 mt-1">3 kommande bokningar</p>
+      {/* Stats Cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-green-50 rounded-xl">
+              <CreditCardIcon className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Totalt spenderat</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stats.totalSpent.toLocaleString()} kr
+              </p>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Kvitton */}
-      <section className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Kvitton</h2>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
-              Filtrera
-            </button>
-            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
-              Exportera
-            </button>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-yellow-50 rounded-xl">
+              <ClockIcon className="w-6 h-6 text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Väntande betalningar</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stats.pendingPayments.toLocaleString()} kr
+              </p>
+            </div>
           </div>
         </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-xl">
+              <DocumentTextIcon className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Antal transaktioner</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stats.transactionsCount}
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Transactions Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-white rounded-2xl shadow-sm border border-gray-100"
+      >
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900">Transaktionshistorik</h2>
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            >
+              <option value="all">Alla transaktioner</option>
+              <option value="month">Senaste månaden</option>
+              <option value="quarter">Senaste kvartalet</option>
+              <option value="year">Senaste året</option>
+            </select>
+          </div>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="w-full">
             <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kvittonummer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kampanj</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Belopp</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Åtgärd</th>
+              <tr className="border-b border-gray-100">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fakturanummer
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Datum
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Beskrivning
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Belopp
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Åtgärd
+                </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">REC-2024-001</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-03-15</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Vårkampanj 2024</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2 500 kr</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Betald
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#ff6b00]">
-                  <button className="hover:text-[#e65c00]">Ladda ner</button>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">REC-2024-002</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-03-20</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Sommarkampanj 2024</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3 000 kr</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                    Väntar
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#ff6b00]">
-                  <button className="hover:text-[#e65c00]">Ladda ner</button>
-                </td>
-              </tr>
+            <tbody className="divide-y divide-gray-100">
+              {transactions.map((transaction) => (
+                <motion.tr
+                  key={transaction.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  whileHover={{ backgroundColor: '#fafafa' }}
+                  className="transition-colors"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {transaction.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {transaction.date}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {transaction.description}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {transaction.amount.toLocaleString()} kr
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {getStatusBadge(transaction.status)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {transaction.status === 'completed' && transaction.receiptUrl ? (
+                      <button className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium">
+                        <ArrowDownTrayIcon className="w-4 h-4" />
+                        Ladda ner
+                      </button>
+                    ) : transaction.status === 'pending' ? (
+                      <button className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium">
+                        Betala nu
+                      </button>
+                    ) : (
+                      <button className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-700 font-medium">
+                        Försök igen
+                      </button>
+                    )}
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
-      </section>
+      </motion.div>
 
-      {/* Betalningsmetoder */}
-      <section className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-4">Betalningsmetoder</h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-8 bg-gray-200 rounded"></div>
-              <div>
-                <p className="font-medium">•••• •••• •••• 4242</p>
-                <p className="text-sm text-gray-500">Utgår 12/24</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                Standard
-              </span>
-              <button className="text-[#ff6b00] hover:text-[#e65c00]">Ta bort</button>
-            </div>
+      {/* Payment Methods */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-2">Betalningsmetoder</h3>
+            <p className="text-sm text-gray-600">
+              Hantera dina sparade betalningsmetoder för snabbare betalningar
+            </p>
           </div>
-          <button className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-[#ff6b00] hover:text-[#ff6b00]">
-            + Lägg till ny betalningsmetod
+          <button className="px-4 py-2 bg-white text-orange-600 rounded-xl font-medium shadow-sm hover:shadow-md transition-all duration-200">
+            Hantera metoder
           </button>
         </div>
-      </section>
+      </motion.div>
     </div>
   );
 } 

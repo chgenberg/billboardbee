@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { PrismaClient } from "@prisma/client";
+import prisma from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { verifyToken } from '@/lib/auth';
 
 const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-const prisma = new PrismaClient();
 
 async function saveFile(file: File) {
   const arrayBuffer = await file.arrayBuffer();
@@ -293,7 +292,5 @@ export async function GET() {
       { error: 'Failed to fetch billboards', billboards: [] },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 

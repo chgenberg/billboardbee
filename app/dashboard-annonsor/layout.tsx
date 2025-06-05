@@ -3,8 +3,20 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { CreditCardIcon, MagnifyingGlassIcon, ShoppingCartIcon, CalendarIcon, ArrowUpTrayIcon, CurrencyDollarIcon, ChartBarIcon, WalletIcon, UserGroupIcon, BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
-import Image from 'next/image';
+import { 
+  CreditCardIcon, 
+  MagnifyingGlassIcon, 
+  ShoppingCartIcon, 
+  CalendarIcon, 
+  ArrowUpTrayIcon, 
+  CurrencyDollarIcon, 
+  ChartBarIcon, 
+  WalletIcon, 
+  UserGroupIcon, 
+  BellIcon, 
+  ChatBubbleLeftRightIcon 
+} from '@heroicons/react/24/solid';
+import { motion } from 'framer-motion';
 
 const navigation = [
   { name: 'Konto & betalningar', href: '/dashboard-annonsor/konto', icon: CreditCardIcon },
@@ -20,19 +32,24 @@ const navigation = [
   { name: 'Support & ärenden', href: '/dashboard-annonsor/support', icon: ChatBubbleLeftRightIcon },
 ];
 
-export default function AnnonsorDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
+
   return (
-    <div className="min-h-screen bg-[#f6f5f3]">
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-20">
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-center h-16">
-            <Link href="/" className="flex items-center justify-center">
-              <Image src="/LOGOblackorange.png" alt="BillboardBee Logo" width={120} height={64} className="object-contain h-16 w-auto" />
-            </Link>
-          </div>
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="flex">
+        {/* Sidebar */}
+        <motion.aside
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20"
+        >
+          <nav className="px-4 space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -40,24 +57,23 @@ export default function AnnonsorDashboardLayout({ children }: { children: React.
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    'flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                    'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     isActive
-                      ? 'bg-[#ff6b00] text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   )}
                 >
-                  <item.icon className="w-5 h-5 mr-3" />
+                  <item.icon className="w-5 h-5" />
                   {item.name}
                 </Link>
               );
             })}
           </nav>
-        </div>
-      </div>
-      {/* Main content */}
-      <div className="pl-64">
-        <main className="py-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        </motion.aside>
+
+        {/* Main content */}
+        <main className="flex-1 pl-64 pt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </div>
         </main>
