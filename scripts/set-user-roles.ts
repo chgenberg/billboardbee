@@ -11,7 +11,7 @@ async function main() {
 
   await prisma.user.update({
     where: { email: 'philipson@par.se' },
-    data: { role: 'annonsor' },
+    data: { role: UserRole.ANNONSOR },
   });
   console.log('Uppdaterade philipson@par.se till annonsor');
 }
