@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function TestScrapePage() {
   const [url, setUrl] = useState('');
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,8 +30,8 @@ export default function TestScrapePage() {
       }
 
       setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Ett okänt fel uppstod');
     } finally {
       setLoading(false);
     }

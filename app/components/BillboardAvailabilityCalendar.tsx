@@ -9,16 +9,25 @@ const FullCalendar = dynamic(() => import("@fullcalendar/react"), {
   loading: () => <div className="h-32 flex items-center justify-center">Laddar kalender...</div>,
 });
 
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
+  extendedProps: { status: string };
+}
+
 export default function BillboardAvailabilityCalendar({ billboardId }: { billboardId: string }) {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   // Tooltip
   const [tooltipContent, setTooltipContent] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{x: number, y: number} | null>(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
-      setLoading(true);
       const res = await fetch(`/api/bookings?billboardId=${billboardId}`);
       const data = await res.json();
       setEvents(
@@ -33,13 +42,12 @@ export default function BillboardAvailabilityCalendar({ billboardId }: { billboa
           extendedProps: { status: b.status },
         }))
       );
-      setLoading(false);
     };
     if (billboardId) fetchBookings();
   }, [billboardId]);
 
   // Klick på dag (förberett för modal)
-  function handleDateClick(arg: any) {
+  function handleDateClick(arg: { dateStr: string }) {
     // Kolla om dagen är bokad
     const isBooked = events.some(ev => {
       const start = new Date(ev.start);
@@ -54,7 +62,7 @@ export default function BillboardAvailabilityCalendar({ billboardId }: { billboa
   }
 
   // Tooltip vid hover på event
-  function handleEventMouseEnter(info: any) {
+  function handleEventMouseEnter(info: { event: { title: string }, jsEvent: { clientX: number, clientY: number } }) {
     setTooltipContent(info.event.title);
     setTooltipPos({ x: info.jsEvent.clientX, y: info.jsEvent.clientY });
   }

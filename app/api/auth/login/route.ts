@@ -1,79 +1,83 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
-import { compare } from 'bcryptjs';
+import { z } from 'zod';
+import { NextRequest } from 'next/server';
+import { rateLimit } from '@/lib/rate-limit';
+import prisma from '@/app/lib/prisma';
+import bcrypt from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    // Rate limiting
+    const rateLimitResult = await rateLimit(request);
+    if (rateLimitResult) {
+      return rateLimitResult;
+    }
 
-    // Hitta användaren
+    const body = await request.json();
+    const { email, password } = loginSchema.parse(body);
+
+    // Dummy login for investors
+    if (email === 'investor@example.com' && password === 'investor123') {
+      const token = sign(
+        { userId: 'dummy-annonsor-id', email: 'investor@example.com', role: 'ANNONSOR' },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      );
+      return new Response(JSON.stringify({ token }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    if (email === 'investor2@example.com' && password === 'investor123') {
+      const token = sign(
+        { userId: 'dummy-uthyrare-id', email: 'investor2@example.com', role: 'UTHYRARE' },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      );
+      return new Response(JSON.stringify({ token }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        password: true,
-        role: true,
-        emailVerified: true,
-      },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Felaktig e-post eller lösenord' },
-        { status: 401 }
-      );
+      return new Response('Invalid email or password', { status: 401 });
     }
 
-    // Verifiera lösenord
-    const isValid = await compare(password, user.password);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: 'Felaktig e-post eller lösenord' },
-        { status: 401 }
-      );
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return new Response('Invalid email or password', { status: 401 });
     }
 
-    // Skapa JWT token
     const token = sign(
-      { 
-        id: user.id,
-        email: user.email,
-        role: user.role 
-      },
-      process.env.JWT_SECRET || 'your-secret-key',
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
 
-    // Logga användarens roll
-    console.log('User role at login:', user.role);
-
-    // Sätt auth token cookie
-    cookies().set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60, // 7 dagar
-      path: '/',
-    });
-
-    return NextResponse.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
+    return new Response(JSON.stringify({ token }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Ett fel uppstod vid inloggning' },
-      { status: 500 }
-    );
+    console.error('Error during login:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 } 

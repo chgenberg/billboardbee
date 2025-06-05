@@ -1,22 +1,20 @@
+import React from 'react';
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
+export function Card(props: React.HTMLAttributes<HTMLDivElement>) {
+  const { className, ...restProps } = props;
+  return (
+    <div
+      className={cn(
+        'rounded-xl bg-white shadow p-4',
+        className
+      )}
+      {...restProps}
+    />
+  );
+}
 
-const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'rounded-lg border bg-card text-card-foreground shadow-sm',
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
 Card.displayName = 'Card';
 
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -92,4 +90,4 @@ const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
 );
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }; 
+export { CardHeader, CardFooter, CardTitle, CardDescription, CardContent }; 

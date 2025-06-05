@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -14,7 +13,9 @@ const beeIcon = new L.Icon({
   className: 'bee-marker',
 });
 
-export default function MapWithBees({ billboards = [] }: { billboards?: any[] }) {
+type Billboard = { id: string; lat: number; lng: number; [key: string]: unknown };
+
+export default function MapWithBees({ billboards = [] }: { billboards?: Billboard[] }) {
   // Default center över Sverige
   const center: [number, number] = [62.0, 16.5];
   return (
@@ -36,8 +37,8 @@ export default function MapWithBees({ billboards = [] }: { billboards?: any[] })
         b.lat && b.lng ? (
           <Marker key={b.id} position={[b.lat, b.lng]} icon={beeIcon}>
             <Tooltip direction="top" offset={[0, -30]} opacity={1} permanent={false} className="bee-tooltip">
-              <div className="font-bold text-[#222] text-sm">{b.title}</div>
-              <div className="text-xs text-gray-600">{b.location}</div>
+              <div className="font-bold text-[#222] text-sm">{String(b.title ?? '')}</div>
+              <div className="text-xs text-gray-600">{String(b.location ?? '')}</div>
             </Tooltip>
           </Marker>
         ) : null

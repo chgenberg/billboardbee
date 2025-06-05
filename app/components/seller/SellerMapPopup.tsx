@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L, { Icon, Map as LeafletMap } from 'leaflet';
+import L, { Icon } from 'leaflet';
 
 // Orange pin från leaflet-color-markers
 const orangeIcon = new Icon({
@@ -114,7 +114,7 @@ export default function SellerMapPopup({ lat, lng, onSelect }: { lat?: string; l
           scrollWheelZoom={true}
           style={{ width: '100%', height: '100%' }}
           className="rounded-xl"
-          ref={mapRef as any}
+          ref={mapRef}
         >
           <TileLayer
             attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'

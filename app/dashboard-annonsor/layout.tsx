@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { CreditCardIcon, MagnifyingGlassIcon, ShoppingCartIcon, CalendarIcon, ArrowUpTrayIcon, CurrencyDollarIcon, ChartBarIcon, WalletIcon, UserGroupIcon, BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
 
 const navigation = [
   { name: 'Konto & betalningar', href: '/dashboard-annonsor/konto', icon: CreditCardIcon },
@@ -28,7 +29,7 @@ export default function AnnonsorDashboardLayout({ children }: { children: React.
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16">
             <Link href="/" className="flex items-center justify-center">
-              <img src="/LOGOblackorange.png" alt="BillboardBee Logo" className="object-contain h-16 w-auto" />
+              <Image src="/LOGOblackorange.png" alt="BillboardBee Logo" width={120} height={64} className="object-contain h-16 w-auto" />
             </Link>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">

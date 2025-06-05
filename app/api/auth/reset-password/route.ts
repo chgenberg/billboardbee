@@ -1,21 +1,25 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import { z } from 'zod';
+import { NextRequest } from 'next/server';
+import { rateLimit } from '@/lib/rate-limit';
+import prisma from '@/app/lib/prisma';
+import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+const resetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { token, password } = await request.json();
-
-    if (!token || !password) {
-      return NextResponse.json(
-        { message: 'Token och lösenord krävs' },
-        { status: 400 }
-      );
+    // Rate limiting
+    const rateLimitResult = await rateLimit(request);
+    if (rateLimitResult) {
+      return rateLimitResult;
     }
 
-    // Hitta användaren med token
+    const body = await request.json();
+    const { token, password } = resetPasswordSchema.parse(body);
+
     const user = await prisma.user.findFirst({
       where: {
         resetToken: token,
@@ -26,16 +30,11 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'Ogiltig eller utgången återställningslänk' },
-        { status: 400 }
-      );
+      return new Response('Invalid or expired token', { status: 400 });
     }
 
-    // Hasha det nya lösenordet
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Uppdatera användarens lösenord och ta bort reset token
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -45,23 +44,9 @@ export async function POST(request: Request) {
       },
     });
 
-    // Lägg till det nya lösenordet i lösenordshistoriken
-    await prisma.passwordHistory.create({
-      data: {
-        userId: user.id,
-        password: hashedPassword,
-      },
-    });
-
-    return NextResponse.json(
-      { message: 'Lösenordet har återställts' },
-      { status: 200 }
-    );
+    return new Response('Password reset successfully', { status: 200 });
   } catch (error) {
-    console.error('Fel vid återställning av lösenord:', error);
-    return NextResponse.json(
-      { message: 'Ett fel uppstod vid återställning av lösenord' },
-      { status: 500 }
-    );
+    console.error('Error resetting password:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 } 

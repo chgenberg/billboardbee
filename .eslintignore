@@ -1,0 +1,12 @@
+# Ignore node_modules and build output
+node_modules/
+.next/
+out/
+build/
+
+# Ignore generated Prisma files
+src/generated/
+prisma/migrations/
+
+# Ignore macOS system files
+.DS_Store 

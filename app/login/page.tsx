@@ -15,6 +15,8 @@ export default function Login() {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +36,7 @@ export default function Login() {
 
       if (!response.ok) {
         setError(data.message || 'Fel vid inloggning');
+        setStatus('error');
         return;
       }
 
@@ -47,8 +50,11 @@ export default function Login() {
       } else {
         router.push('/'); // fallback
       }
+      setStatus('success');
+      setMessage('Inloggning lyckades!');
     } catch (error) {
       setError('Ett oväntat fel uppstod. Försök igen senare.');
+      setStatus('error');
     } finally {
       setIsLoading(false);
     }
@@ -124,6 +130,14 @@ export default function Login() {
         </div>
 
         <form className="w-full space-y-6" onSubmit={handleSubmit}>
+          {message && (
+            <div className={`rounded-md p-4 ${
+              status === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+            }`}>
+              <p className="text-sm">{message}</p>
+            </div>
+          )}
+
           <div className="space-y-4">
             <div className="group">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -175,6 +189,12 @@ export default function Login() {
             </button>
           </div>
         </form>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          <p>För investerare: Använd följande dummy-konton för att testa:</p>
+          <p>Annonsör: investor@example.com / investor123</p>
+          <p>Uthyrare: investor2@example.com / investor123</p>
+        </div>
       </div>
     </div>
   );

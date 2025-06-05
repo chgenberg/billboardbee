@@ -25,7 +25,7 @@ export default function CalendarPage() {
   const [view, setView] = useState('dayGridMonth');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [billboardId, setBillboardId] = useState('');
 
   // Hämta bokningar från API

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 export default function SidebarPricing({ basePrice, serviceFee, availableWeeks, peakWeeks, peakPrice, summary }: {
   basePrice: number;

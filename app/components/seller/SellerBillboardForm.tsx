@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import SellerCalendarPopup from './SellerCalendarPopup';
+import Image from 'next/image';
 
 const helpTexts: Record<string, string> = {
   title: 'Skriv en tydlig och lockande rubrik! Exempel: "Stor LED-skylt vid E6:an – syns av 65 000 bilar/dag". Tänk på att nämna plats, typ av skylt och något unikt.',
@@ -121,8 +122,8 @@ export default function SellerBillboardForm() {
     try {
       const formData = new FormData();
       formData.append('title', form.title);
-      formData.append('coverImage', form.coverImage as any);
-      form.gallery.forEach((file, i) => formData.append('gallery', file as any));
+      if (form.coverImage) formData.append('coverImage', form.coverImage);
+      form.gallery.forEach((file) => formData.append('gallery', file));
       formData.append('trafficTeaser', form.trafficTeaser);
       formData.append('teaser', form.teaser);
       formData.append('basePrice', form.basePrice);
@@ -144,8 +145,8 @@ export default function SellerBillboardForm() {
       } else {
         setError(data.error || 'Något gick fel vid sparande.');
       }
-    } catch (err: any) {
-      setError(err.message || 'Något gick fel vid sparande.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Något gick fel vid sparande.');
     } finally {
       setLoading(false);
     }
@@ -177,7 +178,9 @@ export default function SellerBillboardForm() {
         onDragOver={e => e.preventDefault()}
       >
         {form.coverImage ? (
-          <img src={imageToUrl(form.coverImage)} alt="cover" className="object-cover w-full h-full rounded-xl" />
+          <div className="relative w-full h-full">
+            <Image src={imageToUrl(form.coverImage)} alt="cover" fill className="object-cover w-full h-full rounded-xl" />
+          </div>
         ) : (
           <span className="text-[#ff6b00] text-lg opacity-60">Dra in eller klicka för att ladda upp bild</span>
         )}
@@ -214,8 +217,8 @@ export default function SellerBillboardForm() {
           <span className="text-[#ff6b00] text-sm opacity-60">Dra in eller klicka för att ladda upp bilder</span>
         )}
         {form.gallery.map((file, idx) => (
-          <div key={idx} className="relative group">
-            <img src={imageToUrl(file)} alt={`gallery-${idx}`} className="w-20 h-14 object-cover rounded-lg border border-[#ff6b00]/20" />
+          <div key={idx} className="relative group w-20 h-14">
+            <Image src={imageToUrl(file)} alt={`gallery-${idx}`} fill className="object-cover rounded-lg border border-[#ff6b00]/20" />
             <button
               type="button"
               className="absolute top-1 right-1 bg-white/80 rounded-full p-0.5 text-[#ff6b00] text-base shadow"
