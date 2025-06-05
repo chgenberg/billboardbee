@@ -1,42 +1,35 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest } from 'next/server';
+import prisma from '@/app/lib/prisma';
 import { verifyToken } from '@/lib/auth';
-import { JwtPayload } from 'jsonwebtoken';
+import { z } from 'zod';
 
-const prisma = new PrismaClient();
+const updateRoleSchema = z.object({
+  userId: z.string(),
+  role: z.enum(['UTHYRARE', 'ANNONSOR']),
+});
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('auth-token')?.value;
-    
+    const token = request.headers.get('Authorization')?.split(' ')[1];
     if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return new Response('Unauthorized', { status: 401 });
     }
 
-    const decoded = verifyToken(token) as JwtPayload & { id: string };
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      );
+    const payload = await verifyToken(token);
+    if (!payload) {
+      return new Response('Invalid token', { status: 401 });
     }
 
-    const { email, role } = await request.json();
-
-    if (!email || !role) {
-      return NextResponse.json(
-        { error: 'Email and role are required' },
-        { status: 400 }
-      );
+    // Check if user is admin (you might want to add an admin role to your UserRole enum)
+    if (payload.role !== 'UTHYRARE') {
+      return new Response('Forbidden', { status: 403 });
     }
+
+    const body = await request.json();
+    const { userId, role } = updateRoleSchema.parse(body);
 
     const updatedUser = await prisma.user.update({
-      where: { email },
+      where: { id: userId },
       data: { role },
       select: {
         id: true,
@@ -45,14 +38,14 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log('Updated user role:', updatedUser);
-
-    return NextResponse.json(updatedUser);
+    return new Response(JSON.stringify(updatedUser), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Error updating user role:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return new Response('Internal Server Error', { status: 500 });
   }
 } 

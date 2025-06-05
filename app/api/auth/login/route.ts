@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { rateLimit } from '@/lib/rate-limit';
 import prisma from '@/app/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -23,11 +23,12 @@ export async function POST(request: NextRequest) {
 
     // Dummy login for investors
     if (email === 'investor@example.com' && password === 'investor123') {
-      const token = sign(
-        { userId: 'dummy-annonsor-id', email: 'investor@example.com', role: 'ANNONSOR' },
-        process.env.JWT_SECRET!,
-        { expiresIn: '7d' }
-      );
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+      const token = await new SignJWT({ userId: 'dummy-annonsor-id', email: 'investor@example.com', role: 'ANNONSOR' })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('7d')
+        .sign(secret);
+
       return new Response(JSON.stringify({ token }), {
         status: 200,
         headers: {
@@ -37,11 +38,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (email === 'investor2@example.com' && password === 'investor123') {
-      const token = sign(
-        { userId: 'dummy-uthyrare-id', email: 'investor2@example.com', role: 'UTHYRARE' },
-        process.env.JWT_SECRET!,
-        { expiresIn: '7d' }
-      );
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+      const token = await new SignJWT({ userId: 'dummy-uthyrare-id', email: 'investor2@example.com', role: 'UTHYRARE' })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('7d')
+        .sign(secret);
+
       return new Response(JSON.stringify({ token }), {
         status: 200,
         headers: {
@@ -64,11 +66,11 @@ export async function POST(request: NextRequest) {
       return new Response('Invalid email or password', { status: 401 });
     }
 
-    const token = sign(
-      { userId: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
-    );
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const token = await new SignJWT({ userId: user.id, email: user.email, role: user.role })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .sign(secret);
 
     return new Response(JSON.stringify({ token }), {
       status: 200,

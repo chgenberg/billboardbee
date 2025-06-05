@@ -1,9 +1,10 @@
-import { verify } from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
-export function verifyToken(token: string) {
+export async function verifyToken(token: string) {
   try {
-    const decoded = verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    return decoded;
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
+    const { payload } = await jwtVerify(token, secret);
+    return payload;
   } catch (error) {
     console.error('Token verification failed:', error);
     return null;

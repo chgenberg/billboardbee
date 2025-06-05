@@ -1,56 +1,43 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest } from 'next/server';
+import prisma from '@/app/lib/prisma';
 import { verifyToken } from '@/lib/auth';
-import { JwtPayload } from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
+    const token = request.headers.get('Authorization')?.split(' ')[1];
     if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return new Response('Unauthorized', { status: 401 });
     }
 
-    const decoded = verifyToken(token) as JwtPayload & { id: string };
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      );
+    const payload = await verifyToken(token);
+    if (!payload) {
+      return new Response('Invalid token', { status: 401 });
     }
 
+    const userId = payload.userId as string;
     const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
         name: true,
         role: true,
         emailVerified: true,
-        createdAt: true
       },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return new Response('User not found', { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return new Response(JSON.stringify(user), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return new Response('Internal Server Error', { status: 500 });
   }
 } 
