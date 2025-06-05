@@ -75,11 +75,11 @@ export default function LedigaSkyltar() {
   }, [searchParams]);
 
   // Unika regioner och typer för filter
-  const regions = Array.from(new Set(billboards.map(b => b.region).filter(Boolean)));
-  const types = Array.from(new Set(billboards.map(b => b.type).filter(Boolean)));
+  const regions = Array.from(new Set(billboards?.map(b => b.region).filter(Boolean) || []));
+  const types = Array.from(new Set(billboards?.map(b => b.type).filter(Boolean) || []));
 
   // Filtrering
-  let filtered = billboards.filter(b => {
+  let filtered = billboards?.filter(b => {
     const matchesSearch =
       search.trim().length === 0 ||
       (b.title && b.title.toLowerCase().includes(search.toLowerCase())) ||

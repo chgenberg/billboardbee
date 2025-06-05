@@ -286,11 +286,11 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(billboards);
+    return NextResponse.json(billboards || []);
   } catch (error) {
     console.error('Error fetching billboards:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch billboards' },
+      { error: 'Failed to fetch billboards', billboards: [] },
       { status: 500 }
     );
   } finally {
