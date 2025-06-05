@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import type { ChartOptions } from 'chart.js';
 
 // Dynamically import Chart.js to avoid SSR issues
 const Chart = dynamic(() => import('react-chartjs-2').then(mod => mod.Line), {
@@ -46,7 +47,7 @@ const dummyRevenue = {
   ],
 };
 
-const chartOptions = {
+const chartOptions: ChartOptions<'line'> = {
   responsive: true,
   plugins: {
     legend: {
@@ -60,7 +61,9 @@ const chartOptions = {
     y: {
       beginAtZero: true,
       ticks: {
-        callback: (value: number) => `${value.toLocaleString('sv-SE')} kr`,
+        callback: function(value) {
+          return `${value.toLocaleString('sv-SE')} kr`;
+        },
       },
     },
   },
