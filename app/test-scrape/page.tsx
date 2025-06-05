@@ -2,9 +2,17 @@
 
 import { useState } from 'react';
 
+interface ScrapeResult {
+  title?: string;
+  description?: string;
+  images?: string[];
+  text?: string;
+  [key: string]: any;
+}
+
 export default function TestScrapePage() {
   const [url, setUrl] = useState('');
-  const [result, setResult] = useState<unknown>(null);
+  const [result, setResult] = useState<ScrapeResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
