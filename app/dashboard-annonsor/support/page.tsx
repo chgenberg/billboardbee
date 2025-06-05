@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { PlusIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ChatBubbleLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SupportTicket {
   id: string;
@@ -35,6 +36,30 @@ export default function SupportPage() {
     },
   ]);
 
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTicket, setNewTicket] = useState({
+    title: '',
+    description: '',
+    priority: 'medium' as SupportTicket['priority'],
+  });
+
+  const handleAddTicket = () => {
+    if (newTicket.title && newTicket.description) {
+      const ticket: SupportTicket = {
+        id: Date.now().toString(),
+        title: newTicket.title,
+        description: newTicket.description,
+        status: 'open',
+        priority: newTicket.priority,
+        createdAt: new Date().toISOString().split('T')[0],
+        lastUpdated: new Date().toISOString().split('T')[0],
+      };
+      setTickets([ticket, ...tickets]);
+      setNewTicket({ title: '', description: '', priority: 'medium' });
+      setShowAddModal(false);
+    }
+  };
+
   const getStatusColor = (status: SupportTicket['status']) => {
     switch (status) {
       case 'open':
@@ -61,7 +86,10 @@ export default function SupportPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-900">Support & ärenden</h1>
-        <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff6b00] hover:bg-[#e65c00]">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff6b00] hover:bg-[#e65c00]"
+        >
           <PlusIcon className="h-5 w-5 mr-2" />
           Nytt ärende
         </button>
@@ -119,6 +147,97 @@ export default function SupportPage() {
           </table>
         </div>
       </div>
+
+      {/* Add Ticket Modal */}
+      <AnimatePresence>
+        {showAddModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAddModal(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Skapa nytt ärende</h2>
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Rubrik
+                    </label>
+                    <input
+                      type="text"
+                      value={newTicket.title}
+                      onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="Kort beskrivning av problemet"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Beskrivning
+                    </label>
+                    <textarea
+                      value={newTicket.description}
+                      onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      rows={4}
+                      placeholder="Beskriv ditt ärende i detalj..."
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Prioritet
+                    </label>
+                    <select
+                      value={newTicket.priority}
+                      onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value as SupportTicket['priority'] })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      <option value="low">Låg</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">Hög</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  >
+                    Avbryt
+                  </button>
+                  <button
+                    onClick={handleAddTicket}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#ff6b00] rounded-md hover:bg-[#e65c00]"
+                  >
+                    Skapa ärende
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 

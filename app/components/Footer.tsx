@@ -35,6 +35,12 @@ export default function Footer() {
           >
             DPA
           </Link>
+          <Link 
+            href="/admin" 
+            className="text-[#222] hover:text-[#ff6b00] transition-colors uppercase text-sm font-semibold tracking-wide"
+          >
+            ADMIN
+          </Link>
         </div>
         
         {/* Logo and Copyright */}

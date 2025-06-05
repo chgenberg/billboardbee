@@ -5,13 +5,14 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import LoginModal from "./LoginModal";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(2); // Mock cart count
   const pathname = usePathname();
 
   useEffect(() => {
@@ -97,8 +98,18 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Right side - Login Button and Mobile Menu */}
-            <div className="flex items-center gap-4">
+            {/* Right side - Cart, Login Button and Mobile Menu */}
+            <div className="flex items-center gap-3 lg:gap-4">
+              {/* Shopping Cart */}
+              <Link href="/varukorg" className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <ShoppingCartIcon className="h-6 w-6 text-gray-700" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
+
               {/* Desktop Login Button */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -189,7 +200,25 @@ export default function Navbar() {
                   ))}
                 </nav>
 
-                <div className="mt-8 pt-8 border-t border-gray-100">
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <Link
+                    href="/varukorg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-3 rounded-lg bg-orange-50 text-orange-600 font-bold"
+                  >
+                    <span>VARUKORG</span>
+                    <div className="flex items-center">
+                      <ShoppingCartIcon className="h-5 w-5 mr-2" />
+                      {cartItemCount > 0 && (
+                        <span className="bg-orange-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                          {cartItemCount}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+
+                <div className="mt-4">
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);

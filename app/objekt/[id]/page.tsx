@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 const BillboardMapWrapper = dynamic(() => import("@/app/components/BillboardMapWrapper"), { ssr: false });
 
@@ -28,10 +29,12 @@ interface Billboard {
 
 export default function BillboardPage() {
   const params = useParams();
+  const router = useRouter();
   const [billboard, setBillboard] = useState<Billboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const fetchBillboard = async () => {
@@ -183,6 +186,18 @@ export default function BillboardPage() {
 
             {/* CTA */}
             <div className="space-y-3">
+              <button 
+                onClick={() => {
+                  setAddedToCart(true);
+                  setTimeout(() => {
+                    router.push('/varukorg');
+                  }, 1000);
+                }}
+                className="w-full py-4 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-all duration-200 font-medium flex items-center justify-center gap-2"
+              >
+                <ShoppingCartIcon className="h-5 w-5" />
+                {addedToCart ? 'Tillagd! Går till varukorg...' : 'Lägg till i varukorg'}
+              </button>
               <button className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium">
                 Kontakta för bokning
               </button>

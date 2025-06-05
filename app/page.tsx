@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BeeQuizModal from './components/BeeQuizModal';
 import { FaMapMarkedAlt } from 'react-icons/fa';
 import { MagnifyingGlassIcon, MapIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon } from '@heroicons/react/24/outline';
 
 const MapWithBees = dynamic(() => import('./components/MapWithBees'), { ssr: false });
 const BillboardMapWrapper = dynamic(() => import('./components/BillboardMapWrapper'), { ssr: false });
@@ -81,101 +82,76 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero Section with Billboard Background */}
-      <section className="relative h-screen w-full overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/bakgrunds.png"
-            alt="Billboard background"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-        </div>
-
-        {/* Search Section - Positioned inside the billboard */}
-        <div className="absolute inset-0 flex items-center justify-center px-4">
+      {/* Search Section */}
+      <section className="relative -mt-32 z-20 px-4 pb-20">
+        <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-xl mx-auto"
-            style={{
-              // Adjust these values to position the search box inside the billboard
-              marginTop: '-8%',
-              transform: 'scale(0.7)'
-            }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
           >
-            <div className="text-center space-y-3 sm:space-y-6">
-              <motion.h1
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 uppercase tracking-wider"
-              >
-                HITTA DIN PERFEKTA
-                <span className="block text-orange-600 mt-1">REKLAMPLATS</span>
-              </motion.h1>
+            {/* Billboard Background */}
+            <div className="relative">
+              <Image
+                src="/bakgrunds.png"
+                alt="Billboard"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                priority
+              />
               
-              <motion.form
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSearch(searchQuery);
-                }}
-                className="space-y-3 sm:space-y-5"
-              >
-                <div className="relative group">
-                  <MagnifyingGlassIcon className="absolute left-4 sm:left-5 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-500 group-focus-within:text-orange-600 transition-colors" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="SÖK STAD ELLER REGION..."
-                    className="w-full pl-10 sm:pl-14 pr-4 sm:pr-5 py-3 sm:py-4 text-sm sm:text-base font-medium placeholder-gray-500 bg-white/90 backdrop-blur border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
-                  />
-                </div>
-                
-                <div className="flex flex-wrap justify-center gap-2">
-                  {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
-                    <motion.button
-                      key={city}
-                      type="button"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleQuickSearch(city)}
-                      className="px-3 sm:px-5 py-1.5 sm:py-2.5 text-xs sm:text-sm font-bold text-gray-700 bg-white/80 backdrop-blur hover:bg-white hover:text-orange-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
-                    >
-                      {city}
-                    </motion.button>
-                  ))}
-                </div>
-                
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 pt-1 sm:pt-3">
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl transition-all duration-300 uppercase tracking-wider"
-                  >
-                    SÖK SKYLTAR
-                  </motion.button>
+              {/* Search Content - Positioned inside billboard */}
+              <div className="absolute inset-0 flex items-center justify-center p-8">
+                <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl w-full transform -translate-y-8">
+                  <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gray-900">
+                    HITTA DIN PERFEKTA
+                  </h2>
+                  <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-[#ff6b00]">
+                    REKLAMPLATS
+                  </h2>
                   
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowMap(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 text-orange-600 bg-white/80 backdrop-blur hover:bg-white rounded-full font-bold transition-all duration-200 shadow-lg hover:shadow-xl uppercase tracking-wider text-xs sm:text-sm"
-                  >
-                    <MapIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                    <span>VISA KARTA</span>
-                  </motion.button>
+                  <div className="space-y-6">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="SÖK STAD ELLER REGION..."
+                        className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors"
+                      />
+                      <MagnifyingGlassIcon className="absolute right-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
+                    </div>
+                    
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
+                        <button
+                          key={city}
+                          className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-semibold text-gray-700 transition-colors"
+                        >
+                          {city}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Link
+                        href="/lediga-skyltar"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      >
+                        <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
+                        SÖK SKYLTAR
+                      </Link>
+                      <Link
+                        href="/lediga-skyltar"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200"
+                      >
+                        <MapPinIcon className="h-5 w-5 mr-2" />
+                        VISA KARTA
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </motion.form>
+              </div>
             </div>
           </motion.div>
         </div>
