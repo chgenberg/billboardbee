@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
+import { verifyToken } from '@/lib/auth';
 
 const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 const prisma = new PrismaClient();
@@ -18,6 +19,18 @@ async function saveFile(file: File) {
 }
 
 export async function POST(req: Request) {
+  // Extrahera JWT-token från Authorization-headern
+  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
+  if (!authHeader) {
+    return NextResponse.json({ success: false, error: 'Ingen Authorization-header' }, { status: 401 });
+  }
+  const token = authHeader.split(' ')[1];
+  const payload = await verifyToken(token);
+  if (!payload || !payload.userId) {
+    return NextResponse.json({ success: false, error: 'Ogiltig token' }, { status: 401 });
+  }
+  const userId = payload.userId as string;
+
   const { seedDemo } = await req.json();
   if (seedDemo) {
     // Hämta Pärs användar-id
@@ -249,6 +262,7 @@ export async function POST(req: Request) {
         longitude: lng,
         price: basePrice,
         status: 'ledig',
+        ownerId: userId,
         // Lägg till custom-fält för perioder om du vill (t.ex. json-fält eller separat tabell)
         // peakPrice, standardDays, peakDays, cta etc kan sparas i extra fält eller json
       },
