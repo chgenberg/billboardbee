@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, BookingStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     const overlapping = await prisma.booking.findFirst({
       where: {
         billboardId: data.billboardId,
-        status: 'confirmed',
+        status: BookingStatus.CONFIRMED,
         OR: [
           { startDate: { lte: data.endDate }, endDate: { gte: data.startDate } },
         ],
