@@ -100,22 +100,22 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-2xl mx-auto"
+            className="w-full max-w-xl mx-auto"
             style={{
               // Adjust these values to position the search box inside the billboard
-              marginTop: '-5%',
-              transform: 'scale(0.85)'
+              marginTop: '-8%',
+              transform: 'scale(0.7)'
             }}
           >
-            <div className="text-center space-y-4 sm:space-y-8">
+            <div className="text-center space-y-3 sm:space-y-6">
               <motion.h1
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 uppercase tracking-wider"
+                className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 uppercase tracking-wider"
               >
                 HITTA DIN PERFEKTA
-                <span className="block text-orange-600 mt-1 sm:mt-2">REKLAMPLATS</span>
+                <span className="block text-orange-600 mt-1">REKLAMPLATS</span>
               </motion.h1>
               
               <motion.form
@@ -126,20 +126,20 @@ export default function Home() {
                   e.preventDefault();
                   handleSearch(searchQuery);
                 }}
-                className="space-y-4 sm:space-y-6"
+                className="space-y-3 sm:space-y-5"
               >
                 <div className="relative group">
-                  <MagnifyingGlassIcon className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 w-5 sm:w-6 h-5 sm:h-6 text-gray-500 group-focus-within:text-orange-600 transition-colors" />
+                  <MagnifyingGlassIcon className="absolute left-4 sm:left-5 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-500 group-focus-within:text-orange-600 transition-colors" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="SÖK STAD ELLER REGION..."
-                    className="w-full pl-12 sm:pl-16 pr-4 sm:pr-6 py-4 sm:py-6 text-base sm:text-lg font-medium placeholder-gray-500 bg-white/90 backdrop-blur border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
+                    className="w-full pl-10 sm:pl-14 pr-4 sm:pr-5 py-3 sm:py-4 text-sm sm:text-base font-medium placeholder-gray-500 bg-white/90 backdrop-blur border-2 border-gray-200 rounded-full focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 shadow-lg"
                   />
                 </div>
                 
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                <div className="flex flex-wrap justify-center gap-2">
                   {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
                     <motion.button
                       key={city}
@@ -147,19 +147,19 @@ export default function Home() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleQuickSearch(city)}
-                      className="px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold text-gray-700 bg-white/80 backdrop-blur hover:bg-white hover:text-orange-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+                      className="px-3 sm:px-5 py-1.5 sm:py-2.5 text-xs sm:text-sm font-bold text-gray-700 bg-white/80 backdrop-blur hover:bg-white hover:text-orange-600 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
                     >
                       {city}
                     </motion.button>
                   ))}
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 pt-1 sm:pt-3">
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 uppercase tracking-wider"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl transition-all duration-300 uppercase tracking-wider"
                   >
                     SÖK SKYLTAR
                   </motion.button>
@@ -169,9 +169,9 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowMap(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 text-orange-600 bg-white/80 backdrop-blur hover:bg-white rounded-full font-bold transition-all duration-200 shadow-lg hover:shadow-xl uppercase tracking-wider text-sm sm:text-base"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 text-orange-600 bg-white/80 backdrop-blur hover:bg-white rounded-full font-bold transition-all duration-200 shadow-lg hover:shadow-xl uppercase tracking-wider text-xs sm:text-sm"
                   >
-                    <MapIcon className="w-4 sm:w-5 h-4 sm:h-5" />
+                    <MapIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     <span>VISA KARTA</span>
                   </motion.button>
                 </div>

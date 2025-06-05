@@ -108,12 +108,12 @@ export default function Navbar() {
               >
                 <button
                   onClick={() => setShowLoginModal(true)}
-                  className="relative inline-flex items-center px-6 lg:px-8 py-2.5 lg:py-3 overflow-hidden text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-full group"
+                  className="relative inline-flex items-center px-5 lg:px-6 py-2 lg:py-2.5 overflow-hidden text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-full group"
                 >
-                  <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-orange-700 rounded-full group-hover:w-56 group-hover:h-56"></span>
-                  <span className="relative font-bold tracking-wider text-sm lg:text-base">LOGGA IN</span>
+                  <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-orange-700 rounded-full group-hover:w-48 group-hover:h-48"></span>
+                  <span className="relative font-bold tracking-wider text-xs lg:text-sm">LOGGA IN</span>
                   <motion.svg
-                    className="w-4 lg:w-5 h-4 lg:h-5 ml-2"
+                    className="w-3.5 lg:w-4 h-3.5 lg:h-4 ml-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

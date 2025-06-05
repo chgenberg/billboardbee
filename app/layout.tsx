@@ -4,7 +4,6 @@ import './globals.css'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import { Providers } from './providers'
-import OverlayNavbar from './components/OverlayNavbar'
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['400', '600', '700'] })
 
@@ -27,7 +26,6 @@ export default function RootLayout({
     <html lang="sv">
       <body className={`${nunito.className} min-h-screen flex flex-col bg-white relative`}>
         <Providers>
-          <OverlayNavbar />
           <Navbar />
           <main className="flex-grow relative z-10 pt-20">
             {children}
