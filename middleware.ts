@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const token = request.headers.get('authorization')?.split(' ')[1];
   if (!token) return NextResponse.next();
 
-  const decoded = verifyToken(token);
+  const decoded = await verifyToken(token);
   if (!decoded) return NextResponse.next();
 
   // Redirect annonsor to their dashboard
