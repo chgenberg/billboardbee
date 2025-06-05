@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('leaflet/dist/leaflet.css');
+
 :root {
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 0, 0, 0;
@@ -10,4 +12,8 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+}
+
+.input-alt {
+  @apply w-full rounded-lg border border-[#bf7100]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#bf7100]/40 text-[#222] placeholder:text-[#bf7100]/60 transition;
 } 

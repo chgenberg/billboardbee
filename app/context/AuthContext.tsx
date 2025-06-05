@@ -5,6 +5,7 @@ interface User {
   name: string;
   email: string;
   plan: string;
+  role: 'ANNONSOR' | 'UTHYRARE';
 }
 
 interface AuthContextType {
@@ -21,13 +22,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem("frejfund_user");
-    if (stored) setUser(JSON.parse(stored));
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.role === 'ANNONSOR' || parsed.role === 'UTHYRARE')) {
+          setUser(parsed);
+        } else {
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      }
+    }
   }, []);
 
   const login = async (email: string, password: string) => {
     // Mock: accept demo@frejfund.com/demo123
     if (email === "demo@frejfund.com" && password === "demo123") {
-      const u = { name: "Sara", email, plan: "SILVER" };
+      const u = { name: "Sara", email, plan: "SILVER", role: 'ANNONSOR' as const };
       setUser(u);
       localStorage.setItem("frejfund_user", JSON.stringify(u));
       return true;
@@ -37,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (email: string, password: string, name?: string) => {
     // Mock: always succeed
-    const u = { name: name || "Sara", email, plan: "SILVER" };
+    const u = { name: name || "Sara", email, plan: "SILVER", role: 'ANNONSOR' as const };
     setUser(u);
     localStorage.setItem("frejfund_user", JSON.stringify(u));
     return true;

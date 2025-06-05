@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLoginModal } from './LoginModal';
 
 export default function OverlayNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,64 +10,50 @@ export default function OverlayNavbar() {
   return (
     <>
       {/* Hamburgarmeny */}
-      <div className="fixed top-6 left-6 z-50 flex flex-row items-center gap-4">
+      <div className="fixed top-6 left-6 z-[300]">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex flex-col justify-center items-center w-9 h-9 bg-transparent border-none p-0 focus:outline-none group"
           aria-label="Meny"
         >
-          <span className="block w-7 h-0.5 my-0.5 rounded bg-white transition-all duration-200 group-hover:bg-gray-300" />
-          <span className="block w-7 h-0.5 my-0.5 rounded bg-white transition-all duration-200 group-hover:bg-gray-300" />
-          <span className="block w-7 h-0.5 my-0.5 rounded bg-white transition-all duration-200 group-hover:bg-gray-300" />
-        </button>
-        <button
-          onClick={useLoginModal()}
-          className="ml-2 px-5 py-2 bg-[#16475b] text-white font-bold rounded-full shadow-md hover:bg-[#133a4a] transition-colors text-sm tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-[#16475b]/40"
-          style={{ letterSpacing: '0.08em' }}
-        >
-          LOGGA IN
+          <span className="block w-7 h-0.5 my-0.5 rounded bg-black transition-all duration-200 group-hover:bg-gray-700" />
+          <span className="block w-7 h-0.5 my-0.5 rounded bg-black transition-all duration-200 group-hover:bg-gray-700" />
+          <span className="block w-7 h-0.5 my-0.5 rounded bg-black transition-all duration-200 group-hover:bg-gray-700" />
         </button>
         {isOpen && (
-          <div className="absolute left-8 top-12 w-60 bg-[#16475b] backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl animate-fade-in p-2">
-            <div className="py-2">
+          <div className="absolute left-0 top-full mt-2 w-56 bg-white text-black border border-gray-200 rounded-xl p-1">
+            <div className="py-1">
               <Link 
                 href="/" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
+                className="block px-4 py-2 hover:bg-gray-100 transition-colors text-sm tracking-wide text-left uppercase text-black font-medium rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 HEM
               </Link>
               <Link 
                 href="/om-oss" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
+                className="block px-4 py-2 hover:bg-gray-100 transition-colors text-sm tracking-wide text-left uppercase text-black font-medium rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 OM OSS
               </Link>
               <Link 
-                href="/vara-paket" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
+                href="/buzz-idegeneratorn" 
+                className="block px-4 py-2 hover:bg-gray-100 transition-colors text-sm tracking-wide text-left uppercase text-black font-medium rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
-                VÅRA PAKET
-              </Link>
-              <Link 
-                href="/pitch-pingvinen" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
-                onClick={() => setIsOpen(false)}
-              >
-                PITCH-PINGVINEN
+                BUZZ IDÉGENERATORN
               </Link>
               <Link 
                 href="/qa" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
+                className="block px-4 py-2 hover:bg-gray-100 transition-colors text-sm tracking-wide text-left uppercase text-black font-medium rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
-                Q&A
+                FAQ
               </Link>
               <Link 
                 href="/kontakt" 
-                className="block px-6 py-3 hover:bg-white/10 transition-colors text-base tracking-wide text-center uppercase"
+                className="block px-4 py-2 hover:bg-gray-100 transition-colors text-sm tracking-wide text-left uppercase text-black font-medium rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 KONTAKT
@@ -82,12 +67,12 @@ export default function OverlayNavbar() {
       <div className="fixed top-6 right-6 z-50 h-14 w-44 flex items-center justify-end">
         {!logoError ? (
           <Image
-            src="/logo.png"
-            alt="Frejfund Logo"
-            fill
-            sizes="(max-width: 768px) 120px, 180px"
-            className="object-contain"
+            src="/LOGOwhiteyellow.png"
+            alt="BillboardBee Logo"
+            width={120}
+            height={40}
             priority
+            className="object-contain w-32 h-auto"
             onError={() => setLogoError(true)}
           />
         ) : (

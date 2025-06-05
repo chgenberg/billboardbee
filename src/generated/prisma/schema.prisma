@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  password          String
+  name              String?
+  emailVerified     Boolean           @default(false)
+  verificationToken String?           @unique
+  tokenExpiresAt    DateTime?
+  resetToken        String?           @unique
+  resetTokenExpires DateTime?
+  rememberToken     String?           @unique
+  createdAt         DateTime          @default(now())
+  billboards        Billboard[] // En användare kan ha flera billboards
+  passwordHistory   PasswordHistory[]
+}
+
+model PasswordHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  password  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Billboard {
+  id            String    @id @default(uuid())
+  title         String
+  description   String
+  imageUrls     String[] // Array av bild-URL:er
+  location      String
+  latitude      Float?
+  longitude     Float?
+  price         Int
+  status        String    @default("ledig")
+  size          String?
+  type          String? // t.ex. "digital", "print"
+  traffic       Int? // bilar/dygn
+  availableFrom DateTime?
+  availableTo   DateTime?
+  contactPhone  String?
+  address       String?
+  region        String?
+  ownerId       String
+  owner         User      @relation(fields: [ownerId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

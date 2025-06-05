@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  UTHYRARE
+  ANNONSOR
+}
+
+model User {
+  id                String      @id @default(uuid())
+  email             String      @unique
+  password          String
+  name              String?
+  role              UserRole    @default(ANNONSOR)
+  emailVerified     Boolean     @default(false)
+  verificationToken String?     @unique
+  tokenExpiresAt    DateTime?
+  resetToken        String?     @unique
+  resetTokenExpires DateTime?
+  rememberToken     String?     @unique
+  createdAt         DateTime    @default(now())
+  billboards        Billboard[] // En användare kan ha flera billboards
+  passwordHistory   PasswordHistory[]
+  bookings          Booking[]   // En användare kan ha flera bokningar
+}
+
+model PasswordHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  password  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Billboard {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  imageUrls     String[] // Array av bild-URL:er
+  location      String
+  latitude      Float?
+  longitude     Float?
+  price         Int
+  status        String   @default("ledig")
+  size          String?
+  type          String?  // t.ex. "digital", "print"
+  traffic       Int?     // bilar/dygn
+  availableFrom DateTime?
+  availableTo   DateTime?
+  contactPhone  String?
+  address       String?
+  region        String?
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  bookings      Booking[] // En skylt kan ha flera bokningar
+  teamMembers        TeamMember[]
+  maintenanceTickets MaintenanceTicket[]
+  buildingPermits    BuildingPermit[]
+  payoutSettings     PayoutSettings?
+  blockedPeriods     BlockedPeriod[]
+}
+
+enum BookingStatus {
+  REQUESTED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  billboardId String
+  userId      String
+  startDate   DateTime
+  endDate     DateTime
+  status      BookingStatus @default(REQUESTED)
+  recurringRule String?     // iCal-format för återkommande bokningar
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  billboard   Billboard     @relation(fields: [billboardId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+  history     BookingHistory[]
+
+  @@index([billboardId])
+  @@index([userId])
+  @@index([startDate, endDate])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  email     String
+  role      UserRole
+  billboardId String
+  billboard Billboard @relation(fields: [billboardId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model MaintenanceTicket {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  status      TicketStatus @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  imageUrl    String?
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum PermitStatus {
+  PENDING
+  APPROVED
+  EXPIRED
+  RENEWAL_NEEDED
+}
+
+model BuildingPermit {
+  id          String   @id @default(cuid())
+  documentUrl String
+  status      PermitStatus @default(PENDING)
+  expiryDate  DateTime
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PayoutSettings {
+  id              String   @id @default(cuid())
+  billboardId     String   @unique
+  billboard       Billboard @relation(fields: [billboardId], references: [id])
+  iban            String?
+  bankgiro        String?
+  payoutFrequency String   // "weekly" or "monthly"
+  vatStatus       Boolean  @default(false)
+  stripeAccountId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BlockedPeriod {
+  id          String    @id @default(uuid())
+  billboardId String
+  startDate   DateTime
+  endDate     DateTime
+  reason      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+
+  @@index([billboardId])
+  @@index([startDate, endDate])
+}
+
+model BookingHistory {
+  id          String   @id @default(uuid())
+  bookingId   String
+  action      String   // t.ex. "created", "updated", "cancelled"
+  performedBy String   // userId eller system
+  timestamp   DateTime @default(now())
+  details     String?  // JSON eller text om ändringen
+
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+}

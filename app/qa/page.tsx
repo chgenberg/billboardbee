@@ -1,76 +1,99 @@
 "use client";
-import Image from 'next/image';
 import { useState } from 'react';
+import Image from 'next/image';
+import { FaQuestionCircle, FaChevronDown } from 'react-icons/fa';
 
 interface QAItem {
-  q: string;
-  a: string;
+  id: number;
+  question: string;
+  answer: string;
 }
 
-const qaData: QAItem[] = [
-  { q: 'Vad gör FrejFund i ett nötskal?', a: 'Vi analyserar din affärsidé med AI, identifierar styrkor / luckor och guidar dig till investerings­redo pitch och kapital.' },
-  { q: 'Måste jag ha ett registrerat bolag?', a: 'Nej, idéstadie räcker – men vi visar vad som krävs för att bilda bolag innan du söker investerare.' },
-  { q: 'Hur lång tid tar Silver-analysen?', a: '10–15 minuter att svara, rapporten levereras inom 30 sekunder.' },
-  { q: 'Vilka datapunkter tittar AI-n på?', a: 'Team­profil, marknadsstorlek, traction, konkurrensfördel, risker, ekonomi och kapitalbehov.' },
-  { q: 'Kan ni garantera investering?', a: 'Nej – men vi ökar oddsen genom att täppa igen typiska deal-breakers och matcha dig med rätt investerare.' },
-  { q: 'Hur fungerar scoring-systemet (0–10)?', a: 'AI viktar 120 parametrar enligt nordiska VC- och ängel­kriterier; 7+ anses investerbart.' },
-  { q: 'Är mina svar konfidentiella?', a: 'Ja, data krypteras, lagras i EU-datacenter och delas aldrig utan ditt godkännande.' },
-  { q: 'Kan jag exportera rapporten?', a: 'Ja, PDF + delbar länk; Gold- och Platinum-kunder får även PowerPoint-one-pager.' },
-  { q: 'Vad kostar det om jag ändrar mina svar?', a: 'Obegränsade omkörningar ingår i Gold (kvartalsvis) och Platinum (löpande).' },
-  { q: 'Vilka investerare samarbetar ni med?', a: '70+ nordiska affärsänglar, ALMI Invest-kontor, STOAF, Norrsken VC m.fl.; listan uppdateras kontinuerligt.' },
-  { q: 'Tar ni ägarandel?', a: 'Endast i Platinum: 2 % success-fee när du faktiskt tar in kapital, ingen equity up-front.' },
-  { q: 'Hur mäter ni "team-kompetens"?', a: 'Kombinerar CV-metadata, track-record och komplementäritet i roller; luckor flaggas automatiskt.' },
-  { q: 'Stöder ni non-profit eller impact-bolag?', a: 'Ja – AI-n har särskilda ESG-parametrar och vi samarbetar med impact-fonder.' },
-  { q: 'Kan jag bjuda in co-founders att fylla i?', a: 'Ja, dela link med gäst-token; svaren slås samman i en gemensam rapport.' },
-  { q: 'Vad gör jag med en röd flagg i rapporten?', a: 'Klicka "Fix-guide" – du får konkreta åtgärder, mallar och resurser för att lösa luckan.' },
-  { q: 'Hur ofta uppdateras AI-modellen?', a: 'Kvartalsvis; vi tränar mot färska deal-flow-data och justerar vikter efter investerarnas krav.' },
-  { q: 'Stöder ni andra språk än svenska/engelska?', a: 'Input accepteras på båda; rapporten kan automatiskt översättas till engelska för internationella VC.' },
-  { q: 'Får jag mänsklig rådgivare?', a: 'Gold kan boka 30 min call; Platinum har dedikerad coach med 4 timmar per månad.' },
-  { q: 'Vilken tech-stack bygger plattformen på?', a: 'Next.js, Django, OpenAI-API, Stripe, Postgres – driftas i EU.' },
-  { q: 'Kan jag integrera data med mitt CRM?', a: 'Ja, Gold+/API-key: Zapier-flöden till HubSpot, Pipedrive, Notion.' },
-  { q: 'Vad krävs för att nå 9–10 i score?', a: 'Starkt, kompletterande team + unik teknik + validerad marknadstraktion + tydlig skalbar affärs­modell.' },
-  { q: 'Får jag feedback på pitch-deck?', a: 'Platinum: AI-review + mänsklig design-check; Gold kan köpa som add-on.' },
-  { q: 'Har ni student- eller ideell rabatt?', a: 'Ja, 50 % på Gold för studenter och ideella projekt med org-nummer.' },
-  { q: 'Kan AI-n skriva min executive summary?', a: 'Ja – efter analys kan du klicka "Generate summary"; sparas i Word/Google Docs-format.' },
-  { q: 'Hur hanteras personuppgifter enligt GDPR?', a: 'Vi följer Schrems II-rekommendationer, har DPA med OpenAI och anonymiserar känsliga fält.' },
-  { q: 'Funkar plattformen för rena e-handelsidéer?', a: 'Absolut – AI byter fråga-set beroende på bransch (SaaS, e-com, medtech, etc.).' },
-  { q: 'Kan jag ladda upp Excel-budget?', a: 'Ja, Gold/Platinum: systemet parses .xlsx och validerar antaganden mot branschsnitt.' },
-  { q: 'Vad händer om jag redan har investerare?', a: 'Rapporten ger dem en extern validation; vi kan även stötta i nästa runda.' },
-  { q: 'Hur skiljer ni er från acceleratorer?', a: 'Vi är on-demand, remote-först och tar ingen equity förrän du får kapital; du väljer tempo.' },
-  { q: 'Kan jag pausa mitt abonnemang?', a: 'Ja, Gold månadsabonnemang kan frysa i upp till 3 månader utan extra kostnad.' },
-];
-
 export default function QA() {
-  const [open, setOpen] = useState<number | null>(null);
+  const [openItems, setOpenItems] = useState<number[]>([]);
+
+  const qaData: QAItem[] = [
+    { id: 1, question: "Vilken information lagrar ni om mig när jag skapar ett konto?", answer: "Namn, e-post, telefon, lösenords-hash och eventuell företagsinformation – inget mer." },
+    { id: 2, question: "Sparar ni kompletta kortnummer?", answer: "Nej. Vi använder Stripe; endast en krypterad betal-token lagras hos oss." },
+    { id: 3, question: "Hur länge behåller ni mina uppgifter efter att jag raderat kontot?", answer: "Max 12 månader för support-spårbarhet och 7 år för bokföringsmaterial." },
+    { id: 4, question: "Kan jag annonsera anonymt?", answer: "Du kan visa annons utan personnamn, men faktureringsuppgifter måste vara korrekta enligt bokföringslagen." },
+    { id: 5, question: "Hur raderar jag all data permanent?", answer: "Skicka mejl till privacy@billboardbee.com — vi bekräftar radering inom 30 dagar." },
+    { id: 6, question: "Vad är skillnaden mellan villkor och integritetspolicy?", answer: "Villkoren reglerar dina rättigheter & skyldigheter; Integritetspolicyn berättar hur vi behandlar persondata." },
+    { id: 7, question: "Måste jag acceptera cookies?", answer: "Endast de strikt nödvändiga. Analys- och marknadsföringscookies är valbara via vår banner." },
+    { id: 8, question: "Vad händer om jag blockerar cookies?", answer: "Tjänsten fungerar, men inloggning och kart-filtrering kan bli långsammare." },
+    { id: 9, question: "Vilka tredjeparts-cookies använder ni?", answer: "Matomo (analys) och Meta Pixel (kampanj-mätning). Inga andra." },
+    { id: 10, question: "Kan jag ladda ned en kopia av all min data?", answer: `Ja, klicka \"Ladda ned mina data\" i profilinställningarna eller be supporten.` },
+    { id: 11, question: "Vad står i ert Personuppgiftsbiträdes-avtal (DPA) som är viktigt för mig som företagskund?", answer: "Att vi endast behandlar data enligt dina instruktioner, redogör för underbiträden och raderar allt inom 60 dagar efter avslut." },
+    { id: 12, question: "Hur ofta gör ni penetrationstester?", answer: "Minst årligen av extern part; sårbarheter patchas efter en 30-dagars SLA." },
+    { id: 13, question: "Var lagras våra data fysiskt?", answer: "AWS Frankfurt (eu-central-1) för drift och säkerhetskopior i AWS Stockholm." },
+    { id: 14, question: "Använder ni någon AI för att profilera användare?", answer: "Nej. Trafik-prognoser görs på platsnivå, inte på individnivå, och omfattas inte av automatiserade beslut enligt GDPR art. 22." },
+    { id: 15, question: "Får jag skicka reklam via er plattform till markägare?", answer: "Endast inom ramen för pågående bokning; massutskick är förbjudet enligt villkor §5." }
+  ];
+
+  const toggleItem = (id: number) => {
+    setOpenItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id]
+    );
+  };
+
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center px-2 py-12">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-[#16475b] tracking-widest text-center mb-10 mt-2 uppercase">Q&amp;A</h1>
-      {/* Bakgrundsbild */}
-      <Image
-        src="/bakgrund.png"
-        alt="Q&A bakgrund"
-        fill
-        className="object-cover -z-10"
-        priority
-      />
-      <div className="w-full max-w-3xl mx-auto bg-white/90 rounded-3xl shadow-xl p-8 border border-gray-200 backdrop-blur-md">
-        <div className="flex flex-col gap-4">
-          {qaData.map((item, i) => (
-            <div key={i} className="rounded-2xl bg-white/80 border border-gray-200 shadow-md overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col items-center bg-white pt-20">
+      {/* Hero Section */}
+      <div className="w-full min-h-[40vh] flex flex-col items-center justify-center relative pb-12">
+        {/* Bakgrundsbild */}
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            src="/omoss.png"
+            alt="Bakgrund Q&A"
+            fill
+            className="object-contain object-center opacity-60 scale-125 [mask-image:url('data:image/svg+xml;utf8,<svg width=\'100%25\' height=\'100%25\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><radialGradient id=\'g\' cx=\'50%\' cy=\'50%\' r=\'0.8\'><stop offset=\'70%\' stop-color=\'white\'/><stop offset=\'100%\' stop-color=\'black\'/></radialGradient><ellipse cx=\'50\' cy=\'50\' rx=\'50\' ry=\'40\' fill=\'url(%23g)\'/><path d=\'M0,60 Q10,80 30,90 Q50,100 70,90 Q90,80 100,60 Q100,40 90,20 Q70,0 50,10 Q30,0 10,20 Q0,40 0,60 Z\' fill=\'black\' opacity=\'0.15\'/></svg>'); mask-size: cover; mask-repeat: no-repeat;"
+            priority
+          />
+          <div className="absolute inset-0 bg-white/40" />
+        </div>
+        <div className="relative z-10 text-center pt-12">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-[#ff6b00] tracking-widest mb-4 drop-shadow-sm">Vanliga frågor</h1>
+          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto font-light">
+            Här hittar du svar på de vanligaste frågorna om BillboardBee, integritet och plattformens funktioner.
+          </p>
+        </div>
+      </div>
+
+      {/* Q&A Section */}
+      <div className="w-full max-w-3xl mx-auto px-4 py-16">
+        <div className="flex flex-col gap-6">
+          {qaData.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-2xl bg-white shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-200 overflow-hidden"
+            >
               <button
-                className="w-full text-left px-6 py-4 font-bold text-lg text-[#16475b] flex justify-between items-center focus:outline-none"
-                onClick={() => setOpen(open === i ? null : i)}
-                aria-expanded={open === i}
-                aria-controls={`qa-answer-${i}`}
+                onClick={() => toggleItem(item.id)}
+                className="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none group"
+                aria-expanded={openItems.includes(item.id)}
               >
-                <span>{item.q}</span>
-                <span className={`ml-4 transition-transform ${open === i ? 'rotate-90' : ''}`}>▶</span>
-              </button>
-              {open === i && (
-                <div id={`qa-answer-${i}`} className="px-6 pb-4 text-gray-800 text-base animate-fade-in">
-                  {item.a}
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#ff6b00]/10">
+                    <FaQuestionCircle className="text-[#ff6b00] text-xl" />
+                  </span>
+                  <span className="font-semibold text-gray-900 text-lg group-hover:text-[#ff6b00] transition-colors">
+                    {item.question}
+                  </span>
                 </div>
-              )}
+                <FaChevronDown
+                  className={`text-[#ff6b00] text-xl transform transition-transform duration-300 ${openItems.includes(item.id) ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={`px-6 transition-all duration-300 bg-[#fff8f2] ${openItems.includes(item.id) ? 'max-h-96 py-4' : 'max-h-0 py-0'} overflow-hidden`}
+                aria-hidden={!openItems.includes(item.id)}
+              >
+                <p className="text-gray-700 leading-relaxed text-base">
+                  {item.answer}
+                </p>
+              </div>
             </div>
           ))}
         </div>
