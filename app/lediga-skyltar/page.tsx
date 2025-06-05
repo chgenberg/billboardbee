@@ -33,6 +33,8 @@ export default function LedigaSkyltar() {
   const [sortBy, setSortBy] = useState('price-asc');
   const [showMap, setShowMap] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [minTraffic, setMinTraffic] = useState('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -65,9 +67,10 @@ export default function LedigaSkyltar() {
     if (q) setSearch(q);
   }, [searchParams]);
 
-  // Extract unique regions and types
+  // Extract unique values
   const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
   const types = Array.from(new Set((billboards || []).map(b => b.type).filter(Boolean)));
+  const sizes = Array.from(new Set((billboards || []).map(b => b.size).filter(Boolean)));
 
   // Filter billboards
   let filtered = (billboards || []).filter(b => {
@@ -78,7 +81,9 @@ export default function LedigaSkyltar() {
     const matchesRegion = !selectedRegion || b.region === selectedRegion;
     const matchesType = !selectedType || b.type === selectedType;
     const matchesPrice = b.price >= priceRange[0] && b.price <= priceRange[1];
-    return matchesSearch && matchesRegion && matchesType && matchesPrice;
+    const matchesSize = !selectedSize || b.size === selectedSize;
+    const matchesTraffic = !minTraffic || (b.traffic ?? 0) >= parseInt(minTraffic);
+    return matchesSearch && matchesRegion && matchesType && matchesPrice && matchesSize && matchesTraffic;
   });
 
   // Sort billboards
@@ -92,12 +97,18 @@ export default function LedigaSkyltar() {
     }
   });
 
-  const activeFiltersCount = [selectedRegion, selectedType, priceRange[0] > 0 || priceRange[1] < 50000].filter(Boolean).length;
+  const activeFiltersCount = [
+    selectedRegion, 
+    selectedType, 
+    selectedSize,
+    minTraffic,
+    priceRange[0] > 0 || priceRange[1] < 50000
+  ].filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
@@ -108,7 +119,7 @@ export default function LedigaSkyltar() {
                   placeholder="Sök stad, region eller skylt..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-full outline-none focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all duration-200"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm"
                 />
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -118,25 +129,31 @@ export default function LedigaSkyltar() {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowFilters(!showFilters)}
                 className={`relative px-6 py-3 rounded-full font-medium transition-all duration-200 ${
-                  showFilters ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  showFilters 
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
+                    : 'bg-white border border-gray-200 text-gray-700 hover:border-orange-500 hover:text-orange-600 shadow-sm'
                 }`}
               >
-                Filter
+                FILTER
                 {activeFiltersCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 w-6 h-6 bg-orange-600 text-white text-xs rounded-full flex items-center justify-center shadow-md">
                     {activeFiltersCount}
                   </span>
                 )}
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowMap(true)}
-                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors duration-200"
+                className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-full font-medium hover:border-orange-500 hover:text-orange-600 transition-all duration-200 shadow-sm"
               >
-                Karta
-              </button>
+                KARTA
+              </motion.button>
             </div>
           </div>
 
@@ -147,58 +164,132 @@ export default function LedigaSkyltar() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="pt-4 pb-2 flex flex-wrap items-center gap-3">
+                <div className="pt-6 pb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                   {/* Region */}
-                  <select
-                    value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="px-4 py-2 bg-gray-50 rounded-full outline-none focus:bg-white focus:ring-2 focus:ring-gray-200"
-                  >
-                    <option value="">Alla regioner</option>
-                    {regions.map(region => (
-                      <option key={region} value={region || ''}>{region}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Region</label>
+                    <select
+                      value={selectedRegion}
+                      onChange={(e) => setSelectedRegion(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">Alla regioner</option>
+                      {regions.map(region => (
+                        <option key={region} value={region || ''}>{region}</option>
+                      ))}
+                    </select>
+                    <svg className="absolute right-3 top-[60%] -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
 
                   {/* Type */}
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="px-4 py-2 bg-gray-50 rounded-full outline-none focus:bg-white focus:ring-2 focus:ring-gray-200"
-                  >
-                    <option value="">Alla typer</option>
-                    {types.map(type => (
-                      <option key={type} value={type || ''}>{type}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Typ</label>
+                    <select
+                      value={selectedType}
+                      onChange={(e) => setSelectedType(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">Alla typer</option>
+                      {types.map(type => (
+                        <option key={type} value={type || ''}>{type}</option>
+                      ))}
+                    </select>
+                    <svg className="absolute right-3 top-[60%] -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+
+                  {/* Size */}
+                  <div className="relative">
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Storlek</label>
+                    <select
+                      value={selectedSize}
+                      onChange={(e) => setSelectedSize(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">Alla storlekar</option>
+                      {sizes.map(size => (
+                        <option key={size} value={size || ''}>{size}</option>
+                      ))}
+                    </select>
+                    <svg className="absolute right-3 top-[60%] -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+
+                  {/* Price Range */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Pris (kr/mån)</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={priceRange[0] || ''}
+                        onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                        className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm"
+                      />
+                      <span className="text-gray-400">-</span>
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={priceRange[1] === 50000 ? '' : priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 50000])}
+                        className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Traffic */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Min trafik/dag</label>
+                    <input
+                      type="number"
+                      placeholder="Ex: 5000"
+                      value={minTraffic}
+                      onChange={(e) => setMinTraffic(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm"
+                    />
+                  </div>
 
                   {/* Sort */}
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 bg-gray-50 rounded-full outline-none focus:bg-white focus:ring-2 focus:ring-gray-200"
-                  >
-                    <option value="price-asc">Pris: Låg till hög</option>
-                    <option value="price-desc">Pris: Hög till låg</option>
-                    <option value="traffic-desc">Mest trafik</option>
-                    <option value="newest">Nyast</option>
-                  </select>
+                  <div className="relative">
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1 block">Sortera</label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                    >
+                      <option value="price-asc">Pris: Låg till hög</option>
+                      <option value="price-desc">Pris: Hög till låg</option>
+                      <option value="traffic-desc">Mest trafik</option>
+                      <option value="newest">Nyast</option>
+                    </select>
+                    <svg className="absolute right-3 top-[60%] -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
 
                   {/* Clear filters */}
                   {activeFiltersCount > 0 && (
-                    <button
-                      onClick={() => {
-                        setSelectedRegion('');
-                        setSelectedType('');
-                        setPriceRange([0, 50000]);
-                      }}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                    >
-                      Rensa filter
-                    </button>
+                    <div className="col-span-full flex justify-end">
+                      <button
+                        onClick={() => {
+                          setSelectedRegion('');
+                          setSelectedType('');
+                          setSelectedSize('');
+                          setMinTraffic('');
+                          setPriceRange([0, 50000]);
+                        }}
+                        className="px-4 py-2 text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors duration-200"
+                      >
+                        RENSA ALLA FILTER
+                      </button>
+                    </div>
                   )}
                 </div>
               </motion.div>

@@ -86,35 +86,34 @@ export default function Home() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20" />
         </div>
 
-        {/* Search Container */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
+        {/* Search Container - Positioned inside the billboard */}
+        <div className="relative z-10 h-full flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center max-w-4xl mx-auto"
+            className="text-center max-w-3xl mx-auto px-4 -mt-20"
           >
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-4 tracking-tight">
-              Hitta din perfekta
-              <span className="block font-medium text-gray-800">reklamplats</span>
+            <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-3 tracking-tight uppercase">
+              HITTA DIN PERFEKTA
+              <span className="block font-medium text-gray-800">REKLAMPLATS</span>
             </h1>
             
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-gray-600 mb-12 font-light">
+            <p className="text-base md:text-lg text-gray-700 mb-8 font-light uppercase tracking-wide">
               Sveriges ledande marknadsplats för utomhusreklam
             </p>
 
             {/* Search Bar */}
-            <div className={`relative max-w-2xl mx-auto transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
+            <div className={`relative max-w-xl mx-auto transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
               <div className="relative bg-white/95 backdrop-blur-md rounded-full shadow-2xl border border-gray-100 overflow-hidden">
                 <input
                   type="text"
                   placeholder="Sök stad eller region..."
-                  className="w-full px-8 py-6 pr-32 text-lg bg-transparent outline-none text-gray-900 placeholder-gray-400"
+                  className="w-full px-6 py-4 pr-24 text-base bg-transparent outline-none text-gray-900 placeholder-gray-400"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
@@ -127,19 +126,19 @@ export default function Home() {
                 />
                 <button
                   onClick={() => handleSearch(search)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium text-sm"
                 >
-                  Sök
+                  SÖK
                 </button>
               </div>
 
               {/* Quick Links */}
-              <div className="flex flex-wrap justify-center gap-3 mt-6">
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
                 {['Stockholm', 'Göteborg', 'Malmö', 'Uppsala'].map((city) => (
                   <button
                     key={city}
                     onClick={() => handleSearch(city)}
-                    className="px-6 py-2 text-sm text-gray-600 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200 border border-gray-200"
+                    className="px-4 py-1.5 text-xs text-gray-600 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200 border border-gray-200"
                   >
                     {city}
                   </button>
@@ -153,12 +152,12 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               onClick={() => setShowMap(true)}
-              className="mt-8 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+              className="mt-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
-              <span className="font-medium">Visa karta</span>
+              <span className="font-medium uppercase">Visa karta</span>
             </motion.button>
           </motion.div>
         </div>
@@ -190,8 +189,8 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              Utvalda skyltar
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4 uppercase tracking-wide">
+              UTVALDA SKYLTAR
             </h2>
             <p className="text-lg text-gray-600 font-light">
               Upptäck våra mest populära reklamplatser
@@ -200,7 +199,7 @@ export default function Home() {
 
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -252,7 +251,7 @@ export default function Home() {
               href="/lediga-skyltar"
               className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
             >
-              Visa alla skyltar
+              VISA ALLA SKYLTAR
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

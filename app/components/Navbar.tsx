@@ -158,12 +158,16 @@ export default function Navbar() {
       </div>
       {/* Logga in knapp och meny */}
       <div className="flex items-center gap-2 relative" ref={authMenuRef}>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setAuthMenuOpen(v => !v)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#ff6b00] text-white font-bold shadow hover:bg-[#ff8c42] transition-colors text-sm"
+          className="relative flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-sm overflow-hidden group"
         >
-          <FaUserCircle className="text-lg mr-1" /> Logga in
-        </button>
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          <FaUserCircle className="text-lg relative z-10" />
+          <span className="relative z-10 uppercase tracking-wide">Logga in</span>
+        </motion.button>
         <AnimatePresence>
           {authMenuOpen && (
             <motion.div
