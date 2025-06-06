@@ -136,13 +136,35 @@ export default function Home() {
                   placeholder="Sök efter stad eller område..."
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleSearch(searchQuery);
                     }
                   }}
                 />
+                {showSuggestions && filteredCities.length > 0 && (
+                  <ul className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-60 overflow-auto">
+                    {filteredCities.map((city, idx) => (
+                      <li
+                        key={city + idx}
+                        className="px-4 py-2 cursor-pointer hover:bg-orange-50 text-gray-900"
+                        onMouseDown={() => {
+                          setSearchQuery(city);
+                          setShowSuggestions(false);
+                          handleSearch(city);
+                        }}
+                      >
+                        {city}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <button
                   onClick={() => handleSearch(searchQuery)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-500 hover:text-orange-600"
