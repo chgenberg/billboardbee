@@ -492,58 +492,44 @@ export default function SellerBillboardForm() {
             Tillgängliga perioder
             <HelpTooltip text={helpTexts.availableWeeks} />
           </label>
-          {/* Tabs */}
-          <div className="flex gap-2 mb-4">
-            <button
-              type="button"
-              onClick={() => setCalendarTab('standard')}
-              className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${calendarTab === 'standard' ? 'bg-orange-500 text-white shadow' : 'bg-white border border-orange-200 text-gray-700 hover:bg-orange-50'}`}
-            >
-              Standardperiod
-            </button>
-            <button
-              type="button"
-              onClick={() => setCalendarTab('peak')}
-              className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${calendarTab === 'peak' ? 'bg-orange-500 text-white shadow' : 'bg-white border border-orange-200 text-gray-700 hover:bg-orange-50'}`}
-            >
-              Peak-period 🔥
-            </button>
-          </div>
-          {/* Kalendern */}
-          <div className="bg-white rounded-2xl shadow border border-gray-100 p-4">
-            <div className="mb-2 text-sm text-gray-700">
+          <button
+            type="button"
+            className="px-4 py-2 rounded-xl font-medium bg-orange-500 text-white shadow hover:bg-orange-600 transition-all duration-200 mb-4"
+            onClick={() => setCalendarOpen(true)}
+          >
+            Välj period
+          </button>
+          {/* Lista med valda datum */}
+          <div className="mt-6">
+            <div className="mb-2 text-xs text-gray-500 font-semibold">Valda datum:</div>
+            <div className="flex flex-wrap gap-2">
               {calendarTab === 'standard'
-                ? 'Välj dagar med standardpris. Klicka på en dag för att markera/avmarkera.'
-                : 'Välj högsäsongsdagar med högre pris (t.ex. sommar, storhelger).'}
-            </div>
-            <SellerCalendarPopup
-              standardDays={standardDays}
-              setStandardDays={setStandardDays}
-              peakDays={peakDays}
-              setPeakDays={setPeakDays}
-              tab={calendarTab}
-              setTab={(tab) => setCalendarTab(tab as 'standard' | 'peak')}
-              onClose={() => {}}
-            />
-            {/* Lista med valda datum */}
-            <div className="mt-6">
-              <div className="mb-2 text-xs text-gray-500 font-semibold">Valda datum:</div>
-              <div className="flex flex-wrap gap-2">
-                {calendarTab === 'standard'
-                  ? standardDays.length > 0
-                    ? standardDays.map((d, i) => (
-                        <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
-                      ))
-                    : <span className="text-gray-400">Inga valda standarddagar</span>
-                  : peakDays.length > 0
-                    ? peakDays.map((d, i) => (
-                        <span key={i} className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
-                      ))
-                    : <span className="text-gray-400">Inga valda peak-dagar</span>
-                }
-              </div>
+                ? standardDays.length > 0
+                  ? standardDays.map((d, i) => (
+                      <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
+                    ))
+                  : <span className="text-gray-400">Inga valda standarddagar</span>
+                : peakDays.length > 0
+                  ? peakDays.map((d, i) => (
+                      <span key={i} className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
+                    ))
+                  : <span className="text-gray-400">Inga valda peak-dagar</span>
+              }
             </div>
           </div>
+          <AnimatePresence>
+            {calendarOpen && (
+              <SellerCalendarPopup
+                standardDays={standardDays}
+                setStandardDays={setStandardDays}
+                peakDays={peakDays}
+                setPeakDays={setPeakDays}
+                tab={calendarTab}
+                setTab={(tab) => setCalendarTab(tab as 'standard' | 'peak')}
+                onClose={() => setCalendarOpen(false)}
+              />
+            )}
+          </AnimatePresence>
         </div>
 
         {/* CTA */}
