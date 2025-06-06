@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import SimpleChatBot from './components/SimpleChatBot'
 import { Providers } from './providers'
+// import PromoBanner from './components/PromoBanner'
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['400', '600', '700'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="sv">
       <body className={`${nunito.className} min-h-screen flex flex-col bg-white relative`}>
         <Providers>
+          {/* <PromoBanner /> */}
           <Navbar />
           <main className="flex-grow relative z-10 pt-20">
             {children}
