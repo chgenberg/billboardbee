@@ -47,6 +47,10 @@ export default function Navbar() {
       ]
     },
     {
+      label: "Pris",
+      path: "/pris"
+    },
+    {
       label: "Kontakt",
       path: "/kontakt"
     }
@@ -85,11 +89,19 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
               {menuItems.map((item, index) => (
                 <div key={item.label} className="relative group">
-                  {item.path ? (
+                  {item.path || item.label === "Upptäck" || item.label === "Om BillboardBee" ? (
                     <Link
-                      href={item.path}
+                      href={
+                        item.path
+                          ? item.path
+                          : item.label === "Upptäck"
+                          ? "/lediga-skyltar"
+                          : item.label === "Om BillboardBee"
+                          ? "/om-oss"
+                          : "#"
+                      }
                       className={`relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider transition-all duration-300 group whitespace-nowrap ${
-                        isActive(item.path)
+                        isActive(item.path || (item.label === "Upptäck" ? "/lediga-skyltar" : item.label === "Om BillboardBee" ? "/om-oss" : ""))
                           ? 'text-orange-600'
                           : 'text-gray-700 hover:text-orange-600'
                       }`}
@@ -101,7 +113,7 @@ export default function Navbar() {
                         whileHover={{ scale: 1.1 }}
                       />
                       {/* Active indicator */}
-                      {isActive(item.path) && (
+                      {isActive(item.path || (item.label === "Upptäck" ? "/lediga-skyltar" : item.label === "Om BillboardBee" ? "/om-oss" : "")) && (
                         <motion.div
                           layoutId="navbar-indicator"
                           className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
@@ -229,12 +241,20 @@ export default function Navbar() {
                 <nav className="space-y-1">
                   {menuItems.map((item) => (
                     <div key={item.label} className="relative">
-                      {item.path ? (
+                      {item.path || item.label === "Upptäck" || item.label === "Om BillboardBee" ? (
                         <Link
-                          href={item.path}
+                          href={
+                            item.path
+                              ? item.path
+                              : item.label === "Upptäck"
+                              ? "/lediga-skyltar"
+                              : item.label === "Om BillboardBee"
+                              ? "/om-oss"
+                              : "#"
+                          }
                           onClick={() => setIsMobileMenuOpen(false)}
                           className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
-                            isActive(item.path)
+                            isActive(item.path || (item.label === "Upptäck" ? "/lediga-skyltar" : item.label === "Om BillboardBee" ? "/om-oss" : ""))
                               ? 'bg-orange-50 text-orange-600'
                               : 'text-gray-700 hover:bg-gray-50'
                           }`}
