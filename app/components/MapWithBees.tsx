@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Billboard } from '../types/billboard';
 
 // Skapa en custom bi-ikon
 const beeIcon = new L.Icon({
@@ -20,17 +21,6 @@ const blackBeeIcon = new L.Icon({
   popupAnchor: [0, -40],
   className: 'bee-marker',
 });
-
-type Billboard = { 
-  id: string; 
-  lat: number; 
-  lng: number; 
-  title?: string;
-  location?: string;
-  isOffice?: boolean;
-  imageUrls?: string[];
-  [key: string]: unknown 
-};
 
 interface MapWithBeesProps {
   billboards?: Billboard[];

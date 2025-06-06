@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { XMarkIcon, MapIcon } from '@heroicons/react/24/outline';
 
 const BillboardMapWrapper = dynamic(() => import('../components/BillboardMapWrapper'), { ssr: false });
 
@@ -35,6 +36,7 @@ export default function LedigaSkyltar() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [minTraffic, setMinTraffic] = useState('');
+  const [selectedBillboard, setSelectedBillboard] = useState<Billboard | null>(null);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -386,29 +388,53 @@ export default function LedigaSkyltar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowMap(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-5xl h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden mt-16"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={() => setShowMap(false)}
-                className="absolute top-6 right-6 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200 shadow-lg"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <BillboardMapWrapper />
+              <div className="absolute top-4 right-4 z-[100]">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowMap(false)}
+                  className="p-4 bg-black/90 text-white rounded-full shadow-2xl border-2 border-white hover:bg-black transition-colors"
+                  style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.25)' }}
+                >
+                  <XMarkIcon className="w-7 h-7" />
+                </motion.button>
+              </div>
+              <div className="w-full h-full">
+                <BillboardMapWrapper
+                  billboards={filtered}
+                  selectedBillboard={selectedBillboard}
+                  onSelectBillboard={setSelectedBillboard}
+                  onClose={() => setShowMap(false)}
+                />
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Map Button */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowMap(true)}
+          className="bg-white text-gray-900 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium"
+        >
+          <MapIcon className="w-5 h-5" />
+          Visa karta
+        </motion.button>
+      </div>
     </div>
   );
 } 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { Billboard } from '../types/billboard';
 
 const MapWithBees = dynamic(() => import('../components/MapWithBees'), { ssr: false });
 
@@ -13,7 +14,7 @@ export default function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [billboards, setBillboards] = useState<any[]>([]);
+  const [billboards, setBillboards] = useState<Billboard[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,16 +53,19 @@ export default function Contact() {
       try {
         const response = await fetch('/api/billboards');
         const data = await response.json();
-        const mapped = (Array.isArray(data) ? data : data.billboards || [])
+        const billboards: Billboard[] = Array.isArray(data) ? data : data.billboards || [];
+        const mapped = billboards
           .filter(b => typeof b.latitude === 'number' && typeof b.longitude === 'number')
           .map(b => ({ ...b, lat: b.latitude, lng: b.longitude }));
         // Lägg till kontorsmarkör
         mapped.push({
           id: 'office',
-          lat: 59.3325806,
-          lng: 18.0649031,
           title: 'BillboardBee HQ',
           location: 'Drottninggatan 12, Stockholm',
+          latitude: 59.3325806,
+          longitude: 18.0649031,
+          lat: 59.3325806,
+          lng: 18.0649031,
           isOffice: true
         });
         setBillboards(mapped);
