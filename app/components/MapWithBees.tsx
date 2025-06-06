@@ -14,6 +14,7 @@ const beeIcon = new L.Icon({
   className: 'bee-marker',
 });
 
+// Kontorsikon: svart bi
 const blackBeeIcon = new L.Icon({
   iconUrl: '/bi-black.png',
   iconSize: [40, 40],
