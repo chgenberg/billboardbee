@@ -1,6 +1,8 @@
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { CalendarDaysIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const helpTexts = {
   standard: 'Standardperiod: Vanliga veckor/dagar med ordinarie pris.',
@@ -40,60 +42,143 @@ export default function SellerCalendarPopup({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
-      <div className="relative bg-white rounded-3xl p-6 w-[99vw] max-w-3xl h-[80vh] flex flex-col border-2 border-[#ff6b00] shadow-xl">
-        <button className="absolute top-4 right-4 text-[#ff6b00] text-2xl font-bold" onClick={onClose}>&times;</button>
-        <div className="flex gap-4 mb-6 justify-center">
-          <button
-            className={`px-6 py-2 rounded-full font-bold text-base border transition-all duration-200 ${tab === 'standard' ? 'bg-[#ff6b00] text-white border-[#ff6b00]' : 'bg-white text-[#ff6b00] border-[#ff6b00]'}`}
-            onClick={() => setTab('standard')}
-          >
-            Standardperiod <HelpIcon type="standard" />
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-bold text-base border transition-all duration-200 ${tab === 'peak' ? 'bg-[#ff6b00] text-white border-[#ff6b00]' : 'bg-white text-[#ff6b00] border-[#ff6b00]'}`}
-            onClick={() => setTab('peak')}
-          >
-            Peak-period <HelpIcon type="peak" />
-          </button>
-        </div>
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="w-full max-w-2xl bg-white rounded-2xl p-6 flex items-center justify-center border-2 border-[#ff6b00] shadow-md">
-            <DayPicker
-              mode="multiple"
-              selected={tab === 'standard' ? standardDays : peakDays}
-              onSelect={days => {
-                if (tab === 'standard') setStandardDays(days || []);
-                else setPeakDays(days || []);
-              }}
-              modifiers={{
-                peak: peakDays,
-                standard: standardDays
-              }}
-              modifiersClassNames={{
-                peak: 'bg-[#ffb347] text-black font-bold',
-                standard: 'bg-[#ffe082] text-black font-bold',
-                selected: 'rounded-full border-2 border-[#ff6b00] text-black',
-                hover: 'hover:bg-[#fff7e6] hover:text-[#ff6b00]',
-              }}
-              className="rounded-2xl"
-              styles={{
-                caption: { color: '#ff6b00', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif', background: 'white', padding: '0.5rem', borderRadius: '0.75rem' },
-                day: { borderRadius: '1rem', background: '#fff', border: '1px solid #eee', margin: 2, transition: 'background 0.2s', color: '#23272f', fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif', fontWeight: 500 },
-                day_selected: { borderRadius: '1rem', border: '2px solid #ff6b00', background: '#fff3e0', color: '#ff6b00' },
-                months: { justifyContent: 'center', display: 'flex', gap: '2rem' },
-              }}
-            />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <CalendarDaysIcon className="w-8 h-8" />
+              <h2 className="text-2xl font-semibold">Välj tillgängliga perioder</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+            >
+              <XMarkIcon className="w-6 h-6" />
+            </button>
+          </div>
+          
+          {/* Tabs */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setTab('standard')}
+              className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                tab === 'standard' 
+                  ? 'bg-white text-orange-600' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              Standardperiod
+            </button>
+            <button
+              onClick={() => setTab('peak')}
+              className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                tab === 'peak' 
+                  ? 'bg-white text-orange-600' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              Peak-period 🔥
+            </button>
           </div>
         </div>
-        <button
-          className="mt-8 mx-auto px-10 py-4 rounded-full bg-[#ff6b00] text-white font-bold text-xl border border-[#ff6b00] tracking-wide font-avenir hover:bg-white hover:text-[#ff6b00] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40"
-          style={{ fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif' }}
-          onClick={onClose}
-        >
-          KLAR
-        </button>
-      </div>
+
+        {/* Calendar */}
+        <div className="p-6">
+          <div className="mb-4 text-sm text-gray-600">
+            {tab === 'standard' ? (
+              <p>Välj dagar med standardpris. Klicka på en dag för att markera/avmarkera.</p>
+            ) : (
+              <p>Välj högsäsongsdagar med högre pris (t.ex. sommar, storhelger).</p>
+            )}
+          </div>
+          
+          <DayPicker
+            mode="multiple"
+            selected={tab === 'standard' ? standardDays : peakDays}
+            onSelect={days => {
+              if (tab === 'standard') setStandardDays(days || []);
+              else setPeakDays(days || []);
+            }}
+            modifiers={{
+              peak: peakDays,
+              standard: standardDays
+            }}
+            modifiersClassNames={{
+              peak: 'rdp-day_peak',
+              standard: 'rdp-day_standard',
+            }}
+            className="rdp-custom"
+          />
+          
+          <style jsx global>{`
+            .rdp-custom {
+              --rdp-cell-size: 40px;
+              --rdp-accent-color: #ff6b00;
+              --rdp-background-color: #ff6b00;
+              margin: 0 auto;
+            }
+            
+            .rdp-custom .rdp-day {
+              border-radius: 12px;
+              font-weight: 500;
+              transition: all 0.2s;
+            }
+            
+            .rdp-custom .rdp-day:hover:not(.rdp-day_selected) {
+              background-color: #f3f4f6;
+            }
+            
+            .rdp-custom .rdp-day_selected:not(.rdp-day_disabled) {
+              background-color: #ff6b00;
+              color: white;
+              font-weight: 600;
+            }
+            
+            .rdp-custom .rdp-day_standard:not(.rdp-day_selected) {
+              background-color: #e0f2fe;
+              color: #0369a1;
+            }
+            
+            .rdp-custom .rdp-day_peak:not(.rdp-day_selected) {
+              background-color: #fef3c7;
+              color: #d97706;
+            }
+            
+            .rdp-custom .rdp-caption {
+              font-weight: 600;
+              font-size: 1.1rem;
+              color: #1f2937;
+            }
+            
+            .rdp-custom .rdp-head_cell {
+              font-weight: 600;
+              color: #6b7280;
+              font-size: 0.875rem;
+            }
+          `}</style>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-gray-50 px-6 py-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            <span className="font-medium">{standardDays.length}</span> standarddagar, 
+            <span className="font-medium ml-1">{peakDays.length}</span> peak-dagar
+          </div>
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow hover:shadow-lg transition-all duration-200"
+          >
+            Klar
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 } 

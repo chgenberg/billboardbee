@@ -15,12 +15,11 @@ const orangeIcon = new Icon({
 
 // Grå pin för befintliga skyltar
 const grayIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  shadowSize: [41, 41],
+  iconUrl: '/pinbi2.png',
+  iconSize: [36, 44],
+  iconAnchor: [18, 44],
+  popupAnchor: [0, -44],
+  shadowUrl: undefined,
 });
 
 interface Billboard {

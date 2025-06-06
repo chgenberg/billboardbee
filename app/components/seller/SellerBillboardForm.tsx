@@ -140,6 +140,15 @@ export default function SellerBillboardForm() {
     setError(null);
     
     try {
+      // Hämta JWT-token från localStorage eller cookies
+      const token = localStorage.getItem('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+      
+      if (!token) {
+        setError('Du måste vara inloggad för att skapa en annons');
+        setLoading(false);
+        return;
+      }
+      
       const formData = new FormData();
       formData.append('title', form.title);
       if (form.coverImage) formData.append('coverImage', form.coverImage);
@@ -156,6 +165,9 @@ export default function SellerBillboardForm() {
 
       const res = await fetch('/api/billboards', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
       
@@ -234,7 +246,7 @@ export default function SellerBillboardForm() {
             type="text"
             value={form.title}
             onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 text-gray-900"
             placeholder="Ex: Stor LED-skylt vid E6:an – syns av 65 000 bilar/dag"
             required
           />
@@ -249,7 +261,7 @@ export default function SellerBillboardForm() {
           <textarea
             value={form.teaser}
             onChange={(e) => setForm(f => ({ ...f, teaser: e.target.value }))}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 resize-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 resize-none text-gray-900"
             placeholder="Beskriv vad som gör din skyltplats unik..."
             rows={3}
             required
@@ -399,7 +411,7 @@ export default function SellerBillboardForm() {
             type="text"
             value={form.trafficTeaser}
             onChange={(e) => setForm(f => ({ ...f, trafficTeaser: e.target.value }))}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 text-gray-900"
             placeholder="Ex: 65 000 fordon passerar varje dag"
             required
           />
@@ -453,7 +465,7 @@ export default function SellerBillboardForm() {
               type="number"
               value={form.basePrice}
               onChange={(e) => setForm(f => ({ ...f, basePrice: e.target.value }))}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 text-gray-900"
               placeholder="18900"
               required
             />
@@ -468,7 +480,7 @@ export default function SellerBillboardForm() {
               type="number"
               value={form.peakPrice}
               onChange={(e) => setForm(f => ({ ...f, peakPrice: e.target.value }))}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 text-gray-900"
               placeholder="22900"
             />
           </div>
@@ -502,7 +514,7 @@ export default function SellerBillboardForm() {
             type="text"
             value={form.cta}
             onChange={(e) => setForm(f => ({ ...f, cta: e.target.value }))}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 text-gray-900"
             placeholder="Ex: Boka vecka 34 • 18 900 kr"
             required
           />

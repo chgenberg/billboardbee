@@ -155,7 +155,7 @@ export default function TeamPage() {
                       type="text"
                       value={newMember.name}
                       onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900"
                       placeholder="Ange namn"
                     />
                   </div>
@@ -168,7 +168,7 @@ export default function TeamPage() {
                       type="email"
                       value={newMember.email}
                       onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900"
                       placeholder="namn@exempel.se"
                     />
                   </div>
@@ -180,7 +180,7 @@ export default function TeamPage() {
                     <select
                       value={newMember.role}
                       onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900"
                     >
                       <option value="Medarbetare">Medarbetare</option>
                       <option value="Annonsör">Annonsör</option>

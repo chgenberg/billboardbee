@@ -39,6 +39,22 @@ export default function AnnonsorDashboard() {
         </p>
       </motion.div>
 
+      {/* CTA Button - direkt under välkomsttexten */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+        className="flex justify-center mb-8"
+      >
+        <button
+          onClick={() => window.location.href = '/saljare/ny-annons'}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-lg animate-bounce-short"
+        >
+          <FaPlusCircle className="text-xl" />
+          Skapa ny annons
+        </button>
+      </motion.div>
+
       {/* Stats Grid */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -92,22 +108,6 @@ export default function AnnonsorDashboard() {
             </motion.div>
           ))}
         </div>
-      </motion.div>
-
-      {/* CTA Button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="flex justify-center"
-      >
-        <button
-          onClick={() => window.location.href = '/saljare/ny-annons'}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
-        >
-          <FaPlusCircle className="text-xl" />
-          Skapa ny annons
-        </button>
       </motion.div>
     </div>
   );
