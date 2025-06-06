@@ -50,7 +50,7 @@ export default function BillboardMap({ focusBillboardId, height }: { focusBillbo
   useEffect(() => {
     fetch('/api/billboards')
       .then(res => res.json())
-      .then(data => setBillboards(data.filter((b: Billboard) => b.latitude && b.longitude)))
+      .then(data => setBillboards(data.filter((b: Billboard) => b.latitude !== null && b.longitude !== null)))
       .finally(() => setLoading(false));
   }, []);
 

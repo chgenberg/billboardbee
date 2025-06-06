@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon, MapPinIcon, FunnelIcon, HeartIcon, BellIcon } from
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Billboard {
   id: string;
@@ -203,9 +204,9 @@ export default function UtforskaPage() {
                           {billboard.status === "ledig" ? 'Tillgänglig' : 'Upptagen'}
                         </span>
                       </div>
-                      <button className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow hover:shadow-lg transition-all duration-200">
+                      <Link href={`/dashboard-annonsor/skylt/${billboard.id}`} className="w-full block py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow hover:shadow-lg transition-all duration-200 text-center">
                         Visa detaljer
-                      </button>
+                      </Link>
                     </div>
                   </motion.div>
                 ))}

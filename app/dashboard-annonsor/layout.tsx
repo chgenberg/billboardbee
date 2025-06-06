@@ -50,10 +50,10 @@ export default function DashboardLayout({
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20"
+          className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-32"
         >
           {/* Skapa ny annons knapp - mer prominent */}
-          <div className="px-4 mb-4">
+          {/* <div className="px-4 mb-4">
             <Link
               href="/saljare/ny-annons"
               className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
@@ -61,7 +61,7 @@ export default function DashboardLayout({
               <PlusCircleIcon className="w-6 h-6" />
               SKAPA ANNONS
             </Link>
-          </div>
+          </div> */}
           
           <nav className="px-4 space-y-1">
             {/* Översikt med närmare markering */}
@@ -104,7 +104,7 @@ export default function DashboardLayout({
         </motion.aside>
 
         {/* Main content */}
-        <main className="flex-1 pl-64 pt-20">
+        <main className="flex-1 pl-64 pt-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </div>

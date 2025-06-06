@@ -24,11 +24,32 @@ export default function Navbar() {
   }, []);
 
   const menuItems = [
-    { href: "/lediga-skyltar", label: "LEDIGA SKYLTAR" },
-    { href: "/buzz-idegeneratorn", label: "BUZZ IDÉGENERATORN" },
-    { href: "/om-oss", label: "OM OSS" },
-    { href: "/qa", label: "FAQ" },
-    { href: "/kontakt", label: "KONTAKT" }
+    {
+      label: "Upptäck",
+      children: [
+        { label: "Lediga skyltar", path: "/skyltar" },
+        { label: "Buzz-idégeneratorn", path: "/buzz" }
+      ]
+    },
+    {
+      label: "Om BillboardBee",
+      children: [
+        { label: "Om oss", path: "/om-oss" },
+        { label: "FAQ", path: "/faq" }
+      ]
+    },
+    {
+      label: "Partner",
+      path: "/partner",
+      children: [
+        { label: "Annonsör", path: "/annonsor" },
+        { label: "Uthyrare", path: "/uthyrare" }
+      ]
+    },
+    {
+      label: "Kontakt",
+      path: "/kontakt"
+    }
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -64,15 +85,15 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
               {menuItems.map((item, index) => (
                 <motion.div
-                  key={item.href}
+                  key={item.label}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
                   <Link
-                    href={item.href}
+                    href={item.path}
                     className={`relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider transition-all duration-300 group whitespace-nowrap ${
-                      isActive(item.href)
+                      isActive(item.path)
                         ? 'text-orange-600'
                         : 'text-gray-700 hover:text-orange-600'
                     }`}
@@ -86,7 +107,7 @@ export default function Navbar() {
                     />
                     
                     {/* Active indicator */}
-                    {isActive(item.href) && (
+                    {isActive(item.path) && (
                       <motion.div
                         layoutId="navbar-indicator"
                         className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
@@ -186,11 +207,11 @@ export default function Navbar() {
                 <nav className="space-y-1">
                   {menuItems.map((item) => (
                     <Link
-                      key={item.href}
-                      href={item.href}
+                      key={item.label}
+                      href={item.path}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
-                        isActive(item.href)
+                        isActive(item.path)
                           ? 'bg-orange-50 text-orange-600'
                           : 'text-gray-700 hover:bg-gray-50'
                       }`}
