@@ -7,22 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { XMarkIcon, MapIcon } from '@heroicons/react/24/outline';
+import { Billboard } from '../types/billboard';
 
 const BillboardMapWrapper = dynamic(() => import('../components/BillboardMapWrapper'), { ssr: false });
-
-interface Billboard {
-  id: string;
-  title: string;
-  description: string;
-  imageUrls: string[];
-  location: string;
-  price: number;
-  status: string;
-  size: string | null;
-  type: string | null;
-  traffic: number | null;
-  region: string | null;
-}
 
 export default function LedigaSkyltar() {
   const [billboards, setBillboards] = useState<Billboard[]>([]);
