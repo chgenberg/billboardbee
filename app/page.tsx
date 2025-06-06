@@ -10,6 +10,7 @@ import BeeQuizModal from './components/BeeQuizModal';
 import { FaMapMarkedAlt } from 'react-icons/fa';
 import { MagnifyingGlassIcon, MapIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon } from '@heroicons/react/24/outline';
+import Papa from 'papaparse';
 
 const MapWithBees = dynamic(() => import('./components/MapWithBees'), { ssr: false });
 const BillboardMapWrapper = dynamic(() => import('./components/BillboardMapWrapper'), { ssr: false });
@@ -38,6 +39,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Billboard[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -67,15 +70,24 @@ export default function Home() {
     fetchBillboards();
   }, []);
 
+  // Läs in städer från CSV vid mount
+  useEffect(() => {
+    fetch('/Stader.csv')
+      .then(res => res.text())
+      .then(csv => {
+        const parsed = Papa.parse(csv, { header: false });
+        const cities = parsed.data.map((row: any) => row[0]).filter((c: string) => !!c && typeof c === 'string');
+        setCitySuggestions(cities);
+      });
+  }, []);
+
   // Extract unique regions safely
   const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
 
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
-    if (value.trim().length > 0) {
-      // Lägg till viewport parameter för att behålla mobil-vyn
-      const isMobile = window.innerWidth < 640; // sm breakpoint i Tailwind
-      router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}${isMobile ? '&viewport=mobile' : ''}`);
+  const handleSearch = (value?: string) => {
+    const searchValue = value || searchQuery;
+    if (searchValue.trim()) {
+      router.push(`/lediga-skyltar?search=${encodeURIComponent(searchValue)}`);
     }
   };
 
@@ -83,6 +95,11 @@ export default function Home() {
     setSearchQuery(city);
     handleSearch(city);
   };
+
+  // Filtrera förslag baserat på input
+  const filteredCities = searchQuery.length > 0
+    ? citySuggestions.filter(city => city.toLowerCase().startsWith(searchQuery.toLowerCase())).slice(0, 8)
+    : [];
 
   return (
     <>
@@ -112,51 +129,34 @@ export default function Home() {
             <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">REKLAMPLATS</span>
           </h2>
           <div className="space-y-2 sm:space-y-2 w-full max-w-[280px] sm:max-w-2xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Sök stad, region eller skylt..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch(searchQuery);
-                  }
-                }}
-                className="w-full px-3 py-2 sm:px-6 sm:py-4 text-xs sm:text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/95 text-black shadow-md"
-              />
-              <button
-                onClick={() => handleSearch(searchQuery)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <MagnifyingGlassIcon className="h-4 w-4 sm:h-6 sm:w-6 text-gray-400" />
-              </button>
-            </div>
-            {/* Ort-förslag endast på desktop */}
-            <div className="hidden sm:flex flex-wrap justify-center gap-5 mt-8">
-              {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
+            <div className="flex flex-col gap-4 w-full max-w-2xl">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Sök efter stad eller område..."
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(searchQuery);
+                    }
+                  }}
+                />
                 <button
-                  key={city}
-                  onClick={() => handleQuickSearch(city)}
-                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-semibold text-gray-700 transition-colors"
+                  onClick={() => handleSearch(searchQuery)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-500 hover:text-orange-600"
                 >
-                  {city}
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
                 </button>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center mt-2 sm:mt-4">
-              <Link
-                href="/lediga-skyltar"
-                className="inline-flex items-center justify-center px-3 sm:px-8 py-2 sm:py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base w-[180px] sm:w-auto mx-auto"
-              >
-                <MagnifyingGlassIcon className="h-3 w-3 sm:h-5 sm:w-5 mr-2" />
-                SÖK SKYLTAR
-              </Link>
+              </div>
               <button
                 onClick={() => setShowMap(true)}
-                className="inline-flex items-center justify-center px-3 sm:px-8 py-2 sm:py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200 text-xs sm:text-base w-[180px] sm:w-auto mx-auto"
+                className="px-6 py-3 bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 transition-colors mx-auto flex items-center justify-center"
               >
-                <MapPinIcon className="h-3 w-3 sm:h-5 sm:w-5 mr-2" />
+                <MapPinIcon className="h-5 w-5 mr-2" />
                 VISA KARTA
               </button>
             </div>
@@ -266,6 +266,7 @@ export default function Home() {
                   billboards={billboards.filter(b => typeof b.latitude === 'number' && typeof b.longitude === 'number').map(b => ({ ...b, lat: b.latitude, lng: b.longitude }))}
                   initialCenter={[59.3325806, 18.0649031]}
                   initialZoom={13}
+                  key="map-with-bees"
                 />
               </div>
             </div>
