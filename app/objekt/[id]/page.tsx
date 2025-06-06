@@ -25,7 +25,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import BookingCalendar from '@/app/components/BookingCalendar';
 import { Billboard } from '../../types/billboard';
 
-const BillboardMapWrapper = dynamic(() => import('../../components/BillboardMapWrapper'), { 
+const MapWithBees = dynamic(() => import('../../components/MapWithBees'), { 
   ssr: false,
   loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-xl" />
 });
@@ -360,12 +360,15 @@ export default function BillboardPage() {
               
               {billboard.latitude && billboard.longitude ? (
                 <>
-                  <div className="h-64 rounded-xl overflow-hidden mb-4">
-                    <BillboardMapWrapper 
-                      billboards={[billboard]}
-                      selectedBillboard={null}
-                      onSelectBillboard={() => {}}
-                      onClose={() => {}}
+                  <div className="h-64 rounded-xl overflow-hidden mb-4 border-4 border-orange-100">
+                    <MapWithBees 
+                      billboards={[{
+                        ...billboard,
+                        lat: billboard.latitude,
+                        lng: billboard.longitude
+                      }]}
+                      initialCenter={[billboard.latitude, billboard.longitude]}
+                      initialZoom={14}
                     />
                   </div>
                   <div className="space-y-3">
