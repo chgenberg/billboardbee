@@ -18,6 +18,8 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 export default function DashboardLayout({
   children,
@@ -26,6 +28,7 @@ export default function DashboardLayout({
 }) {
   const { user } = useAuth();
   const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   if (user?.role === 'ANNONSOR' && !pathname.startsWith('/dashboard-annonsor')) {
     if (typeof window !== 'undefined') {
       window.location.href = '/dashboard-annonsor';
@@ -49,14 +52,39 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Mobile sidebar toggle button */}
+      <button
+        className="fixed top-4 left-4 z-50 p-2 rounded-full bg-white shadow-lg md:hidden"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Öppna meny"
+        style={{ display: sidebarOpen ? 'none' : 'block' }}
+      >
+        <ArrowRightIcon className="w-7 h-7 text-gray-700" />
+      </button>
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       <div className="flex">
         {/* Sidebar */}
         <motion.aside
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20"
+          initial={false}
+          animate={{ x: sidebarOpen || typeof window === 'undefined' ? 0 : '-100%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20 z-50 md:translate-x-0 md:static md:block"
+          style={{ transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)' }}
         >
+          {/* Close button for mobile */}
+          <button
+            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white shadow-lg md:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Stäng meny"
+          >
+            <ArrowLeftIcon className="w-7 h-7 text-gray-700" />
+          </button>
           {/* Skapa annons knapp för UTHYRARE */}
           {user?.role === 'UTHYRARE' && (
             <div className="px-4 mb-4">
@@ -111,7 +139,7 @@ export default function DashboardLayout({
         </motion.aside>
 
         {/* Main content */}
-        <main className="flex-1 pl-64 pt-20">
+        <main className="flex-1 pt-20 md:pl-64">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </div>
