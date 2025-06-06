@@ -65,7 +65,7 @@ export default function About() {
 
       {/* Vision Section */}
       <section className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="w-full sm:max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -129,7 +129,7 @@ export default function About() {
 
       {/* Impact Section */}
       <section className="py-24 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="w-full sm:max-w-6xl mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -171,7 +171,7 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center"
+          className="w-full sm:max-w-4xl mx-auto text-center"
         >
           <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-8 uppercase tracking-wide">
             FRAMTIDEN ÄR HÄR

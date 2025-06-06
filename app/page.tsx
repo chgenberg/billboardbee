@@ -73,7 +73,9 @@ export default function Home() {
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     if (value.trim().length > 0) {
-      router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}`);
+      // Lägg till viewport parameter för att behålla mobil-vyn
+      const isMobile = window.innerWidth < 640; // sm breakpoint i Tailwind
+      router.push(`/lediga-skyltar?search=${encodeURIComponent(value.trim())}${isMobile ? '&viewport=mobile' : ''}`);
     }
   };
 
@@ -102,7 +104,7 @@ export default function Home() {
         {/* Overlay för bättre kontrast - svagare på mobil */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/40 sm:from-white/80 via-white/20 sm:via-white/60 to-transparent pointer-events-none" />
         {/* Sökboxen */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-220px] sm:mt-0">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-220px] sm:mt-[-160px]">
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
             <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">HITTA DIN PERFEKTA</span>
           </h2>

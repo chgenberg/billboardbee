@@ -246,7 +246,7 @@ export default function PrisPage() {
       </section>
 
       {/* Why pricing is more than a number */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-4xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-4 flex items-center gap-2 text-gray-900"><InformationCircleIcon className="w-7 h-7 text-orange-500" /> Varför prissättning är mer än en siffra</h2>
           <p className="text-lg text-gray-700 mb-4">När du köper eller hyr ut en billboard hos Billboard Bee betalar du inte bara för ytan i sig. Du betalar för räckvidd, kontext, exponeringstid, driftsäkerhet, energieffektiv teknik och mätbar effekt. Vår modell bygger därför på att varje krona du investerar – eller tjänar – är förankrad i data som går att följa i realtid.</p>
@@ -254,7 +254,7 @@ export default function PrisPage() {
       </section>
 
       {/* How base price is calculated */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-5xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><CalculatorIcon className="w-7 h-7 text-orange-500" /> Så beräknas grundpriset</h2>
           <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
@@ -285,7 +285,7 @@ export default function PrisPage() {
       </section>
 
       {/* Dynamic pricing (yield engine) */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-5xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-4 flex items-center gap-2 text-gray-900"><BoltIcon className="w-7 h-7 text-pink-500" /> Dynamisk prissättning (yield-motor)</h2>
           <ul className="list-disc pl-6 text-lg text-gray-700 space-y-2 mb-4">
@@ -299,7 +299,7 @@ export default function PrisPage() {
       </section>
 
       {/* Price models */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-5xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><CurrencyDollarIcon className="w-7 h-7 text-green-500" /> Prisstrukturer att välja mellan</h2>
           <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
@@ -326,7 +326,7 @@ export default function PrisPage() {
       </section>
 
       {/* Cost example */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-5xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><ChartBarIcon className="w-7 h-7 text-blue-500" /> Kostnadsexempel</h2>
           <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
@@ -354,7 +354,7 @@ export default function PrisPage() {
       </section>
 
       {/* Always included */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-4xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><CheckCircleIcon className="w-7 h-7 text-emerald-500" /> Vad ingår alltid i priset?</h2>
           <ul className="list-disc pl-6 text-lg text-gray-700 space-y-2">
@@ -366,7 +366,7 @@ export default function PrisPage() {
       </section>
 
       {/* FAQ */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-4xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><QuestionMarkCircleIcon className="w-7 h-7 text-orange-500" /> Vanliga frågor</h2>
           <div className="space-y-4">
@@ -396,7 +396,7 @@ export default function PrisPage() {
       </section>
 
       {/* Owner calculator */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-4xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><CurrencyDollarIcon className="w-7 h-7 text-green-500" /> För markägare – din intäktskalkyl</h2>
           <p className="text-lg text-gray-700 mb-4">Som uthyrare kan du välja fast hyra (garanterad månadsintäkt) eller revenue-share (procent av omsättningen). Kalkylatorn i ditt konto visar båda scenarierna utifrån samma yield-data som annonsörerna ser.</p>
@@ -415,7 +415,7 @@ export default function PrisPage() {
       </section>
 
       {/* Steps to get started */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="w-full sm:max-w-4xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 text-gray-900"><ChartBarIcon className="w-7 h-7 text-blue-500" /> Så kommer du i gång</h2>
           <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
@@ -448,7 +448,7 @@ export default function PrisPage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="max-w-3xl mx-auto px-4 py-16 text-center">
+      <section className="w-full sm:max-w-3xl mx-auto px-4 py-16 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold mb-4 text-gray-900">Har du fler frågor?</h2>
           <p className="text-lg text-gray-900 mb-8">Kontakta oss – vi ger dig en skräddarsydd offert inom 24 timmar.</p>

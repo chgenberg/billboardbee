@@ -203,7 +203,7 @@ export default function AnnonsorPage() {
 
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-r from-orange-500 to-pink-500 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full sm:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

@@ -25,6 +25,12 @@ export default function LedigaSkyltar() {
   const [minTraffic, setMinTraffic] = useState('');
   const [selectedBillboard, setSelectedBillboard] = useState<Billboard | null>(null);
   const searchParams = useSearchParams();
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    const viewport = searchParams?.get('viewport');
+    setIsMobileView(viewport === 'mobile');
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchBillboards = async () => {
@@ -98,7 +104,7 @@ export default function LedigaSkyltar() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm mt-8">
-        <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="w-full sm:max-w-7xl mx-auto px-4 py-10">
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-2xl">
@@ -288,7 +294,7 @@ export default function LedigaSkyltar() {
       </header>
 
       {/* Results */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="w-full sm:max-w-7xl mx-auto px-4 py-8">
         {/* Results count */}
         <div className="mb-6">
           <p className="text-gray-600">
@@ -322,7 +328,7 @@ export default function LedigaSkyltar() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className={`grid ${isMobileView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'} gap-6`}>
             {filtered.map((billboard, index) => (
               <motion.div
                 key={billboard.id}

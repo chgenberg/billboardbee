@@ -144,7 +144,7 @@ export default function BillboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="w-full sm:max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section with Images and Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Image Gallery - Takes 2 columns on desktop */}

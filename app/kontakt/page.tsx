@@ -83,7 +83,7 @@ export default function Contact() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="w-full sm:max-w-2xl mx-auto text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -105,7 +105,7 @@ export default function Contact() {
 
       {/* Contact Grid */}
       <section className="px-4 pb-20">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="w-full sm:max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -225,7 +225,7 @@ export default function Contact() {
 
       {/* Map Section */}
       <section className="px-4 pb-20">
-        <div className="max-w-6xl mx-auto">
+        <div className="w-full sm:max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
