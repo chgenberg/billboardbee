@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { XMarkIcon, MapIcon } from '@heroicons/react/24/outline';
 import { Billboard } from '../types/billboard';
+import Papa from 'papaparse';
 
 const BillboardMapWrapper = dynamic(() => import('../components/BillboardMapWrapper'), { ssr: false });
 
@@ -26,6 +27,8 @@ export default function LedigaSkyltar() {
   const [selectedBillboard, setSelectedBillboard] = useState<Billboard | null>(null);
   const searchParams = useSearchParams();
   const [isMobileView, setIsMobileView] = useState(false);
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     const viewport = searchParams?.get('viewport');
@@ -61,6 +64,22 @@ export default function LedigaSkyltar() {
     const q = searchParams?.get('search') || '';
     if (q) setSearch(q);
   }, [searchParams]);
+
+  // Läs in städer från CSV vid mount
+  useEffect(() => {
+    fetch('/Stader.csv')
+      .then(res => res.text())
+      .then(csv => {
+        const parsed = Papa.parse(csv, { header: false });
+        const cities = parsed.data.map((row: any) => row[0]).filter((c: string) => !!c && typeof c === 'string');
+        setCitySuggestions(cities);
+      });
+  }, []);
+
+  // Filtrera förslag baserat på input
+  const filteredCities = search.length > 0
+    ? citySuggestions.filter(city => city.toLowerCase().startsWith(search.toLowerCase())).slice(0, 8)
+    : [];
 
   // Extract unique values
   const regions = Array.from(new Set((billboards || []).map(b => b.region).filter(Boolean)));
@@ -113,12 +132,34 @@ export default function LedigaSkyltar() {
                   type="text"
                   placeholder="Sök stad, region eller skylt..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm text-black"
+                  autoComplete="off"
                 />
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
+                {showSuggestions && filteredCities.length > 0 && (
+                  <ul className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-60 overflow-auto">
+                    {filteredCities.map((city, idx) => (
+                      <li
+                        key={city + idx}
+                        className="px-4 py-2 cursor-pointer hover:bg-orange-50 text-gray-900"
+                        onMouseDown={() => {
+                          setSearch(city);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {city}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 
