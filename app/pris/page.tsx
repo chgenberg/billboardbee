@@ -11,10 +11,10 @@ export default function PrisPage() {
           <p className="text-xl text-gray-600 mb-8 font-light">
             Inga konstgjorda reapriser. Bara ärliga, datadrivna priser som alla har råd att lita på.
           </p>
-          <div className="bg-white/80 rounded-2xl shadow p-6 md:p-8 mb-8 text-left max-w-2xl mx-auto">
+          <div className="bg-white/80 rounded-2xl shadow p-6 md:p-8 mb-8 text-left max-w-2xl mx-auto text-gray-900">
             <h2 className="text-lg font-bold text-orange-600 mb-2">Trött på "80 % RABATT – bara i dag!"?</h2>
-            <p className="mb-4">Det är vi också. Reklamvärlden har länge levt på glittriga buzz-ord, tidsbegränsade superdeals och obegripliga pristabeller. Resultatet?</p>
-            <ul className="list-disc pl-6 space-y-1 mb-4 text-gray-700">
+            <p className="mb-4 text-gray-900">Det är vi också. Reklamvärlden har länge levt på glittriga buzz-ord, tidsbegränsade superdeals och obegripliga pristabeller. Resultatet?</p>
+            <ul className="list-disc pl-6 space-y-1 mb-4 text-gray-900">
               <li>Företagare som vågar mindre än de vill.</li>
               <li>Markägare som inte riktigt vet vad skylten egentligen är värd.</li>
               <li>Ett ständigt surr av osäkerhet, istället för det brummande ljudet av genuin affärsnytta.</li>
@@ -42,9 +42,9 @@ export default function PrisPage() {
             </div>
           </div>
 
-          <div className="bg-orange-50 rounded-2xl shadow p-6 md:p-8 mt-8 text-center">
+          <div className="bg-orange-50 rounded-2xl shadow p-6 md:p-8 mt-8 text-center text-gray-900">
             <h2 className="text-2xl font-bold text-orange-600 mb-2">Är du redo att ta plats – utan konstgjort glitter?</h2>
-            <p className="mb-2">Testa din kreativa idé, se priset forma sig i realtid och känn hur mag­känslan går från \"hoppas\" till \"nu kör vi!\".</p>
+            <p className="mb-4 text-gray-900">Testa din kreativa idé, se priset forma sig i realtid och känn hur mag­känslan går från \"hoppas\" till \"nu kör vi!\".</p>
             <p className="font-extrabold text-orange-700 mt-4">BillboardBee – ärliga priser, äkta räckvidd.</p>
           </div>
         </div>
