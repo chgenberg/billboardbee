@@ -154,9 +154,9 @@ export default function Home() {
               </div>
               <button
                 onClick={() => setShowMap(true)}
-                className="px-6 py-3 bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 transition-colors mx-auto flex items-center justify-center"
+                className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors mx-auto flex items-center justify-center"
               >
-                <MapPinIcon className="h-5 w-5 mr-2" />
+                <MapPinIcon className="h-5 w-5 mr-2 text-white" />
                 VISA KARTA
               </button>
             </div>
