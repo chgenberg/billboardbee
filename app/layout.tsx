@@ -3,7 +3,7 @@ import { Nunito } from 'next/font/google'
 import './globals.css'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
-// import ChatBot from './components/ChatBot'
+import SimpleChatBot from './components/SimpleChatBot'
 import { Providers } from './providers'
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['400', '600', '700'] })
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-grow relative z-10 pt-20">
             {children}
           </main>
-          {/* <ChatBot /> */}
+          <SimpleChatBot />
         </Providers>
         <Footer />
       </body>
