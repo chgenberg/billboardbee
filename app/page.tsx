@@ -299,11 +299,9 @@ export default function Home() {
                       typeof b.latitude === 'number' && typeof b.longitude === 'number'
                     )
                     .map(b => ({
-                      id: b.id,
+                      ...b,
                       lat: b.latitude,
-                      lng: b.longitude,
-                      title: b.title,
-                      location: b.location
+                      lng: b.longitude
                     }))}
                   initialCenter={[62.0, 16.5]}
                   initialZoom={5}
