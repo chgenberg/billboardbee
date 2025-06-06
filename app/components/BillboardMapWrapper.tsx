@@ -3,14 +3,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
-interface Billboard {
-  id: string;
-  title: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-}
+import { Billboard } from '../types/billboard';
 
 interface BillboardMapWrapperProps {
   billboards: Billboard[];
@@ -38,8 +31,11 @@ export default function BillboardMapWrapper({ billboards, selectedBillboard, onS
 
     // Add new markers
     billboards.forEach(billboard => {
-      if (billboard.latitude && billboard.longitude) {
-        const marker = L.marker([billboard.latitude, billboard.longitude])
+      // Använd lat/lng om de finns, annars latitude/longitude
+      const lat = billboard.lat ?? billboard.latitude;
+      const lng = billboard.lng ?? billboard.longitude;
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        const marker = L.marker([lat, lng])
           .addTo(mapRef.current!)
           .bindPopup(`
             <div class="p-2">
