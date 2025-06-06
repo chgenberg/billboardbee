@@ -90,15 +90,14 @@ export default function SellerCalendarPopup({
         </div>
 
         {/* Calendar */}
-        <div className="p-6">
-          <div className="mb-4 text-sm text-gray-600">
+        <div className="p-6 bg-gray-50 rounded-b-3xl">
+          <div className="mb-4 text-sm text-gray-700">
             {tab === 'standard' ? (
               <p>Välj dagar med standardpris. Klicka på en dag för att markera/avmarkera.</p>
             ) : (
               <p>Välj högsäsongsdagar med högre pris (t.ex. sommar, storhelger).</p>
             )}
           </div>
-          
           <DayPicker
             mode="multiple"
             selected={tab === 'standard' ? standardDays : peakDays}
@@ -116,47 +115,66 @@ export default function SellerCalendarPopup({
             }}
             className="rdp-custom"
           />
-          
+
+          {/* Lista med valda datum */}
+          <div className="mt-6">
+            <div className="mb-2 text-xs text-gray-500 font-semibold">Valda datum:</div>
+            <div className="flex flex-wrap gap-2">
+              {tab === 'standard'
+                ? standardDays.length > 0
+                  ? standardDays.map((d, i) => (
+                      <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
+                    ))
+                  : <span className="text-gray-400">Inga valda standarddagar</span>
+                : peakDays.length > 0
+                  ? peakDays.map((d, i) => (
+                      <span key={i} className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">{d.toLocaleDateString('sv-SE')}</span>
+                    ))
+                  : <span className="text-gray-400">Inga valda peak-dagar</span>
+              }
+            </div>
+          </div>
+
           <style jsx global>{`
             .rdp-custom {
               --rdp-cell-size: 40px;
               --rdp-accent-color: #ff6b00;
               --rdp-background-color: #ff6b00;
               margin: 0 auto;
+              background: #f9fafb;
+              border-radius: 18px;
+              box-shadow: 0 2px 8px 0 #0001;
             }
-            
             .rdp-custom .rdp-day {
               border-radius: 12px;
               font-weight: 500;
               transition: all 0.2s;
+              color: #222;
+              background: #fff;
             }
-            
             .rdp-custom .rdp-day:hover:not(.rdp-day_selected) {
-              background-color: #f3f4f6;
+              background-color: #ffe4b5;
+              color: #ff6b00;
             }
-            
             .rdp-custom .rdp-day_selected:not(.rdp-day_disabled) {
               background-color: #ff6b00;
               color: white;
-              font-weight: 600;
+              font-weight: 700;
+              box-shadow: 0 0 0 2px #fff, 0 2px 8px 0 #0001;
             }
-            
             .rdp-custom .rdp-day_standard:not(.rdp-day_selected) {
               background-color: #e0f2fe;
               color: #0369a1;
             }
-            
             .rdp-custom .rdp-day_peak:not(.rdp-day_selected) {
               background-color: #fef3c7;
               color: #d97706;
             }
-            
             .rdp-custom .rdp-caption {
               font-weight: 600;
               font-size: 1.1rem;
               color: #1f2937;
             }
-            
             .rdp-custom .rdp-head_cell {
               font-weight: 600;
               color: #6b7280;

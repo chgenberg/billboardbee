@@ -84,38 +84,49 @@ export default function Navbar() {
             {/* Desktop Menu - Centered */}
             <div className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
               {menuItems.map((item, index) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link
-                    href={item.path}
-                    className={`relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider transition-all duration-300 group whitespace-nowrap ${
-                      isActive(item.path)
-                        ? 'text-orange-600'
-                        : 'text-gray-700 hover:text-orange-600'
-                    }`}
+                item.path ? (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
                   >
-                    <span className="relative z-10">{item.label}</span>
-                    
-                    {/* Hover effect background */}
-                    <motion.div
-                      className="absolute inset-0 bg-orange-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      whileHover={{ scale: 1.1 }}
-                    />
-                    
-                    {/* Active indicator */}
-                    {isActive(item.path) && (
+                    <Link
+                      href={item.path}
+                      className={`relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider transition-all duration-300 group whitespace-nowrap ${
+                        isActive(item.path)
+                          ? 'text-orange-600'
+                          : 'text-gray-700 hover:text-orange-600'
+                      }`}
+                    >
+                      <span className="relative z-10">{item.label}</span>
+                      {/* Hover effect background */}
                       <motion.div
-                        layoutId="navbar-indicator"
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="absolute inset-0 bg-orange-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        whileHover={{ scale: 1.1 }}
                       />
-                    )}
-                  </Link>
-                </motion.div>
+                      {/* Active indicator */}
+                      {isActive(item.path) && (
+                        <motion.div
+                          layoutId="navbar-indicator"
+                          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <div className="relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider text-gray-700 opacity-70 cursor-default select-none">
+                      {item.label}
+                    </div>
+                  </motion.div>
+                )
               ))}
             </div>
 
@@ -206,18 +217,27 @@ export default function Navbar() {
               <div className="p-6">
                 <nav className="space-y-1">
                   {menuItems.map((item) => (
-                    <Link
-                      key={item.label}
-                      href={item.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
-                        isActive(item.path)
-                          ? 'bg-orange-50 text-orange-600'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
+                    item.path ? (
+                      <Link
+                        key={item.label}
+                        href={item.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
+                          isActive(item.path)
+                            ? 'bg-orange-50 text-orange-600'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <div
+                        key={item.label}
+                        className="block px-4 py-3 rounded-lg font-bold tracking-wider text-gray-700 opacity-70 cursor-default select-none"
+                      >
+                        {item.label}
+                      </div>
+                    )
                   ))}
                 </nav>
 
