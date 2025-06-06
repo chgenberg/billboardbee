@@ -121,7 +121,7 @@ export default function Home() {
                 <MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />
               </button>
             </div>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-5 mt-8">
               {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
                 <button
                   key={city}
@@ -132,7 +132,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mt-6">
               <Link
                 href="/lediga-skyltar"
                 className="inline-flex items-center justify-center px-8 py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"

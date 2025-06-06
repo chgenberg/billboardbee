@@ -175,7 +175,7 @@ export default function SimpleChatBot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Skriv ditt meddelande..."
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all text-gray-900"
                 />
                 <button
                   type="submit"

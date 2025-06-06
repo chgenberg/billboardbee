@@ -26,7 +26,23 @@ const billboardTypes = ['digital', 'print'];
 const billboardSizes = ['3x6', '4x8', '5x10', '6x12'];
 const statuses = ['ledig', 'bokad', 'underhåll'];
 
+const exampleImages = [
+  '/billboards/bb1.png',
+  '/billboards/bb2.png',
+  '/billboards/bb3.png',
+  '/billboards/bb4.png',
+  '/billboards/bb5.png',
+  '/billboards/bb6.png',
+  '/billboards/bb7.png',
+  '/billboards/bb8.png',
+  '/billboards/bb9.png',
+  '/billboards/bb10.png'
+];
+
 async function main() {
+  // Rensa alla billboards först!
+  await prisma.billboard.deleteMany({});
+
   // Create a test user if it doesn't exist
   const testUser = await prisma.user.upsert({
     where: { email: 'test@example.com' },
@@ -55,8 +71,7 @@ async function main() {
         title: `${location.city} Skylt ${i + 1}`,
         description: `Premium ${type} skylt i ${location.city}. Perfekt plats för att nå lokala kunder. ${size} meter stor skylt med hög synlighet.`,
         imageUrls: [
-          'https://placehold.co/600x400/2563eb/ffffff?text=Billboard+1',
-          'https://placehold.co/600x400/2563eb/ffffff?text=Billboard+2'
+          exampleImages[i % exampleImages.length]
         ],
         location: location.city,
         latitude: location.lat + latVariation,
