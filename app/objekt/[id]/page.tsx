@@ -476,7 +476,7 @@ export default function BillboardPage() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-3xl shadow-2xl p-6 md:p-8"
+              className="relative w-full max-w-2xl max-h-[70vh] overflow-y-auto bg-white rounded-3xl shadow-2xl p-4 md:p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <button

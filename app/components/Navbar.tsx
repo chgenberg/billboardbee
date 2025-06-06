@@ -27,15 +27,15 @@ export default function Navbar() {
     {
       label: "Upptäck",
       children: [
-        { label: "Lediga skyltar", path: "/skyltar" },
-        { label: "Buzz-idégeneratorn", path: "/buzz" }
+        { label: "Lediga skyltar", path: "/lediga-skyltar" },
+        { label: "Buzz-idégeneratorn", path: "/buzz-idegeneratorn" }
       ]
     },
     {
       label: "Om BillboardBee",
       children: [
         { label: "Om oss", path: "/om-oss" },
-        { label: "FAQ", path: "/faq" }
+        { label: "FAQ", path: "/qa" }
       ]
     },
     {
@@ -116,20 +116,26 @@ export default function Navbar() {
                   )}
                   {/* Dropdown för children */}
                   {item.children && item.children.length > 0 && (
-                    <div className="absolute left-0 top-full mt-2 min-w-[180px] bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
-                      <ul className="py-2">
-                        {item.children.map((child) => (
-                          <li key={child.label}>
-                            <Link
-                              href={child.path}
-                              className="block px-5 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors"
-                            >
-                              {child.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <>
+                      {/* Invisible bridge to keep dropdown open */}
+                      <div className="absolute left-0 top-full h-2 w-full" />
+                      <div className="absolute left-0 top-full pt-2 min-w-[200px] opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
+                        <div className="bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                          <ul className="py-2">
+                            {item.children.map((child) => (
+                              <li key={child.label}>
+                                <Link
+                                  href={child.path}
+                                  className="block px-5 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                                >
+                                  {child.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               ))}
