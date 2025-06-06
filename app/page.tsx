@@ -105,14 +105,27 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="SÖK STAD ELLER REGION..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch(searchQuery);
+                  }
+                }}
                 className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/80"
               />
-              <MagnifyingGlassIcon className="absolute right-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
+              <button
+                onClick={() => handleSearch(searchQuery)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />
+              </button>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
               {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
                 <button
                   key={city}
+                  onClick={() => handleQuickSearch(city)}
                   className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-semibold text-gray-700 transition-colors"
                 >
                   {city}
@@ -127,13 +140,13 @@ export default function Home() {
                 <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
                 SÖK SKYLTAR
               </Link>
-              <Link
-                href="/lediga-skyltar"
+              <button
+                onClick={() => setShowMap(true)}
                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200"
               >
                 <MapPinIcon className="h-5 w-5 mr-2" />
                 VISA KARTA
-              </Link>
+              </button>
             </div>
           </div>
         </div>

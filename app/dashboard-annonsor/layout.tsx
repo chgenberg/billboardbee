@@ -14,11 +14,14 @@ import {
   WalletIcon, 
   UserGroupIcon, 
   BellIcon, 
-  ChatBubbleLeftRightIcon 
+  ChatBubbleLeftRightIcon,
+  HomeIcon,
+  PlusCircleIcon
 } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
 
 const navigation = [
+  { name: 'Översikt', href: '/dashboard-annonsor', icon: HomeIcon },
   { name: 'Konto & betalningar', href: '/dashboard-annonsor/konto', icon: CreditCardIcon },
   { name: 'Utforska & bevaka skyltar', href: '/dashboard-annonsor/utforska', icon: MagnifyingGlassIcon },
   { name: 'Varukorg & utkast', href: '/dashboard-annonsor/varukorg', icon: ShoppingCartIcon },
@@ -40,7 +43,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="flex">
         {/* Sidebar */}
         <motion.aside
@@ -49,19 +52,37 @@ export default function DashboardLayout({
           transition={{ duration: 0.5 }}
           className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20"
         >
-          {/* Skapa ny annons knapp */}
-          <div className="flex flex-col items-center mb-6">
-            <button
-              onClick={() => window.location.href = '/saljare/ny-annons'}
-              className="w-11/12 py-3 mb-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl font-semibold text-base shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 animate-bounce-short"
-              style={{ fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif' }}
+          {/* Skapa ny annons knapp - mer prominent */}
+          <div className="px-4 mb-4">
+            <Link
+              href="/saljare/ny-annons"
+              className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-              Skapa ny annons
-            </button>
+              <PlusCircleIcon className="w-6 h-6" />
+              SKAPA ANNONS
+            </Link>
           </div>
+          
           <nav className="px-4 space-y-1">
-            {navigation.map((item) => {
+            {/* Översikt med närmare markering */}
+            <Link
+              href={navigation[0].href}
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 mb-4',
+                pathname === navigation[0].href
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              )}
+            >
+              <HomeIcon className="w-5 h-5" />
+              {navigation[0].name}
+            </Link>
+            
+            {/* Separator */}
+            <div className="h-px bg-gray-200 my-4" />
+            
+            {/* Resten av menyn */}
+            {navigation.slice(1).map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link

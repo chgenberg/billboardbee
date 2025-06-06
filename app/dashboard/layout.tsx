@@ -12,7 +12,8 @@ import {
   CreditCardIcon, 
   ChartBarIcon, 
   BellIcon, 
-  CogIcon 
+  CogIcon,
+  PlusCircleIcon 
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -47,7 +48,7 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="flex">
         {/* Sidebar */}
         <motion.aside
@@ -56,8 +57,39 @@ export default function DashboardLayout({
           transition={{ duration: 0.5 }}
           className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 pt-20"
         >
+          {/* Skapa annons knapp för UTHYRARE */}
+          {user?.role === 'UTHYRARE' && (
+            <div className="px-4 mb-4">
+              <Link
+                href="/saljare/ny-annons"
+                className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                SKAPA ANNONS
+              </Link>
+            </div>
+          )}
+          
           <nav className="px-4 space-y-1">
-            {navigation.map((item) => {
+            {/* Översikt med närmare gul markering */}
+            <Link
+              href={navigation[0].href}
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 mb-4',
+                pathname === navigation[0].href
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              )}
+            >
+              <HomeIcon className="w-5 h-5" />
+              {navigation[0].name}
+            </Link>
+            
+            {/* Separator */}
+            <div className="h-px bg-gray-200 my-4" />
+            
+            {/* Resten av menyn */}
+            {navigation.slice(1).map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
