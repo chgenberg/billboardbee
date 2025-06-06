@@ -84,13 +84,8 @@ export default function Navbar() {
             {/* Desktop Menu - Centered */}
             <div className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 transform -translate-x-1/2">
               {menuItems.map((item, index) => (
-                item.path ? (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+                <div key={item.label} className="relative group">
+                  {item.path ? (
                     <Link
                       href={item.path}
                       className={`relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider transition-all duration-300 group whitespace-nowrap ${
@@ -114,19 +109,29 @@ export default function Navbar() {
                         />
                       )}
                     </Link>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <div className="relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider text-gray-700 opacity-70 cursor-default select-none">
+                  ) : (
+                    <div className="relative px-2 py-2 text-xs xl:text-sm font-bold tracking-wider text-gray-700 opacity-90 cursor-pointer select-none group-hover:text-orange-600">
                       {item.label}
                     </div>
-                  </motion.div>
-                )
+                  )}
+                  {/* Dropdown för children */}
+                  {item.children && item.children.length > 0 && (
+                    <div className="absolute left-0 top-full mt-2 min-w-[180px] bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
+                      <ul className="py-2">
+                        {item.children.map((child) => (
+                          <li key={child.label}>
+                            <Link
+                              href={child.path}
+                              className="block px-5 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors"
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -217,27 +222,43 @@ export default function Navbar() {
               <div className="p-6">
                 <nav className="space-y-1">
                   {menuItems.map((item) => (
-                    item.path ? (
-                      <Link
-                        key={item.label}
-                        href={item.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
-                          isActive(item.path)
-                            ? 'bg-orange-50 text-orange-600'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <div
-                        key={item.label}
-                        className="block px-4 py-3 rounded-lg font-bold tracking-wider text-gray-700 opacity-70 cursor-default select-none"
-                      >
-                        {item.label}
-                      </div>
-                    )
+                    <div key={item.label} className="relative">
+                      {item.path ? (
+                        <Link
+                          href={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`block px-4 py-3 rounded-lg transition-all duration-200 font-bold tracking-wider ${
+                            isActive(item.path)
+                              ? 'bg-orange-50 text-orange-600'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <div
+                          className="block px-4 py-3 rounded-lg font-bold tracking-wider text-gray-700 opacity-90 cursor-pointer select-none"
+                        >
+                          {item.label}
+                        </div>
+                      )}
+                      {/* Dropdown för children i mobilmeny */}
+                      {item.children && item.children.length > 0 && (
+                        <ul className="pl-4 pb-2">
+                          {item.children.map((child) => (
+                            <li key={child.label}>
+                              <Link
+                                href={child.path}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors"
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   ))}
                 </nav>
 
