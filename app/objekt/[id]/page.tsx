@@ -176,6 +176,9 @@ export default function BillboardPage() {
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  quality={85}
+                  loading="eager"
                 />
                 
                 {/* Image Navigation */}
@@ -451,6 +454,8 @@ export default function BillboardPage() {
                 width={1200}
                 height={800}
                 className="rounded-lg max-h-[85vh] w-auto object-contain"
+                quality={90}
+                priority
               />
             </motion.div>
           </motion.div>

@@ -88,6 +88,8 @@ export default function BillboardMap({ focusBillboardId, height }: { focusBillbo
                     fill
                     className="object-cover rounded-xl border border-[#ff6b00]/30"
                     sizes="128px"
+                    quality={75}
+                    loading="lazy"
                   />
                 </div>
                 <div className="font-bold text-[#ff6b00] text-base mb-1 text-center">{billboard.title}</div>

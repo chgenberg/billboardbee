@@ -283,9 +283,29 @@ export async function GET() {
       orderBy: {
         createdAt: 'desc',
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        imageUrls: true,
+        location: true,
+        price: true,
+        status: true,
+        size: true,
+        type: true,
+        traffic: true,
+        region: true,
+        latitude: true,
+        longitude: true,
+        address: true,
+        createdAt: true
+      }
     });
 
-    return NextResponse.json(billboards || []);
+    // Return only unique billboards based on id
+    const uniqueBillboards = Array.from(new Map(billboards.map(item => [item.id, item])).values());
+
+    return NextResponse.json(uniqueBillboards);
   } catch (error) {
     console.error('Error fetching billboards:', error);
     return NextResponse.json(
