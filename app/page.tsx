@@ -253,16 +253,16 @@ export default function Home() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden"
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden mt-16"
             >
               <div className="absolute top-4 right-4 z-10">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowMap(false)}
-                  className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
+                  className="p-3 bg-white rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition-shadow"
                 >
-                  <XMarkIcon className="w-6 h-6 text-gray-600" />
+                  <XMarkIcon className="w-6 h-6 text-gray-900" />
                 </motion.button>
               </div>
               <BillboardMapWrapper />

@@ -20,11 +20,16 @@ export default function BuzzIdegeneratorn() {
     setError('');
     setLoading(true);
     
+    let fixedUrl = url.trim();
+    if (fixedUrl && !/^https?:\/\//i.test(fixedUrl)) {
+      fixedUrl = 'https://' + fixedUrl;
+    }
+
     try {
       const res = await fetch('/api/buzz-idegeneratorn', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: fixedUrl }),
       });
       const data = await res.json();
       if (data.ideas) {
