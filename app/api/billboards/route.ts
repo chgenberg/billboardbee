@@ -35,6 +35,10 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401 });
   }
 
+  if (!userId) {
+    return new Response(JSON.stringify({ error: 'User ID saknas' }), { status: 400 });
+  }
+
   try {
     // Säkerställ att uploadDir finns
     await fs.mkdir(uploadDir, { recursive: true });
