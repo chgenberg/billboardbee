@@ -23,25 +23,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import BookingCalendar from '@/app/components/BookingCalendar';
+import { Billboard } from '../../types/billboard';
 
-const BillboardMapWrapper = dynamic(() => import("@/app/components/BillboardMapWrapper"), { ssr: false });
-
-interface Billboard {
-  id: string;
-  title: string;
-  description: string;
-  imageUrls: string[];
-  location: string;
-  price: number;
-  status: string;
-  size: string | null;
-  type: string | null;
-  traffic: number | null;
-  region: string | null;
-  latitude: number;
-  longitude: number;
-  address: string | null;
-}
+const BillboardMapWrapper = dynamic(() => import('../../components/BillboardMapWrapper'), { 
+  ssr: false,
+  loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-xl" />
+});
 
 export default function BillboardPage() {
   const params = useParams();
@@ -374,12 +361,17 @@ export default function BillboardPage() {
               {billboard.latitude && billboard.longitude ? (
                 <>
                   <div className="h-64 rounded-xl overflow-hidden mb-4">
-                    <BillboardMapWrapper focusBillboardId={billboard.id} height="h-full" />
+                    <BillboardMapWrapper 
+                      billboards={[billboard]}
+                      selectedBillboard={null}
+                      onSelectBillboard={() => {}}
+                      onClose={() => {}}
+                    />
                   </div>
                   <div className="space-y-3">
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-sm text-gray-600">
-                        {billboard.address || billboard.location}
+                        {billboard.location}
                       </p>
                     </div>
                     <div className="text-xs text-gray-500">
