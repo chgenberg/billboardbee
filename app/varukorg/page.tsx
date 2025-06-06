@@ -14,6 +14,7 @@ interface CartItem {
   period: string;
   quantity: number;
   image: string;
+  images?: string[];
 }
 
 export default function CartPage() {
@@ -26,7 +27,8 @@ export default function CartPage() {
       price: 25000,
       period: '2024-06-01 - 2024-06-30',
       quantity: 1,
-      image: '/billboard1.jpg',
+      image: '/billboards/bb1.png',
+      images: ['/billboards/bb1.png', '/billboards/bb5.png'],
     },
     {
       id: '2',
@@ -36,7 +38,8 @@ export default function CartPage() {
       price: 35000,
       period: '2024-06-01 - 2024-06-30',
       quantity: 1,
-      image: '/billboard2.jpg',
+      image: '/billboards/bb5.png',
+      images: ['/billboards/bb5.png', '/billboards/bb1.png'],
     },
   ]);
 
@@ -81,13 +84,24 @@ export default function CartPage() {
                 {cartItems.map((item, idx) => (
                   <div key={item.id} className="p-6 border-b border-gray-200 last:border-b-0">
                     <div className="flex items-start space-x-4">
-                      <div className="relative w-24 h-24 flex-shrink-0">
-                        <Image
-                          src={item.image || (idx === 0 ? '/billboards/bb7.png' : idx === 1 ? '/billboards/bb14.png' : '/billboards/bb7.png')}
-                          alt={item.name}
-                          fill
-                          className="object-cover rounded-md"
-                        />
+                      <div className="relative w-24 h-24 flex-shrink-0 flex gap-1">
+                        {item.images && item.images.length > 1 ? (
+                          <>
+                            <div className="relative w-1/2 h-24">
+                              <Image src={item.images[0]} alt={item.name} fill className="object-cover rounded-md" />
+                            </div>
+                            <div className="relative w-1/2 h-24">
+                              <Image src={item.images[1]} alt={item.name} fill className="object-cover rounded-md" />
+                            </div>
+                          </>
+                        ) : (
+                          <Image
+                            src={item.image || (idx === 0 ? '/billboards/bb7.png' : idx === 1 ? '/billboards/bb14.png' : '/billboards/bb7.png')}
+                            alt={item.name}
+                            fill
+                            className="object-cover rounded-md"
+                          />
+                        )}
                       </div>
                       <div className="flex-1">
                         <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
