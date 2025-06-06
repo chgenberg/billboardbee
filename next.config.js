@@ -14,6 +14,7 @@ const nextConfig = {
         hostname: 'placehold.co',
       },
     ],
+    domains: ['placehold.co'],
   },
 };
 
