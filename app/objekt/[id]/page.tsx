@@ -304,12 +304,12 @@ export default function BillboardPage() {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="relative max-w-5xl max-h-[90vh]"
+              className="relative max-w-5xl max-h-[90vh] bg-white rounded-lg shadow-lg"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setShowImageModal(false)}
-                className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+                className="absolute -top-8 right-0 bg-white/80 hover:bg-gray-200 text-gray-900 hover:text-black rounded-full shadow-md transition-colors p-1.5"
               >
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
