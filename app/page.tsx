@@ -85,24 +85,31 @@ export default function Home() {
   return (
     <>
       {/* Search Section */}
-      <section className="relative w-full aspect-[16/9] flex items-center justify-center overflow-hidden pt-14">
+      <section className="relative w-full h-[calc(100vh-64px)] sm:h-auto sm:aspect-[16/9] flex items-center justify-center overflow-hidden sm:pt-14">
+        {/* Mobilbild */}
+        <img
+          src="/hero-mobile.png"
+          alt="Billboard"
+          className="block sm:hidden absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Desktopbild */}
         <img
           src="/bakgrunds.png"
           alt="Billboard"
-          className="absolute top-0 left-0 w-full h-full object-contain"
+          className="hidden sm:block absolute top-0 left-0 w-full h-full object-contain"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
         />
-        {/* Overlay för bättre kontrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/60 to-transparent pointer-events-none" />
+        {/* Overlay för bättre kontrast - svagare på mobil */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 sm:from-white/80 via-white/20 sm:via-white/60 to-transparent pointer-events-none" />
         {/* Sökboxen */}
-        <div className="relative z-10 w-full max-w-2xl mx-auto flex flex-col items-center justify-center mt-[-16rem] pt-0">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
-            <span className="font-extrabold tracking-[0.2em] leading-relaxed">HITTA DIN PERFEKTA</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-220px] sm:mt-0">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
+            <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">HITTA DIN PERFEKTA</span>
           </h2>
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-[#ff6b00] drop-shadow-lg">
-            <span className="font-extrabold tracking-[0.2em] leading-relaxed">REKLAMPLATS</span>
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-3 text-[#ff6b00] drop-shadow-lg">
+            <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">REKLAMPLATS</span>
           </h2>
-          <div className="space-y-2 w-full">
+          <div className="space-y-2 sm:space-y-2 w-full max-w-[280px] sm:max-w-2xl mx-auto">
             <div className="relative">
               <input
                 type="text"
@@ -114,16 +121,17 @@ export default function Home() {
                     handleSearch(searchQuery);
                   }
                 }}
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/80 text-black"
+                className="w-full px-3 py-2 sm:px-6 sm:py-4 text-xs sm:text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/95 text-black shadow-md"
               />
               <button
                 onClick={() => handleSearch(searchQuery)}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
-                <MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />
+                <MagnifyingGlassIcon className="h-4 w-4 sm:h-6 sm:w-6 text-gray-400" />
               </button>
             </div>
-            <div className="flex flex-wrap justify-center gap-5 mt-8">
+            {/* Ort-förslag endast på desktop */}
+            <div className="hidden sm:flex flex-wrap justify-center gap-5 mt-8">
               {['STOCKHOLM', 'GÖTEBORG', 'MALMÖ', 'UPPSALA'].map((city) => (
                 <button
                   key={city}
@@ -134,19 +142,19 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center mt-2 sm:mt-4">
               <Link
                 href="/lediga-skyltar"
-                className="inline-flex items-center justify-center px-8 py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="inline-flex items-center justify-center px-3 sm:px-8 py-2 sm:py-4 bg-[#ff6b00] text-white rounded-full font-bold hover:bg-[#e65c00] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base w-[180px] sm:w-auto mx-auto"
               >
-                <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
+                <MagnifyingGlassIcon className="h-3 w-3 sm:h-5 sm:w-5 mr-2" />
                 SÖK SKYLTAR
               </Link>
               <button
                 onClick={() => setShowMap(true)}
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200"
+                className="inline-flex items-center justify-center px-3 sm:px-8 py-2 sm:py-4 bg-white text-[#ff6b00] border-2 border-[#ff6b00] rounded-full font-bold hover:bg-[#ff6b00] hover:text-white transition-all duration-200 text-xs sm:text-base w-[180px] sm:w-auto mx-auto"
               >
-                <MapPinIcon className="h-5 w-5 mr-2" />
+                <MapPinIcon className="h-3 w-3 sm:h-5 sm:w-5 mr-2" />
                 VISA KARTA
               </button>
             </div>
