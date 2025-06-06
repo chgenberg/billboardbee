@@ -78,12 +78,12 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow">
-                {cartItems.map((item) => (
+                {cartItems.map((item, idx) => (
                   <div key={item.id} className="p-6 border-b border-gray-200 last:border-b-0">
                     <div className="flex items-start space-x-4">
                       <div className="relative w-24 h-24 flex-shrink-0">
                         <Image
-                          src={item.image}
+                          src={item.image || (idx === 0 ? '/billboards/bb7.png' : idx === 1 ? '/billboards/bb14.png' : '/billboards/bb7.png')}
                           alt={item.name}
                           fill
                           className="object-cover rounded-md"

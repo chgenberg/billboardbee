@@ -153,18 +153,8 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Right side - Cart, Login Button and Mobile Menu */}
+            {/* Right side - Login, Cart and Mobile Menu */}
             <div className="flex items-center gap-3 lg:gap-4">
-              {/* Shopping Cart */}
-              <Link href="/varukorg" className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ShoppingCartIcon className="h-6 w-6 text-gray-700" />
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
-              </Link>
-
               {/* Desktop Login Button */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -190,6 +180,16 @@ export default function Navbar() {
                   </motion.svg>
                 </button>
               </motion.div>
+
+              {/* Shopping Cart (moved after login) */}
+              <Link href="/varukorg" className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <ShoppingCartIcon className="h-6 w-6 text-gray-700" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
 
               {/* Mobile Menu Button */}
               <button

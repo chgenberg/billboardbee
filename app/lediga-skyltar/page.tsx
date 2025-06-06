@@ -108,8 +108,8 @@ export default function LedigaSkyltar() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm mt-8">
+        <div className="max-w-7xl mx-auto px-4 py-10">
           <div className="flex items-center justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-2xl">
@@ -119,7 +119,7 @@ export default function LedigaSkyltar() {
                   placeholder="Sök stad, region eller skylt..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 shadow-sm text-black"
                 />
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

@@ -26,6 +26,8 @@ interface Billboard {
   type: string | null;
   traffic: number | null;
   region: string | null;
+  latitude: number;
+  longitude: number;
 }
 
 export default function Home() {
@@ -95,16 +97,16 @@ export default function Home() {
         {/* Sökboxen */}
         <div className="relative z-10 w-full max-w-2xl mx-auto flex flex-col items-center justify-center mt-[-16rem] pt-0">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
-            HITTA DIN PERFEKTA
+            <span className="font-extrabold tracking-[0.2em] leading-relaxed">HITTA DIN PERFEKTA</span>
           </h2>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-[#ff6b00] drop-shadow-lg">
-            REKLAMPLATS
+            <span className="font-extrabold tracking-[0.2em] leading-relaxed">REKLAMPLATS</span>
           </h2>
           <div className="space-y-2 w-full">
             <div className="relative">
               <input
                 type="text"
-                placeholder="SÖK STAD ELLER REGION..."
+                placeholder="Sök stad, region eller skylt..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => {
@@ -112,7 +114,7 @@ export default function Home() {
                     handleSearch(searchQuery);
                   }
                 }}
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/80"
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-full focus:border-[#ff6b00] focus:outline-none transition-colors bg-white/80 text-black"
               />
               <button
                 onClick={() => handleSearch(searchQuery)}
@@ -236,6 +238,28 @@ export default function Home() {
               </Link>
             </motion.div>
           </motion.div>
+
+          {/* Full-width Map Section */}
+          <section className="py-16 bg-gradient-to-b from-white to-orange-50">
+            <div className="max-w-7xl mx-auto px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="mb-8 text-center"
+              >
+                <p className="text-base sm:text-lg text-gray-600 font-medium">Utforska alla skyltar på kartan – klicka på en bi-symbol för mer info</p>
+              </motion.div>
+              <div className="rounded-3xl shadow-2xl overflow-hidden border-4 border-orange-100 bg-white" style={{ minHeight: 480, height: '60vh' }}>
+                <MapWithBees 
+                  billboards={billboards.filter(b => typeof b.latitude === 'number' && typeof b.longitude === 'number').map(b => ({ ...b, lat: b.latitude, lng: b.longitude }))}
+                  initialCenter={[59.3325806, 18.0649031]}
+                  initialZoom={13}
+                />
+              </div>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -247,6 +271,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowMap(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -254,18 +279,36 @@ export default function Home() {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden mt-16"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute top-4 right-4 z-10">
+              <div className="absolute top-4 right-4 z-[100]">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowMap(false)}
-                  className="p-3 bg-white rounded-full shadow-lg border border-gray-300 hover:bg-gray-100 transition-shadow"
+                  className="p-4 bg-black/90 text-white rounded-full shadow-2xl border-2 border-white hover:bg-black transition-colors"
+                  style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.25)' }}
                 >
-                  <XMarkIcon className="w-6 h-6 text-gray-900" />
+                  <XMarkIcon className="w-7 h-7" />
                 </motion.button>
               </div>
-              <BillboardMapWrapper />
+              <div className="w-full h-full">
+                <MapWithBees 
+                  billboards={billboards
+                    .filter((b): b is Billboard & { latitude: number; longitude: number } => 
+                      typeof b.latitude === 'number' && typeof b.longitude === 'number'
+                    )
+                    .map(b => ({
+                      id: b.id,
+                      lat: b.latitude,
+                      lng: b.longitude,
+                      title: b.title,
+                      location: b.location
+                    }))}
+                  initialCenter={[62.0, 16.5]}
+                  initialZoom={5}
+                />
+              </div>
             </motion.div>
           </motion.div>
         )}
