@@ -89,6 +89,24 @@ export default function RevenuePage() {
   const router = useRouter();
   const [timeRange, setTimeRange] = useState('year');
 
+  // Exportera rapport som CSV
+  const handleExportReport = () => {
+    const rows = [
+      ['Månad', 'Intäkt (kr)'],
+      ...dummyRevenue.labels.map((label, i) => [label, dummyRevenue.datasets[0].data[i]])
+    ];
+    const csvContent = rows.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'intaktsrapport.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-[#f6f5f3]">
       {/* Header */}
@@ -172,7 +190,10 @@ export default function RevenuePage() {
                   ))}
                 </div>
               </div>
-              <button className="w-full mt-4 px-4 py-2 bg-[#ff6b00] text-white rounded-lg hover:bg-[#a05c00] transition">
+              <button
+                className="w-full mt-4 px-4 py-2 bg-[#ff6b00] text-white rounded-lg hover:bg-[#a05c00] transition"
+                onClick={handleExportReport}
+              >
                 Exportera rapport
               </button>
             </div>

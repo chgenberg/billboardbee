@@ -7,6 +7,8 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { PhoneIcon, EnvelopeIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import BookingCalendar from '@/app/components/BookingCalendar';
 
 const BillboardMapWrapper = dynamic(() => import("@/app/components/BillboardMapWrapper"), { ssr: false });
 
@@ -35,6 +37,24 @@ export default function BillboardPage() {
   const [mainImage, setMainImage] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [bookingForm, setBookingForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: '',
+    startDate: '',
+    endDate: ''
+  });
+  const [infoForm, setInfoForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: ''
+  });
 
   useEffect(() => {
     const fetchBillboard = async () => {
@@ -198,10 +218,16 @@ export default function BillboardPage() {
                 <ShoppingCartIcon className="h-5 w-5" />
                 {addedToCart ? 'Tillagd! Går till varukorg...' : 'Lägg till i varukorg'}
               </button>
-              <button className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium">
+              <button 
+                onClick={() => setShowBookingModal(true)}
+                className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
+              >
                 Kontakta för bokning
               </button>
-              <button className="w-full py-4 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200 font-medium">
+              <button 
+                onClick={() => setShowInfoModal(true)}
+                className="w-full py-4 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200 font-medium"
+              >
                 Begär mer information
               </button>
             </div>
@@ -244,6 +270,24 @@ export default function BillboardPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Calendar Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="mt-16"
+        >
+          <h2 className="text-2xl font-light text-gray-900 mb-6">Bokningskalender</h2>
+          <BookingCalendar 
+            billboardId={billboard.id}
+            onDateSelect={(date) => {
+              // Handle date selection for booking
+              console.log('Selected date:', date);
+            }}
+          />
+        </motion.div>
       </main>
 
       {/* Image Modal */}
@@ -278,6 +322,247 @@ export default function BillboardPage() {
                 height={800}
                 className="rounded-lg"
               />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {showBookingModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowBookingModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+              
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Kontakta för bokning</h2>
+              
+              <form className="space-y-4" onSubmit={(e) => {
+                e.preventDefault();
+                // Handle form submission
+                console.log('Booking form:', bookingForm);
+                setShowBookingModal(false);
+              }}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Namn *</label>
+                    <input
+                      type="text"
+                      required
+                      value={bookingForm.name}
+                      onChange={(e) => setBookingForm({...bookingForm, name: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Företag</label>
+                    <input
+                      type="text"
+                      value={bookingForm.company}
+                      onChange={(e) => setBookingForm({...bookingForm, company: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
+                  <input
+                    type="email"
+                    required
+                    value={bookingForm.email}
+                    onChange={(e) => setBookingForm({...bookingForm, email: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={bookingForm.phone}
+                    onChange={(e) => setBookingForm({...bookingForm, phone: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Startdatum</label>
+                    <input
+                      type="date"
+                      value={bookingForm.startDate}
+                      onChange={(e) => setBookingForm({...bookingForm, startDate: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Slutdatum</label>
+                    <input
+                      type="date"
+                      value={bookingForm.endDate}
+                      onChange={(e) => setBookingForm({...bookingForm, endDate: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Meddelande</label>
+                  <textarea
+                    rows={3}
+                    value={bookingForm.message}
+                    onChange={(e) => setBookingForm({...bookingForm, message: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 resize-none"
+                    placeholder="Berätta mer om din kampanj..."
+                  />
+                </div>
+                
+                <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <PhoneIcon className="w-4 h-4" />
+                    <span>Ring oss direkt: <a href="tel:+46701234567" className="font-medium text-orange-600 hover:text-orange-700">070-123 45 67</a></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <EnvelopeIcon className="w-4 h-4" />
+                    <span>E-post: <a href="mailto:info@billboardbee.se" className="font-medium text-orange-600 hover:text-orange-700">info@billboardbee.se</a></span>
+                  </div>
+                </div>
+                
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Skicka bokningsförfrågan
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Info Modal */}
+      <AnimatePresence>
+        {showInfoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowInfoModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowInfoModal(false)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+              
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Begär mer information</h2>
+              
+              <form className="space-y-4" onSubmit={(e) => {
+                e.preventDefault();
+                // Handle form submission
+                console.log('Info form:', infoForm);
+                setShowInfoModal(false);
+              }}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Namn *</label>
+                    <input
+                      type="text"
+                      required
+                      value={infoForm.name}
+                      onChange={(e) => setInfoForm({...infoForm, name: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Företag</label>
+                    <input
+                      type="text"
+                      value={infoForm.company}
+                      onChange={(e) => setInfoForm({...infoForm, company: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
+                  <input
+                    type="email"
+                    required
+                    value={infoForm.email}
+                    onChange={(e) => setInfoForm({...infoForm, email: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                  <input
+                    type="tel"
+                    value={infoForm.phone}
+                    onChange={(e) => setInfoForm({...infoForm, phone: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Vad vill du veta mer om?</label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={infoForm.message}
+                    onChange={(e) => setInfoForm({...infoForm, message: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 resize-none"
+                    placeholder="Beskriv vad du vill veta mer om..."
+                  />
+                </div>
+                
+                <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <PhoneIcon className="w-4 h-4" />
+                    <span>Ring oss: <a href="tel:+46701234567" className="font-medium text-orange-600 hover:text-orange-700">070-123 45 67</a></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <EnvelopeIcon className="w-4 h-4" />
+                    <span>E-post: <a href="mailto:info@billboardbee.se" className="font-medium text-orange-600 hover:text-orange-700">info@billboardbee.se</a></span>
+                  </div>
+                </div>
+                
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Skicka förfrågan
+                </button>
+              </form>
             </motion.div>
           </motion.div>
         )}

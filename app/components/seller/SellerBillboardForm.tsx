@@ -1,50 +1,71 @@
 "use client";
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { motion, AnimatePresence } from 'framer-motion';
 import SellerCalendarPopup from './SellerCalendarPopup';
 import Image from 'next/image';
+import { 
+  PhotoIcon, 
+  MapPinIcon, 
+  CurrencyDollarIcon, 
+  CalendarDaysIcon,
+  InformationCircleIcon,
+  SparklesIcon,
+  ChartBarIcon,
+  CameraIcon
+} from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
 
 const helpTexts: Record<string, string> = {
   title: 'Skriv en tydlig och lockande rubrik! Exempel: "Stor LED-skylt vid E6:an – syns av 65 000 bilar/dag". Tänk på att nämna plats, typ av skylt och något unikt.',
   coverImage: 'Ladda upp en bild som verkligen visar skylten och dess omgivning. Tips: En bild i dagsljus, gärna i liggande format (16:9), där skylten syns tydligt.',
-  gallery: 'Lägg till fler bilder! Visa skylten från olika vinklar, på kvällen, i närbild och gärna med omgivningen. Max 4 bilder. Dra in eller klicka för att välja.',
-  trafficTeaser: 'Beskriv trafikflödet eller exponeringen. Exempel: "65 000 fordon passerar varje dag", "Syns från motorvägen i båda riktningar", "Nära köpcentrum".',
+  gallery: 'Lägg till fler bilder! Visa skylten från olika vinklar, på kvällen, i närbild och gärna med omgivningen. Max 4 bilder.',
+  trafficTeaser: 'Beskriv trafikflödet eller exponeringen. Exempel: "65 000 fordon passerar varje dag", "Syns från motorvägen i båda riktningar".',
   teaser: 'Skriv en kort, säljande beskrivning! Vad gör platsen unik? Exempel: "Perfekt läge för sommarkampanjer – syns av semestertrafiken!"',
-  basePrice: 'Ange pris per vecka i SEK exkl. moms. Tänk på att sätta ett konkurrenskraftigt pris. Exempel: "18 900 kr/vecka".',
+  basePrice: 'Ange pris per vecka i SEK exkl. moms. Tänk på att sätta ett konkurrenskraftigt pris.',
   serviceFee: 'Procentandel som går till BillboardBee. Standard är 10–15%.',
-  availableWeeks: 'Ange lediga veckor som kommateckenseparerade nummer, t.ex. "28,29,30,31". Skriv vilka veckor skylten är ledig för uthyrning.',
-  peakWeeks: 'Vilka veckor är extra attraktiva? (t.ex. sommar, jul). Exempel: "32,33,34".',
-  peakPrice: 'Högre pris för peak-veckor. Exempel: "22 900 kr".',
-  lat: 'Använd Google Maps för att hitta exakta koordinater. Exempel: "55.123456".',
-  lng: 'Använd Google Maps för att hitta exakta koordinater. Exempel: "13.123456".',
-  cta: 'Skriv en tydlig call-to-action! Exempel: "Boka vecka 34 • 18 900 kr" eller "Kontakta oss för offert".'
+  availableWeeks: 'Välj vilka perioder skylten är ledig för uthyrning.',
+  peakWeeks: 'Vilka veckor är extra attraktiva? (t.ex. sommar, jul).',
+  peakPrice: 'Högre pris för peak-veckor.',
+  location: 'Klicka på kartan för att markera skyltens exakta position.',
+  cta: 'Skriv en tydlig call-to-action! Exempel: "Boka vecka 34 • 18 900 kr"'
 };
 
 // Dynamisk import av LeafletMap för att undvika SSR-problem
 const LeafletMap = dynamic(() => import('./SellerMapPopup'), { ssr: false });
 
-function HelpIcon({ field }: { field: string }) {
-  const [open, setOpen] = useState(false);
+function HelpTooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  
   return (
-    <span
-      role="button"
-      tabIndex={0}
-      aria-label="Visa tips"
-      className="relative ml-2 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 rounded-full"
-      onClick={e => { e.stopPropagation(); setOpen(!open); }}
-      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setOpen(!open); } }}
-    >
-      <span className="text-[#ff6b00] text-lg font-bold">?</span>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => setOpen(false)}>
-          <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-[90vw] max-w-md border-2 border-[#ff6b00]/60 animate-fade-in text-[#222]" onClick={e => e.stopPropagation()}>
-            <div className="text-base font-semibold text-[#ff6b00] mb-2">Tips</div>
-            <div className="text-sm leading-relaxed mb-2">{helpTexts[field]}</div>
-            <span role="button" aria-label="Stäng" tabIndex={0} className="absolute top-2 right-3 text-[#ff6b00] text-2xl font-bold cursor-pointer" onClick={e => { e.stopPropagation(); setOpen(false); }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setOpen(false); } }}>&times;</span>
-          </div>
-        </div>
-      )}
-    </span>
+    <div className="relative">
+      <button
+        type="button"
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        className="text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <InformationCircleIcon className="w-5 h-5" />
+      </button>
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-sm rounded-xl shadow-xl"
+          >
+            <div className="relative">
+              {text}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-gray-900" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -60,7 +81,7 @@ export default function SellerBillboardForm() {
     trafficTeaser: '',
     teaser: '',
     basePrice: '',
-    serviceFee: '',
+    serviceFee: '10',
     availableWeeks: '',
     peakWeeks: '',
     peakPrice: '',
@@ -68,32 +89,32 @@ export default function SellerBillboardForm() {
     lng: '',
     cta: ''
   });
+  
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-
-  // Karta-popup state
   const [mapOpen, setMapOpen] = useState(false);
-
-  // Calendar state
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [standardDays, setStandardDays] = useState<Date[]>([]);
   const [peakDays, setPeakDays] = useState<Date[]>([]);
   const [calendarTab, setCalendarTab] = useState<'standard' | 'peak'>('standard');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Drag & drop handlers för huvudbild
+  // Drag & drop handlers
   function handleCoverDrop(e: React.DragEvent) {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setForm(f => ({ ...f, coverImage: e.dataTransfer.files[0] }));
     }
   }
+  
   function handleCoverSelect(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
       setForm(f => ({ ...f, coverImage: e.target.files![0] }));
     }
   }
 
-  // Drag & drop handlers för galleri
   function handleGalleryDrop(e: React.DragEvent) {
     e.preventDefault();
     if (e.dataTransfer.files) {
@@ -101,24 +122,23 @@ export default function SellerBillboardForm() {
       setForm(f => ({ ...f, gallery: [...f.gallery, ...files].slice(0, 4) }));
     }
   }
+  
   function handleGallerySelect(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
       const files = Array.from(e.target.files).slice(0, 4);
       setForm(f => ({ ...f, gallery: [...f.gallery, ...files].slice(0, 4) }));
     }
   }
+  
   function removeGalleryImage(idx: number) {
     setForm(f => ({ ...f, gallery: f.gallery.filter((_, i) => i !== idx) }));
   }
-
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
       const formData = new FormData();
       formData.append('title', form.title);
@@ -138,10 +158,13 @@ export default function SellerBillboardForm() {
         method: 'POST',
         body: formData,
       });
+      
       const data = await res.json();
       if (data.success) {
         setSuccess(true);
-        // Optionellt: resetForm();
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
       } else {
         setError(data.error || 'Något gick fel vid sparande.');
       }
@@ -153,172 +176,404 @@ export default function SellerBillboardForm() {
   }
 
   return (
-    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-      {/* Loading och bekräftelse */}
-      {loading && <div className="text-[#ff6b00] text-center font-semibold">Sparar annons...</div>}
-      {success && <div className="text-green-600 text-center font-semibold">Annonsen är sparad!</div>}
-      {error && <div className="text-red-600 text-center font-semibold">{error}</div>}
-
-      {/* Titel */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Rubrik
-        <HelpIcon field="title" />
-      </label>
-      <input type="text" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
-
-      {/* Huvudbild drag & drop */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Huvudbild
-        <HelpIcon field="coverImage" />
-      </label>
-      <div
-        className="w-full aspect-[16/9] bg-[#f7f7f7] border-2 border-dashed border-[#ff6b00]/40 rounded-xl flex items-center justify-center cursor-pointer relative group"
-        onClick={() => coverInputRef.current?.click()}
-        onDrop={handleCoverDrop}
-        onDragOver={e => e.preventDefault()}
-      >
-        {form.coverImage ? (
-          <div className="relative w-full h-full">
-            <Image src={imageToUrl(form.coverImage)} alt="cover" fill className="object-cover w-full h-full rounded-xl" />
-          </div>
-        ) : (
-          <span className="text-[#ff6b00] text-lg opacity-60">Dra in eller klicka för att ladda upp bild</span>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Status Messages */}
+      <AnimatePresence>
+        {success && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3"
+          >
+            <CheckCircleIcon className="w-6 h-6 text-green-600" />
+            <div>
+              <p className="font-medium text-green-900">Annonsen har skapats!</p>
+              <p className="text-sm text-green-700">Du omdirigeras till dashboard...</p>
+            </div>
+          </motion.div>
         )}
-        <input
-          ref={coverInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleCoverSelect}
-        />
-        {form.coverImage && (
+        
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3"
+          >
+            <ExclamationCircleIcon className="w-6 h-6 text-red-600" />
+            <div>
+              <p className="font-medium text-red-900">Ett fel uppstod</p>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Section 1: Basic Information */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+            <SparklesIcon className="w-6 h-6 text-orange-600" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900">Grundinformation</h2>
+        </div>
+
+        {/* Title */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Rubrik
+            <HelpTooltip text={helpTexts.title} />
+          </label>
+          <input
+            type="text"
+            value={form.title}
+            onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            placeholder="Ex: Stor LED-skylt vid E6:an – syns av 65 000 bilar/dag"
+            required
+          />
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Säljande beskrivning
+            <HelpTooltip text={helpTexts.teaser} />
+          </label>
+          <textarea
+            value={form.teaser}
+            onChange={(e) => setForm(f => ({ ...f, teaser: e.target.value }))}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 resize-none"
+            placeholder="Beskriv vad som gör din skyltplats unik..."
+            rows={3}
+            required
+          />
+        </div>
+      </motion.section>
+
+      {/* Section 2: Images */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <PhotoIcon className="w-6 h-6 text-blue-600" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900">Bilder</h2>
+        </div>
+
+        {/* Cover Image */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Huvudbild
+            <HelpTooltip text={helpTexts.coverImage} />
+          </label>
+          <div
+            onClick={() => coverInputRef.current?.click()}
+            onDrop={handleCoverDrop}
+            onDragOver={e => e.preventDefault()}
+            className="relative aspect-[16/9] bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl overflow-hidden cursor-pointer hover:border-orange-500 hover:bg-orange-50/50 transition-all duration-200 group"
+          >
+            {form.coverImage ? (
+              <>
+                <Image 
+                  src={imageToUrl(form.coverImage)} 
+                  alt="Huvudbild" 
+                  fill 
+                  className="object-cover" 
+                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setForm(f => ({ ...f, coverImage: null }));
+                  }}
+                  className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                >
+                  <span className="text-2xl leading-none text-gray-600">×</span>
+                </button>
+              </>
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <CameraIcon className="w-12 h-12 text-gray-400 mb-3" />
+                <p className="text-gray-600 font-medium">Klicka eller dra för att ladda upp</p>
+                <p className="text-sm text-gray-500 mt-1">JPG, PNG upp till 10MB</p>
+              </div>
+            )}
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleCoverSelect}
+            />
+          </div>
+        </div>
+
+        {/* Gallery */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Bildgalleri
+            <HelpTooltip text={helpTexts.gallery} />
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {form.gallery.map((file, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative aspect-square rounded-xl overflow-hidden group"
+              >
+                <Image 
+                  src={imageToUrl(file)} 
+                  alt={`Bild ${idx + 1}`} 
+                  fill 
+                  className="object-cover" 
+                />
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(idx)}
+                  className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <span className="text-xl leading-none text-gray-600">×</span>
+                </button>
+              </motion.div>
+            ))}
+            
+            {form.gallery.length < 4 && (
+              <div
+                onClick={() => galleryInputRef.current?.click()}
+                onDrop={handleGalleryDrop}
+                onDragOver={e => e.preventDefault()}
+                className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-50/50 transition-all duration-200"
+              >
+                <div className="text-center">
+                  <PhotoIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">Lägg till</p>
+                </div>
+              </div>
+            )}
+            
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleGallerySelect}
+            />
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Section 3: Traffic & Location */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+            <ChartBarIcon className="w-6 h-6 text-purple-600" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900">Trafik & Plats</h2>
+        </div>
+
+        {/* Traffic */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Trafikfakta
+            <HelpTooltip text={helpTexts.trafficTeaser} />
+          </label>
+          <input
+            type="text"
+            value={form.trafficTeaser}
+            onChange={(e) => setForm(f => ({ ...f, trafficTeaser: e.target.value }))}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            placeholder="Ex: 65 000 fordon passerar varje dag"
+            required
+          />
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Plats på karta
+            <HelpTooltip text={helpTexts.location} />
+          </label>
           <button
             type="button"
-            className="absolute top-2 right-2 bg-white/80 rounded-full p-1 text-[#ff6b00] text-xl shadow"
-            onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, coverImage: null })); }}
+            onClick={() => setMapOpen(true)}
+            className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
-            &times;
+            <MapPinIcon className="w-5 h-5" />
+            {form.lat && form.lng ? 'Ändra position på karta' : 'Välj position på karta'}
           </button>
-        )}
-      </div>
+          
+          {form.lat && form.lng && (
+            <div className="mt-2 text-sm text-gray-600">
+              Position: {parseFloat(form.lat).toFixed(4)}, {parseFloat(form.lng).toFixed(4)}
+            </div>
+          )}
+        </div>
+      </motion.section>
 
-      {/* Galleri drag & drop */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Galleri
-        <HelpIcon field="gallery" />
-      </label>
-      <div
-        className="w-full min-h-[60px] bg-[#f7f7f7] border-2 border-dashed border-[#ff6b00]/40 rounded-xl flex items-center gap-2 px-2 py-2 cursor-pointer relative group overflow-x-auto"
-        onClick={() => galleryInputRef.current?.click()}
-        onDrop={handleGalleryDrop}
-        onDragOver={e => e.preventDefault()}
+      {/* Section 4: Pricing & Availability */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="space-y-6"
       >
-        {form.gallery.length === 0 && (
-          <span className="text-[#ff6b00] text-sm opacity-60">Dra in eller klicka för att ladda upp bilder</span>
-        )}
-        {form.gallery.map((file, idx) => (
-          <div key={idx} className="relative group w-20 h-14">
-            <Image src={imageToUrl(file)} alt={`gallery-${idx}`} fill className="object-cover rounded-lg border border-[#ff6b00]/20" />
-            <button
-              type="button"
-              className="absolute top-1 right-1 bg-white/80 rounded-full p-0.5 text-[#ff6b00] text-base shadow"
-              onClick={e => { e.stopPropagation(); removeGalleryImage(idx); }}
-            >
-              &times;
-            </button>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+            <CurrencyDollarIcon className="w-6 h-6 text-green-600" />
           </div>
-        ))}
-        <input
-          ref={galleryInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={handleGallerySelect}
-        />
-      </div>
-
-      {/* Trafik/teaser */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Trafikfakta
-        <HelpIcon field="trafficTeaser" />
-      </label>
-      <input type="text" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.trafficTeaser} onChange={e => setForm(f => ({ ...f, trafficTeaser: e.target.value }))} />
-
-      {/* Teaser */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Säljande text
-        <HelpIcon field="teaser" />
-      </label>
-      <input type="text" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.teaser} onChange={e => setForm(f => ({ ...f, teaser: e.target.value }))} />
-
-      {/* Pris */}
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="flex items-center gap-1 text-[#222] font-semibold">
-            Veckopris
-            <HelpIcon field="basePrice" />
-          </label>
-          <input type="number" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.basePrice} onChange={e => setForm(f => ({ ...f, basePrice: e.target.value }))} />
+          <h2 className="text-2xl font-semibold text-gray-900">Pris & Tillgänglighet</h2>
         </div>
-        <div className="flex-1 flex flex-col justify-end">
-          <label className="flex items-center gap-1 text-[#888] font-semibold mb-1">
-            Serviceavgift (%)
-            <HelpIcon field="serviceFee" />
-          </label>
-          <div className="w-full rounded-lg border border-[#ff6b00]/20 bg-[#fffbe6] px-3 py-2 text-[#ff6b00] font-bold text-center select-none cursor-not-allowed">
-            10%
+
+        {/* Pricing */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              Veckopris (SEK)
+              <HelpTooltip text={helpTexts.basePrice} />
+            </label>
+            <input
+              type="number"
+              value={form.basePrice}
+              onChange={(e) => setForm(f => ({ ...f, basePrice: e.target.value }))}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+              placeholder="18900"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              Peak-pris (SEK)
+              <HelpTooltip text={helpTexts.peakPrice} />
+            </label>
+            <input
+              type="number"
+              value={form.peakPrice}
+              onChange={(e) => setForm(f => ({ ...f, peakPrice: e.target.value }))}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+              placeholder="22900"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Lediga perioder (kalender) */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        Välj lediga perioder
-        <HelpIcon field="availableWeeks" />
-      </label>
-      <div className="w-full">
+        {/* Availability */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Tillgängliga perioder
+            <HelpTooltip text={helpTexts.availableWeeks} />
+          </label>
+          <button
+            type="button"
+            onClick={() => setCalendarOpen(true)}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl hover:border-orange-500 hover:bg-orange-50/50 transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <CalendarDaysIcon className="w-5 h-5 text-gray-600" />
+            {standardDays.length === 0 && peakDays.length === 0 
+              ? 'Välj tillgängliga perioder' 
+              : `${standardDays.length + peakDays.length} perioder valda`}
+          </button>
+        </div>
+
+        {/* CTA */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            Call-to-action
+            <HelpTooltip text={helpTexts.cta} />
+          </label>
+          <input
+            type="text"
+            value={form.cta}
+            onChange={(e) => setForm(f => ({ ...f, cta: e.target.value }))}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200"
+            placeholder="Ex: Boka vecka 34 • 18 900 kr"
+            required
+          />
+        </div>
+      </motion.section>
+
+      {/* Submit Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="pt-6"
+      >
         <button
-          type="button"
-          className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 text-[#222] text-left hover:bg-[#fffbe6] transition"
-          onClick={() => setCalendarOpen(true)}
+          type="submit"
+          disabled={loading}
+          className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {standardDays.length === 0 && peakDays.length === 0 ? 'Klicka för att välja perioder' : 'Redigera perioder'}
+          {loading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Sparar annons...
+            </>
+          ) : (
+            'Publicera annons'
+          )}
         </button>
-        {/* Visning av valda perioder */}
-        {(standardDays.length > 0 || peakDays.length > 0) && (
-          <div className="mt-2 flex flex-col gap-1">
-            {standardDays.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-[#ff6b00] mr-1">Standard:</span>
-                {standardDays.map((d, i) => (
-                  <span key={d.toISOString()} className="bg-[#ffe082] text-[#222] rounded-full px-3 py-1 text-xs font-medium flex items-center gap-1 shadow-sm">
-                    {d.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' })}
-                    <button type="button" className="ml-1 text-[#ff6b00] hover:text-red-500 text-base leading-none" onClick={e => {
-                      e.stopPropagation();
-                      setStandardDays(standardDays.filter((x, idx) => idx !== i));
-                    }}>&times;</button>
-                  </span>
-                ))}
+      </motion.div>
+
+      {/* Map Modal */}
+      <AnimatePresence>
+        {mapOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setMapOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="absolute top-6 left-6 right-6 z-10 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl">
+                  Välj skyltens position
+                </h3>
+                <button
+                  onClick={() => setMapOpen(false)}
+                  className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                >
+                  <span className="text-2xl leading-none text-gray-600">×</span>
+                </button>
               </div>
-            )}
-            {peakDays.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-xs font-semibold text-[#ff9800] mr-1">Peak:</span>
-                {peakDays.map((d, i) => (
-                  <span key={d.toISOString()} className="bg-[#ffb347] text-white rounded-full px-3 py-1 text-xs font-medium flex items-center gap-1 shadow-sm">
-                    {d.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' })}
-                    <button type="button" className="ml-1 text-white hover:text-red-200 text-base leading-none" onClick={e => {
-                      e.stopPropagation();
-                      setPeakDays(peakDays.filter((x, idx) => idx !== i));
-                    }}>&times;</button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+              <LeafletMap
+                lat={form.lat}
+                lng={form.lng}
+                onSelect={(lat: string, lng: string) => {
+                  setForm(f => ({ ...f, lat, lng }));
+                  setMapOpen(false);
+                }}
+              />
+            </motion.div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* Calendar Modal */}
       {calendarOpen && (
         <SellerCalendarPopup
           standardDays={standardDays}
@@ -330,77 +585,6 @@ export default function SellerBillboardForm() {
           onClose={() => setCalendarOpen(false)}
         />
       )}
-
-      {/* Karta-knapp för lat/lng */}
-      <div className="flex justify-center mb-2">
-        <button
-          type="button"
-          className="px-4 py-1.5 rounded-full bg-white text-[#ff6b00] font-bold text-sm border border-[#ff6b00] tracking-wide font-avenir hover:bg-[#ff6b00] hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 shadow"
-          style={{ fontFamily: 'Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif' }}
-          onClick={e => { e.preventDefault(); setMapOpen(true); }}
-        >
-          VISA POSITION PÅ KARTA
-        </button>
-      </div>
-      {/* Popup med karta */}
-      {mapOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setMapOpen(false)}>
-          <div className="relative bg-white rounded-2xl shadow-2xl p-4 w-[98vw] max-w-5xl h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-2">
-              <div className="text-[#ff6b00] font-bold text-lg">Välj position på karta</div>
-              <button aria-label="Stäng karta" className="text-[#ff6b00] text-2xl font-bold" onClick={e => { e.stopPropagation(); setMapOpen(false); }}>&times;</button>
-            </div>
-            <div className="flex-1 rounded-xl overflow-hidden">
-              <LeafletMap
-                lat={form.lat}
-                lng={form.lng}
-                onSelect={(lat: string, lng: string) => {
-                  setForm(f => ({ ...f, lat, lng }));
-                  setMapOpen(false);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Plats */}
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="flex items-center gap-1 text-[#222] font-semibold">
-            Latitud
-            <HelpIcon field="lat" />
-          </label>
-          <input type="number" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.lat} onChange={e => setForm(f => ({ ...f, lat: e.target.value }))} />
-        </div>
-        <div className="flex-1">
-          <label className="flex items-center gap-1 text-[#222] font-semibold">
-            Longitud
-            <HelpIcon field="lng" />
-          </label>
-          <input type="number" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.lng} onChange={e => setForm(f => ({ ...f, lng: e.target.value }))} />
-        </div>
-      </div>
-
-      {/* CTA */}
-      <label className="flex items-center gap-1 text-[#222] font-semibold">
-        CTA
-        <HelpIcon field="cta" />
-      </label>
-      <input type="text" className="w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition" value={form.cta} onChange={e => setForm(f => ({ ...f, cta: e.target.value }))} />
-
-      <button type="submit" className="mt-4 w-full py-3 rounded-full bg-[#ff6b00] text-white font-bold text-lg shadow border border-[#ff6b00] tracking-wide font-avenir hover:bg-white hover:text-[#ff6b00] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40" disabled={loading}>
-        Spara annons
-      </button>
     </form>
   );
-}
-
-// Minimalistisk input-style (lägg till i global CSS eller tailwind.config.js)
-// .input { @apply w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] bg-white; }
-
-/*
-.input-alt {
-  @apply w-full rounded-lg border border-[#ff6b00]/30 bg-[#f6f5f3] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/40 text-[#222] placeholder:text-[#ff6b00]/60 transition;
-}
-*/ 
+} 

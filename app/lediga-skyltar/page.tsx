@@ -174,7 +174,7 @@ export default function LedigaSkyltar() {
                     <select
                       value={selectedRegion}
                       onChange={(e) => setSelectedRegion(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer text-[#222]"
                     >
                       <option value="">Alla regioner</option>
                       {regions.map(region => (
@@ -192,7 +192,7 @@ export default function LedigaSkyltar() {
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer text-[#222]"
                     >
                       <option value="">Alla typer</option>
                       {types.map(type => (
@@ -210,7 +210,7 @@ export default function LedigaSkyltar() {
                     <select
                       value={selectedSize}
                       onChange={(e) => setSelectedSize(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer text-[#222]"
                     >
                       <option value="">Alla storlekar</option>
                       {sizes.map(size => (
@@ -262,7 +262,7 @@ export default function LedigaSkyltar() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm appearance-none cursor-pointer text-[#222]"
                     >
                       <option value="price-asc">Pris: Låg till hög</option>
                       <option value="price-desc">Pris: Hög till låg</option>

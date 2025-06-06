@@ -50,16 +50,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               
               {/* Options */}
               <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-4 min-h-[340px]">
                   {/* Advertiser Option */}
                   <Link href="/login?role=annonsor" onClick={onClose}>
                     <motion.div
                       whileHover={{ scale: 1.02, y: -3 }}
                       whileTap={{ scale: 0.98 }}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer h-full"
                     >
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-transparent hover:border-blue-500 transition-all duration-300 h-full">
-                        <div className="flex flex-col items-center text-center space-y-3">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-transparent hover:border-blue-500 transition-all duration-300 h-full flex flex-col justify-between">
+                        <div className="flex flex-col items-center text-center space-y-3 flex-1 justify-center">
                           <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                             <MegaphoneIcon className="w-8 h-8 text-white" />
                           </div>
@@ -87,10 +87,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <motion.div
                       whileHover={{ scale: 1.02, y: -3 }}
                       whileTap={{ scale: 0.98 }}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer h-full"
                     >
-                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-transparent hover:border-green-500 transition-all duration-300 h-full">
-                        <div className="flex flex-col items-center text-center space-y-3">
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-transparent hover:border-green-500 transition-all duration-300 h-full flex flex-col justify-between">
+                        <div className="flex flex-col items-center text-center space-y-3 flex-1 justify-center">
                           <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                             <HomeIcon className="w-8 h-8 text-white" />
                           </div>

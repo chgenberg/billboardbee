@@ -1,35 +1,116 @@
 'use client';
-import SellerBillboardForm from '../../components/seller/SellerBillboardForm';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import SellerBillboardForm from '../../components/seller/SellerBillboardForm';
 
 export default function NewBillboardPage() {
   const router = useRouter();
+  
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center px-4 py-12 pt-20 bg-[#f6f5f3] overflow-x-hidden">
-      {/* Subtle background image/gradient */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/bakgrunden2.png"
-          alt="Bakgrund"
-          fill
-          className="object-cover opacity-40 blur-sm select-none pointer-events-none"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-[#f6f5f3]/90" />
-      </div>
-      <div className="w-full max-w-2xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 md:p-12 border border-white/20 flex flex-col gap-8 animate-fade-in">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-extrabold text-[#ff6b00] text-center w-full tracking-tight">Ny annons</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Hero Section with Gradient */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-orange-50 opacity-60" />
+        <div className="absolute inset-0">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-orange-200 rounded-full blur-3xl opacity-20" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-300 rounded-full blur-3xl opacity-20" />
         </div>
-        <SellerBillboardForm />
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="mt-2 w-full py-2 rounded-xl bg-[#f6f5f3] text-[#bf7100] font-semibold border border-[#bf7100]/20 hover:bg-white hover:shadow transition-all"
+        
+        {/* Header */}
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 max-w-7xl mx-auto px-4 pt-24 pb-12"
         >
-          Tillbaka till dashboard
-        </button>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="group flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-8"
+          >
+            <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Tillbaka till dashboard</span>
+          </button>
+          
+          <div className="text-center">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-5xl md:text-6xl font-bold text-gray-900 tracking-tight uppercase"
+            >
+              NY ANNONS
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
+            >
+              Skapa en professionell annons för din skyltplats på några minuter
+            </motion.p>
+          </div>
+        </motion.header>
       </div>
+
+      {/* Progress Indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="max-w-4xl mx-auto px-4 mb-8"
+      >
+        <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+            <span className="text-sm font-medium text-gray-900">Information</span>
+          </div>
+          <div className="w-16 h-0.5 bg-gray-300" />
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+            <span className="text-sm text-gray-500">Prissättning</span>
+          </div>
+          <div className="w-16 h-0.5 bg-gray-300" />
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+            <span className="text-sm text-gray-500">Publicera</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Main Content */}
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="max-w-4xl mx-auto px-4 pb-20"
+      >
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="p-8 md:p-12">
+            <SellerBillboardForm />
+          </div>
+        </div>
+
+        {/* Help Section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="mt-12 text-center"
+        >
+          <p className="text-gray-600 mb-4">Behöver du hjälp?</p>
+          <div className="flex items-center justify-center gap-6">
+            <button className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
+              Se guide
+            </button>
+            <span className="text-gray-300">•</span>
+            <button className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
+              Kontakta support
+            </button>
+          </div>
+        </motion.div>
+      </motion.main>
     </div>
   );
 } 

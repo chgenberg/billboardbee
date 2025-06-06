@@ -102,11 +102,11 @@ export default function AnnonsorDashboard() {
         className="flex justify-center"
       >
         <button
-          onClick={() => window.location.href = '/dashboard-annonsor/utforska'}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+          onClick={() => window.location.href = '/saljare/ny-annons'}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
         >
           <FaPlusCircle className="text-xl" />
-          Skapa ny kampanj
+          Skapa ny annons
         </button>
       </motion.div>
     </div>
