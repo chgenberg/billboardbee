@@ -153,83 +153,92 @@ export default function BillboardPage() {
             )}
           </div>
 
-          {/* Details */}
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-light text-gray-900 mb-2">{billboard.title}</h1>
-              <p className="text-gray-600">{billboard.location}</p>
-            </div>
-
-            {/* Price */}
-            <div className="mb-8">
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-light text-gray-900">{billboard.price.toLocaleString()}</span>
-                <span className="text-lg text-gray-500">kr/månad</span>
-              </div>
-            </div>
-
-            {/* Specs */}
-            <div className="space-y-6 mb-8">
-              {billboard.type && (
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Typ</span>
-                  <span className="font-medium text-gray-900">{billboard.type}</span>
-                </div>
-              )}
-              {billboard.size && (
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Storlek</span>
-                  <span className="font-medium text-gray-900">{billboard.size}</span>
-                </div>
-              )}
-              {billboard.traffic && (
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Trafik</span>
-                  <span className="font-medium text-gray-900">{billboard.traffic.toLocaleString()} visningar/dag</span>
-                </div>
-              )}
-              {billboard.region && (
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Region</span>
-                  <span className="font-medium text-gray-900">{billboard.region}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Description */}
-            {billboard.description && (
-              <div className="mb-8">
-                <h2 className="text-lg font-medium text-gray-900 mb-3">Beskrivning</h2>
-                <p className="text-gray-600 leading-relaxed">{billboard.description}</p>
-              </div>
-            )}
-
-            {/* CTA */}
-            <div className="space-y-3">
-              <button 
-                onClick={() => {
-                  setAddedToCart(true);
-                  setTimeout(() => {
-                    router.push('/varukorg');
-                  }, 1000);
+          {/* Details + Kalender */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Kalendern till vänster */}
+            <div className="order-2 lg:order-1">
+              <BookingCalendar 
+                billboardId={billboard.id}
+                onDateSelect={(date) => {
+                  // Handle date selection for booking
+                  console.log('Selected date:', date);
                 }}
-                className="w-full py-4 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-all duration-200 font-medium flex items-center justify-center gap-2"
-              >
-                <ShoppingCartIcon className="h-5 w-5" />
-                {addedToCart ? 'Tillagd! Går till varukorg...' : 'Lägg till i varukorg'}
-              </button>
-              <button 
-                onClick={() => setShowBookingModal(true)}
-                className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
-              >
-                Kontakta för bokning
-              </button>
-              <button 
-                onClick={() => setShowInfoModal(true)}
-                className="w-full py-4 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200 font-medium"
-              >
-                Begär mer information
-              </button>
+              />
+            </div>
+            {/* Info, beskrivning och knappar till höger */}
+            <div className="order-1 lg:order-2">
+              <div className="mb-8">
+                <h1 className="text-3xl font-light text-gray-900 mb-2">{billboard.title}</h1>
+                <p className="text-gray-600">{billboard.location}</p>
+              </div>
+              {/* Price */}
+              <div className="mb-8">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-light text-gray-900">{billboard.price.toLocaleString()}</span>
+                  <span className="text-lg text-gray-500">kr/månad</span>
+                </div>
+              </div>
+              {/* Specs */}
+              <div className="space-y-6 mb-8">
+                {billboard.type && (
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600">Typ</span>
+                    <span className="font-medium text-gray-900">{billboard.type}</span>
+                  </div>
+                )}
+                {billboard.size && (
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600">Storlek</span>
+                    <span className="font-medium text-gray-900">{billboard.size}</span>
+                  </div>
+                )}
+                {billboard.traffic && (
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600">Trafik</span>
+                    <span className="font-medium text-gray-900">{billboard.traffic.toLocaleString()} visningar/dag</span>
+                  </div>
+                )}
+                {billboard.region && (
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600">Region</span>
+                    <span className="font-medium text-gray-900">{billboard.region}</span>
+                  </div>
+                )}
+              </div>
+              {/* Description */}
+              {billboard.description && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-medium text-gray-900 mb-3">Beskrivning</h2>
+                  <p className="text-gray-600 leading-relaxed">{billboard.description}</p>
+                </div>
+              )}
+              {/* CTA */}
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    setAddedToCart(true);
+                    setTimeout(() => {
+                      router.push('/varukorg');
+                    }, 1000);
+                  }}
+                  className="w-full py-4 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-all duration-200 font-medium flex items-center justify-center gap-2"
+                >
+                  <ShoppingCartIcon className="h-5 w-5" />
+                  {addedToCart ? 'Tillagd! Går till varukorg...' : 'Lägg till i varukorg'}
+                </button>
+                <button 
+                  onClick={() => setShowBookingModal(true)}
+                  className="w-full py-4 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium"
+                >
+                  Kontakta för bokning
+                </button>
+                <button 
+                  onClick={() => setShowInfoModal(true)}
+                  className="w-full py-4 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-200 font-medium"
+                >
+                  Begär mer information
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -270,24 +279,6 @@ export default function BillboardPage() {
             </div>
           </motion.div>
         )}
-
-        {/* Calendar Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="mt-16"
-        >
-          <h2 className="text-2xl font-light text-gray-900 mb-6">Bokningskalender</h2>
-          <BookingCalendar 
-            billboardId={billboard.id}
-            onDateSelect={(date) => {
-              // Handle date selection for booking
-              console.log('Selected date:', date);
-            }}
-          />
-        </motion.div>
       </main>
 
       {/* Image Modal */}
