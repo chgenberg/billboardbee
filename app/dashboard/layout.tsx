@@ -13,12 +13,13 @@ import {
   ChartBarIcon, 
   BellIcon, 
   CogIcon,
-  PlusCircleIcon 
+  PlusCircleIcon,
+  Bars3Icon,
+  XMarkIcon
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 export default function DashboardLayout({
@@ -29,6 +30,7 @@ export default function DashboardLayout({
   const { user } = useAuth();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
   if (user?.role === 'ANNONSOR' && !pathname.startsWith('/dashboard-annonsor')) {
     if (typeof window !== 'undefined') {
       window.location.href = '/dashboard-annonsor';
@@ -52,12 +54,40 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Mobile menu button */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition-colors"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Öppna meny"
+      >
+        <Bars3Icon className="w-6 h-6 text-gray-700" />
+      </button>
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:block`}>
+      <div className={cn(
+        "fixed md:static z-50 top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full",
+        "md:translate-x-0 md:block"
+      )}>
+        {/* Close button for mobile */}
+        <button
+          className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Stäng meny"
+        >
+          <XMarkIcon className="w-6 h-6" />
+        </button>
+
         {/* Sidebar content */}
-        <nav className="px-4 space-y-1">
+        <nav className="px-4 pt-16 space-y-1">
           {/* Översikt med närmare gul markering */}
           <Link
             href={navigation[0].href}
@@ -96,27 +126,9 @@ export default function DashboardLayout({
           })}
         </nav>
       </div>
-      {/* Pil-ikon endast på mobil (<md) */}
-      {!sidebarOpen && (
-        <button
-          className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-full shadow p-2"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Öppna meny"
-        >
-          <ArrowRightIcon className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
-      {sidebarOpen && (
-        <button
-          className="md:hidden fixed top-4 left-64 z-50 bg-white rounded-full shadow p-2"
-          onClick={() => setSidebarOpen(false)}
-          aria-label="Stäng meny"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
+
+      {/* Main content */}
       <div className="flex">
-        {/* Main content */}
         <main className="flex-1 pt-20 md:pl-64">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}

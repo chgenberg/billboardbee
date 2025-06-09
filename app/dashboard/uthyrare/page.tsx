@@ -39,7 +39,7 @@ export default function UthyrareDashboard() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-12"
+        className="text-center mb-6"
       >
         <div className="inline-block p-4 bg-orange-50 rounded-2xl mb-6">
           <FaHome className="text-4xl text-orange-500" />

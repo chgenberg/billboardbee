@@ -348,6 +348,8 @@ export default function Home() {
                     }))}
                   initialCenter={[62.0, 16.5]}
                   initialZoom={5}
+                  showCloseButton={true}
+                  onClose={() => setShowMap(false)}
                 />
               </div>
             </motion.div>

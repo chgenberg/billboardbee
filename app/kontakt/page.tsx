@@ -15,6 +15,7 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [billboards, setBillboards] = useState<Billboard[]>([]);
+  const [showMap, setShowMap] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -239,7 +240,11 @@ export default function Contact() {
             <p className="text-base text-gray-600 mb-6">Se alla lediga skyltar på kartan – klicka på en bi-symbol för mer info</p>
           </motion.div>
           <div className="rounded-3xl shadow-2xl overflow-hidden border-4 border-orange-100 bg-white" style={{ minHeight: 480, height: '60vh' }}>
-            <MapWithBees billboards={billboards} />
+            <MapWithBees 
+              billboards={billboards}
+              showCloseButton={true}
+              onClose={() => setShowMap(false)}
+            />
           </div>
         </div>
       </section>

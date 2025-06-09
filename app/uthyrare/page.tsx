@@ -128,7 +128,7 @@ export default function UthyrarePage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/dashboard/uthyrare"
+                href="/lediga-skyltar"
                 className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
                 Registrera din plats
@@ -304,7 +304,7 @@ export default function UthyrarePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/dashboard/uthyrare"
+              href="/lediga-skyltar"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               Registrera plats nu

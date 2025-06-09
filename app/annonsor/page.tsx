@@ -128,7 +128,7 @@ export default function AnnonsorPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/dashboard-annonsor"
+                href="/register?role=annonsor"
                 className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
                 Kom igång nu
