@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import BeeQuizModal from './components/BeeQuizModal';
 import { FaMapMarkedAlt } from 'react-icons/fa';
 import { MagnifyingGlassIcon, MapIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -41,6 +42,7 @@ export default function Home() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -68,6 +70,10 @@ export default function Home() {
     };
 
     fetchBillboards();
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   // Läs in städer från CSV vid mount
@@ -122,22 +128,22 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/40 sm:from-white/80 via-white/20 sm:via-white/60 to-transparent pointer-events-none" />
         {/* Sökboxen */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-100px] sm:mt-[-40px]">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-1 text-gray-900 uppercase tracking-wider">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-1 text-white sm:text-gray-900 uppercase tracking-wider">
             BOKA RÄTT BILLBOARD
           </h2>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 sm:mb-2 text-[#ff6b00] uppercase tracking-wider">
             PÅ RÄTT PLATS
           </h2>
-          <p className="text-xs sm:text-sm text-gray-400 text-center mb-4 max-w-[280px] sm:max-w-xl whitespace-nowrap">
+          <p className="hidden sm:block text-xs sm:text-sm text-gray-400 text-center mb-4 max-w-[280px] sm:max-w-xl whitespace-nowrap">
             Över 1 200 tillgängliga platser runtom i Sverige – filtrera på stad, trafikflöde och pris.
           </p>
-          <div className="space-y-2 sm:space-y-2 w-full max-w-[240px] sm:max-w-xl mx-auto">
+          <div className="space-y-2 sm:space-y-2 w-full max-w-[280px] sm:max-w-xl mx-auto">
             <div className="flex flex-col gap-4 w-full max-w-xl">
               <div className="relative flex-1">
                 <input
                   type="text"
                   placeholder="Sök efter stad eller område..."
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+                  className="w-full px-4 pr-12 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -306,9 +312,21 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowMap(false)}
           >
+            {mounted && createPortal(
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowMap(false)}
+                className="fixed top-20 right-8 p-2 sm:p-3 bg-black text-white rounded-full shadow-2xl border-2 border-white hover:bg-gray-900 transition-colors z-[10000]"
+                style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.25)' }}
+              >
+                <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+              </motion.button>,
+              document.body
+            )}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -317,17 +335,6 @@ export default function Home() {
               className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl h-[80vh] relative overflow-hidden mt-16"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute top-4 right-4 z-[100]">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowMap(false)}
-                  className="p-4 bg-black/90 text-white rounded-full shadow-2xl border-2 border-white hover:bg-black transition-colors"
-                  style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.25)' }}
-                >
-                  <XMarkIcon className="w-7 h-7" />
-                </motion.button>
-              </div>
               <div className="w-full h-full">
                 <MapWithBees 
                   billboards={billboards
