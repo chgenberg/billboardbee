@@ -10,7 +10,7 @@ import { XMarkIcon, MapIcon } from '@heroicons/react/24/outline';
 import { Billboard } from '../types/billboard';
 import Papa from 'papaparse';
 
-const BillboardMapWrapper = dynamic(() => import('../components/BillboardMapWrapper'), { ssr: false });
+const MapWithBees = dynamic(() => import('../components/MapWithBees'), { ssr: false });
 
 export default function LedigaSkyltar() {
   const [billboards, setBillboards] = useState<Billboard[]>([]);
@@ -445,11 +445,14 @@ export default function LedigaSkyltar() {
                 </motion.button>
               </div>
               <div className="w-full h-full">
-                <BillboardMapWrapper
-                  billboards={filtered}
-                  selectedBillboard={selectedBillboard}
-                  onSelectBillboard={setSelectedBillboard}
-                  onClose={() => setShowMap(false)}
+                <MapWithBees
+                  billboards={filtered.map(b => ({
+                    ...b,
+                    lat: b.latitude,
+                    lng: b.longitude
+                  }))}
+                  initialCenter={[62.0, 16.5]}
+                  initialZoom={5}
                 />
               </div>
             </motion.div>
