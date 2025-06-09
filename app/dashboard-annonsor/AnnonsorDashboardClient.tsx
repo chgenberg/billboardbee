@@ -26,7 +26,7 @@ export default function AnnonsorDashboardClient() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
-        className="max-w-4xl mx-auto pt-4 pb-8 px-4 text-center"
+        className="max-w-4xl mx-auto pt-0 pb-4 px-4 text-center"
       >
         <div className="flex flex-col items-center gap-3">
           <div className="bg-[#ff6b00]/10 rounded-full p-4 mb-2 shadow-lg">

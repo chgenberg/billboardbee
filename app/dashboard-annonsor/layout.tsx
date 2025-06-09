@@ -46,32 +46,20 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Sidebar */}
-      <div className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:block`}>
-        {/* Sidebar content */}
-        <nav className="px-4 space-y-1">
-          {/* Översikt med närmare markering */}
-          <Link
-            href={navigation[0].href}
-            className={cn(
-              'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 mb-4',
-              pathname === navigation[0].href
-                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-            )}
-          >
-            <HomeIcon className="w-5 h-5" />
-            {navigation[0].name}
-          </Link>
-          
-          {/* Separator */}
-          <div className="h-px bg-gray-200 my-4" />
-          
-          {/* Resten av menyn */}
-          {navigation.slice(1).map((item) => {
+    <div className="flex min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Sidebar - helt ombyggd */}
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 md:relative md:translate-x-0",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Sidebar header med lite padding */}
+        <div className="h-20 flex items-center px-6 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800">Annonsör Meny</h2>
+        </div>
+        
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          {navigation.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -84,38 +72,46 @@ export default function DashboardLayout({
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
               >
-                <item.icon className="w-5 h-5" />
-                {item.name}
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <span>{item.name}</span>
               </Link>
             );
           })}
         </nav>
-      </div>
-      {/* Pil-ikon endast på mobil (<md) */}
-      {!sidebarOpen && (
-        <button
-          className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-full shadow p-2"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Öppna meny"
-        >
-          <ArrowRightIcon className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
-      {sidebarOpen && (
-        <button
-          className="md:hidden fixed top-4 left-64 z-50 bg-white rounded-full shadow p-2"
-          onClick={() => setSidebarOpen(false)}
-          aria-label="Stäng meny"
-        >
+      </aside>
+
+      {/* Mobile menu toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-24 left-4 z-50 p-2 bg-white rounded-lg shadow-md md:hidden"
+      >
+        {sidebarOpen ? (
           <ArrowLeftIcon className="w-6 h-6 text-gray-700" />
-        </button>
+        ) : (
+          <ArrowRightIcon className="w-6 h-6 text-gray-700" />
+        )}
+      </button>
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col">
+        {/* Top spacing to account for navbar */}
+        <div className="h-20" />
+        
+        {/* Content */}
+        <main className="flex-1 p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
-      {/* Main content */}
-      <main className="flex-1 pt-32 md:pl-64">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </div>
-      </main>
     </div>
   );
 } 

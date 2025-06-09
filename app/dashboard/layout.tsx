@@ -73,7 +73,7 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <div className={cn(
-        "fixed md:static z-50 top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out",
+        "fixed md:static z-50 top-[88px] md:top-0 left-0 h-[calc(100vh-88px)] md:h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out mt-0 md:mt-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full",
         "md:translate-x-0 md:block"
       )}>
@@ -129,8 +129,8 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex">
-        <main className="flex-1 pt-20 md:pl-64">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 mt-[88px] md:mt-0 md:pl-64">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
