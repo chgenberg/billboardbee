@@ -107,7 +107,7 @@ export default function Home() {
       <section className="relative w-full h-[calc(100vh-64px)] sm:h-auto sm:aspect-[16/9] flex items-center justify-center overflow-hidden sm:pt-14">
         {/* Mobilbild */}
         <img
-          src="/hero-mobile2.png"
+          src="/hero-mobile3.png"
           alt="Billboard"
           className="block sm:hidden absolute inset-0 w-full h-full object-cover"
         />
