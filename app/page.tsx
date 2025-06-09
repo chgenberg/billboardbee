@@ -113,7 +113,7 @@ export default function Home() {
         />
         {/* Desktopbild */}
         <img
-          src="/bakgrunds.png"
+          src="/nybakgrund.png"
           alt="Billboard"
           className="hidden sm:block absolute top-0 left-0 w-full h-full object-contain"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
@@ -121,15 +121,18 @@ export default function Home() {
         {/* Overlay för bättre kontrast - svagare på mobil */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/40 sm:from-white/80 via-white/20 sm:via-white/60 to-transparent pointer-events-none" />
         {/* Sökboxen */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-220px] sm:mt-[-160px]">
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-1 text-gray-900 drop-shadow-lg">
-            <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">HITTA DIN PERFEKTA</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-10 mt-[-100px] sm:mt-[-40px]">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-1 text-gray-900 uppercase tracking-wider">
+            BOKA RÄTT BILLBOARD
           </h2>
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-3 text-[#ff6b00] drop-shadow-lg">
-            <span className="font-extrabold tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">REKLAMPLATS</span>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 sm:mb-2 text-[#ff6b00] uppercase tracking-wider">
+            PÅ RÄTT PLATS
           </h2>
-          <div className="space-y-2 sm:space-y-2 w-full max-w-[280px] sm:max-w-2xl mx-auto">
-            <div className="flex flex-col gap-4 w-full max-w-2xl">
+          <p className="text-xs sm:text-sm text-gray-400 text-center mb-4 max-w-[280px] sm:max-w-xl whitespace-nowrap">
+            Över 1 200 tillgängliga platser runtom i Sverige – filtrera på stad, trafikflöde och pris.
+          </p>
+          <div className="space-y-2 sm:space-y-2 w-full max-w-[240px] sm:max-w-xl mx-auto">
+            <div className="flex flex-col gap-4 w-full max-w-xl">
               <div className="relative flex-1">
                 <input
                   type="text"

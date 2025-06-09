@@ -65,7 +65,15 @@ export default function MapWithBees({
                   </div>
                 )}
                 <div className="font-bold text-[#ff6b00] text-base mb-1 mt-1">{String(b.title ?? '')}</div>
-                <div className="text-xs text-gray-600 mb-3">{String(b.location ?? '')}</div>
+                <div className="text-xs text-gray-600 mb-1">{String(b.location ?? '')}</div>
+                {b.traffic && (
+                  <div className="text-xs text-gray-600 mb-1">
+                    Synlig för {b.traffic.toLocaleString()} bilar/dygn
+                  </div>
+                )}
+                <div className="text-sm font-bold text-gray-900 mb-3">
+                  {b.price.toLocaleString()} kr/månad
+                </div>
                 <a
                   href={`/objekt/${b.id}`}
                   className="px-4 py-2 rounded-full bg-[#ff6b00] text-white text-xs font-semibold hover:bg-[#ff8c1a] transition-colors shadow"
